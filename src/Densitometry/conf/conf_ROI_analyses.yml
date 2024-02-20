@@ -1,0 +1,17 @@
+    directory_out : 'C:/Users/belardo.alfonso/Desktop/Cardio/.venv_Fin/Histo_Heart/Analyses'
+
+    
+    specific_ROI_analyses : True #  'False'
+    
+    #insert specific ROI delimiter: HU_min, HU_max, min_counts.
+    specific_ROI_delimiter : [-200, 100, 100]
+
+    over_ROI_analyses : False #  ' True'
+    
+    #insert over ROI delimiter: HU_min over whose analyse; min_counts for this region.
+    over_ROI_delimiter : [400, 100]
+    
+    rate_ROI_analyses : False #  ' True'
+
+    #insert rate ROI delimiter: HU_min over whose analyse; rate_counts beetween inside and outside for this region.
+    rate_ROI_delimiter : [400, 1]

@@ -1,0 +1,14 @@
+    # directory_dcm_files = (Path("//IHSR.dom/OSRFileServices") / "Ric.FisicaSanitaria" / "AAAshared" / "dataset" / 
+    #                            "segmentazione" / "breast_Fodor22_upto2017" / "DB_Resume_Scripts" / "DB_uncomposed")
+    
+    directory_dcm_in : 'C:/Users/belardo.alfonso/Desktop/Cardio/.venv_Fin/Histo_Heart/DB/DB_uncomposed'
+    
+    # directory_ct_files = (Path("//IHSR.dom/OSRFileServices") / "Ric.FisicaSanitaria" / "AAAshared" / "dataset" / 
+    #                            "segmentazione" / "breast_Fodor22_upto2017" / "DB_Resume_Scripts" / "DB_composed")
+    
+    directory_dcm_out : 'C:/Users/belardo.alfonso/Desktop/Cardio/.venv_Fin/Histo_Heart/DB/DB_composed'
+
+    directory_out : 'C:/Users/belardo.alfonso/Desktop/Cardio/.venv_Fin/Histo_Heart/Analyses'
+
+    
+    divide_dcm : 'yes' # 'no'

@@ -1,0 +1,19 @@
+    # directory_ct_files = (Path("//IHSR.dom/OSRFileServices") / "Ric.FisicaSanitaria" / "AAAshared" / "dataset" / 
+    #                            "segmentazione" / "breast_Fodor22_upto2017" / "DB_Resume_Scripts" / "DB_composed")
+    
+    directory_dcm_out : 'C:/Users/belardo.alfonso/Desktop/Cardio/.venv_Fin/Histo_Heart/DB/DB_composed'
+
+    directory_out : 'C:/Users/belardo.alfonso/Desktop/Cardio/.venv_Fin/Histo_Heart/Analyses'
+
+    
+    save_spacing_histo : False #  'True'
+
+    save_ROI_info : False #  'True' 
+    
+    total_ROI_analyses : True # 'False'
+
+    show_total_ROI_info : True # 'False'
+
+    save_total_ROI_info : True # 'False'
+    
+    ID_problems : ''
