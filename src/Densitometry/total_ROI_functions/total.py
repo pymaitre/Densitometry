@@ -7,9 +7,58 @@ from pathlib import Path
 from src.Densitometry.total_ROI_functions import extract_info as info
 from src.Densitometry.total_ROI_functions import extract_histo as histo
 import pandas as pd
+import pydicom
   
 
-def res_and_create_histo(df_py, ID_problems, new_sp, directory_out, show_info_all, save_info_all):
+def get_roi_names(rtstruct_path):
+    rtstruct = pydicom.dcmread(rtstruct_path)
+
+    roi_names = []
+    for roi in rtstruct.StructureSetROISequence:
+        roi_names.append(roi.ROIName)
+
+    return roi_names
+
+
+def find_rt_st(ct_path, rt_kind, list_roi):
+    try:
+        
+        # rt_folder = list(Path(ct_path).parent.glob(f"{rt_kind}*"))
+        path_rt_structures = list(Path(ct_path).parent.glob(f"{rt_kind}*/*.dcm"))
+
+        nomi_con_importanza = {}
+        for i in range(0, len(list_roi)):
+            nomi_con_importanza[list_roi[i]] = len(list_roi)-i
+        print("I'm searching contours with this order: ")
+        print(nomi_con_importanza)
+        
+        for path_rt_st in path_rt_structures:
+            print("I found the RTst:")
+            print(path_rt_st)
+
+            ROI_names = get_roi_names(path_rt_st)
+            # print(ROI_names)
+            
+            for nome in nomi_con_importanza:
+                # print('Check nome: ', nome)
+                for ROI_name in ROI_names:
+                    # print('ROI name: ', ROI_name)
+                    if nome == ROI_name:
+                        print(f'ROI name {ROI_name} matched with name {nome}.')
+                        # CT = dtn.read_dicom_image(ct_path)
+                        # print('Letta CT')
+                        # rt = dtn.read_dicom_rtstruct(path_rt_st, CT, ROI_name)
+                        # print(type(rt), rt)
+                        return ROI_name, path_rt_st
+                    # else:
+                    #     print(f'{ROI_name} is catched.')
+                    #     return ROI_name
+        
+    except Exception as e:
+        print('ROI not founded with error: ', e)
+
+
+def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, directory_out, show_info_all, save_info_all):
     """
     Here almost functions are called for all patients. Especially:
     - CT and RTst are possibly showed; 
@@ -33,14 +82,8 @@ def res_and_create_histo(df_py, ID_problems, new_sp, directory_out, show_info_al
     :return dir_files_fin: directory of all patients df with HU and counts.
     """
 
-    print("The saving variable is set on: ", save_info_all)
-
-    specific_ROI = [False, '']
-    specific = str(input("\nDo you need a specific ROI? (y/n)"))
-    if "y" in specific.lower():
-        specific_ROI[0] = True
-        specific_ROI[1] = str(input("What ROI do you need?"))
-        
+    print("The showing variable is set on: ", show_info_all)
+    print("The saving variable is set on: ", save_info_all)  
     
     dir_histo_fin = Path(directory_out) / "Total_ROI" / "Histograms_ok"
     Path(dir_histo_fin).mkdir(parents=True, exist_ok=True)
@@ -51,29 +94,15 @@ def res_and_create_histo(df_py, ID_problems, new_sp, directory_out, show_info_al
     more_patient_stats_df_total = pd.DataFrame()
     pz_problems = []
     
-    # show_CT_ROI = str(input("\nDo you want to see a CT slice and it's ROI?"))
-    # if "y" in show_CT_ROI:
-    #     show_CT_ROI=True
-    #     print("Show ROI is set on: ", show_CT_ROI)
-    #     print("")
-    #     slice = int(input("Select the slice you want to see: "))
-    # else:
-    #     show_CT_ROI=False
-    #     print("Show df ROI is set on: ", show_CT_ROI)
-    #     print("")
-    #     slice=0
         
     for pz in range(0 , len(df_py)):
         ID = df_py.loc[pz,"PatientID"]
         
         if str(ID) not in ID_problems:
 
-            CT, CT_arr, rt_path, rt, ROI_founded = info.CT_and_ROI(df_py, pz, specific_ROI, show_info_all, slice)
-            if specific_ROI[0]:
-                ROI_founded = specific_ROI[1]
-                
-            if ROI_founded is not None:
-                print(f"ROI founded: {ROI_founded}")
+            try:
+                ct_path = df_py.loc[pz, "Path"]
+                ROI_founded, ROI_path = find_rt_st(ct_path, rt_kind, list_roi)
                 
                 if (df_py.loc[pz,"VoxelSpacingX"]==new_sp[0] and 
                     df_py.loc[pz,"VoxelSpacingY"]==new_sp[1] and 
@@ -81,8 +110,9 @@ def res_and_create_histo(df_py, ID_problems, new_sp, directory_out, show_info_al
                     
                     print("")    
                     print("PZ", ID , " ok")
-    
-                    HU_ROI, counts_ROI = info.ROI_ok(rt, ROI_founded, CT_arr, show_info_all, slice)
+                    
+                    HU_ROI, counts_ROI = info.ROI_ok(ct_path, ROI_path, ROI_founded, show_info_all, 
+                                                     save_info_all, directory_out, ID, slice=40)
                     
                     stats_df = histo.features_ROI(ID, HU_ROI, counts_ROI, dir_histo_fin, dir_files_fin, save_info_all)
                                     
@@ -101,7 +131,8 @@ def res_and_create_histo(df_py, ID_problems, new_sp, directory_out, show_info_al
                     dir_compare_ct_res = Path(directory_out) / "Total_ROI" / "To_be_resampled" / "Compare_histo"
                     Path(dir_compare_ct_res).mkdir(parents=True, exist_ok=True)
             
-                    HU_ROI, counts_ROI = info.ROI_ok(rt, ROI_founded, CT_arr, show_info_all, slice) 
+                    HU_ROI, counts_ROI = info.ROI_ok(ct_path, ROI_path, ROI_founded, show_info_all, 
+                                                     save_info_all, directory_out, ID, slice=40)
                     histo.features_ROI(ID, HU_ROI, counts_ROI, dir_histo_res, dir_files_res, save_info_all)
                                 
             
@@ -109,7 +140,8 @@ def res_and_create_histo(df_py, ID_problems, new_sp, directory_out, show_info_al
                     print("ANALYZING THE RESAMPLED IMAGE!")
                     print("")
             
-                    HU_ROI_res, counts_ROI_res = info.ROI_res(CT, new_sp, rt_path, ROI_founded, show_info_all, slice)
+                    HU_ROI_res, counts_ROI_res = info.ROI_res(ct_path, ROI_path, new_sp, ROI_founded, 
+                                                              show_info_all, save_info_all, directory_out, ID, slice=100)
                     
                     stats_df = histo.features_ROI(ID, HU_ROI_res, counts_ROI_res, dir_histo_fin, dir_files_fin, save_info_all)
                                    
@@ -118,9 +150,10 @@ def res_and_create_histo(df_py, ID_problems, new_sp, directory_out, show_info_al
     
                     more_patient_stats_df_total = pd.concat([more_patient_stats_df_total, stats_df])
 
-            else:
-                print("")
+            except Exception as e:
+                # else:
                 print(f"Patient {ID} has problems with ROI.")
+                print(f"{e}")
                 pz_problems.append(ID) 
                 
         else:
