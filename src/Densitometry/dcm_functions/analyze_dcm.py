@@ -53,10 +53,14 @@ def find_ct_info(directory, directory_out):
                         birth_date_str = dcm.PatientBirthDate
                         study_date_str = dcm.StudyDate
                         
-                        birth_date = datetime.strptime(birth_date_str, "%Y%m%d")
-                        study_date = datetime.strptime(study_date_str, "%Y%m%d")
-                        
-                        patient_age = (study_date - birth_date).days // 365
+                        if str(birth_date_str) != '':
+                            birth_date = datetime.strptime(birth_date_str, "%Y%m%d")
+                            study_date = datetime.strptime(study_date_str, "%Y%m%d")
+                            
+                            patient_age = (study_date - birth_date).days // 365
+
+                        else:
+                            patient_age = 'Non_calcolato'
                         
                         voxel_spacing_x = dcm.PixelSpacing[0]
                         voxel_spacing_y = dcm.PixelSpacing[1]
