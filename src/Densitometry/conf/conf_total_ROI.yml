@@ -3,12 +3,14 @@
     
     directory_dcm_out : '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\dataset\segmentazione\breast_Fodor22_from2017\no_boost\ANONYMIZED_Dx\ANONYMIZED_Breast_Monica_Dx\408782'
 
+    # directory_out : '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\Belardo\Breast\Analyses\breast_Fodor22_from2017\no_boost\ANONYMIZED_Dx\ANONYMIZED_Breast_Monica_Dx'
     directory_out : '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\Belardo\Breast\Analyses\New_extraction'
 
-    
+    image_modality : "CT"
+
     save_spacing_histo :  True  #False #
 
-    save_ROI_info : False #True  #
+    save_ROI_info : True  #False #
     
     total_ROI_analyses :  True #False  #
 
