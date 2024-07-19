@@ -25,8 +25,8 @@ def main():
     directory_out = Path(conf['directory_out'])
     Path(directory_out).mkdir(parents=True, exist_ok=True)
 
-    
-    df_py = info_dcm.find_ct_info(directory_dcm_out, directory_out)
+    image_modality = conf['image_modality']
+    df_py = info_dcm.find_ct_info(directory_dcm_out, directory_out, image_modality)
     print("")            
 
     
