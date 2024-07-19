@@ -24,6 +24,7 @@ def find_rt_st(ct_path, rt_kind, list_roi):
     try:
         
         # rt_folder = list(Path(ct_path).parent.glob(f"{rt_kind}*"))
+        # TODO: check RTst path by name in conf.
         path_rt_structures = list(Path(ct_path).parent.glob(f"{rt_kind}*/*.dcm"))
 
         nomi_con_importanza = {}
