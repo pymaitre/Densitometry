@@ -12,7 +12,7 @@ import pydicom
 from datetime import datetime
 
 
-def find_ct_info(directory, directory_out):
+def find_ct_info(directory, directory_out, imm_mod):
     """
     Create a dataframe reading a slice header of all CTs.
     It will contains ID, Name, Age, dimensions of Voxel_spacing, CT_path.
@@ -39,38 +39,42 @@ def find_ct_info(directory, directory_out):
          
         for root, dirs, files in os.walk(directory):
             for file in files:
-                file_path = os.path.join(root, file)
-                dcm = pydicom.dcmread(file_path)
-                # print(dcm)
-                modality = dcm["Modality"].value
-            
-                if modality == "CT": 
-                    try:
-                        patient_id = dcm.PatientID
-                        name = dcm.PatientName
-                        patient_name = re.sub("\^", ", ", str(name))
+                try:
+                    if str(file).lower().endswith(".dcm"):
+                        file_path = os.path.join(root, file)
+                        dcm = pydicom.dcmread(file_path, force=True)
+                        # print(dcm)
+                        modality = dcm["Modality"].value
                     
-                        birth_date_str = dcm.PatientBirthDate
-                        study_date_str = dcm.StudyDate
+                        if modality == str(imm_mod): 
+                        # try:
+                            patient_id = dcm.PatientID
+                            name = dcm.PatientName
+                            patient_name = re.sub("\^", ", ", str(name))
                         
-                        if str(birth_date_str) != '':
-                            birth_date = datetime.strptime(birth_date_str, "%Y%m%d")
-                            study_date = datetime.strptime(study_date_str, "%Y%m%d")
+                            birth_date_str = dcm.PatientBirthDate
+                            study_date_str = dcm.StudyDate
                             
-                            patient_age = (study_date - birth_date).days // 365
+                            if str(birth_date_str) != '':
+                                birth_date = datetime.strptime(birth_date_str, "%Y%m%d")
+                                study_date = datetime.strptime(study_date_str, "%Y%m%d")
+                                
+                                patient_age = (study_date - birth_date).days // 365
 
-                        else:
-                            patient_age = 'Non_calcolato'
-                        
-                        voxel_spacing_x = dcm.PixelSpacing[0]
-                        voxel_spacing_y = dcm.PixelSpacing[1]
-                        voxel_spacing_z = dcm.SliceThickness    
-                        
-                        print(patient_id)
-                        data.append((patient_id, patient_name, patient_age, voxel_spacing_x, voxel_spacing_y, voxel_spacing_z, root))
-                    except Exception as e:
-                        print(f"Error reading DICOM file {file}: {str(e)}")
-                    break            
+                            else:
+                                patient_age = 'Non_calcolato'
+                            
+                            voxel_spacing_x = dcm.PixelSpacing[0]
+                            voxel_spacing_y = dcm.PixelSpacing[1]
+                            voxel_spacing_z = dcm.SliceThickness    
+                            
+                            print(patient_id)
+                            data.append((patient_id, patient_name, patient_age, voxel_spacing_x, voxel_spacing_y, voxel_spacing_z, root))
+                            break
+                except Exception as e:
+                    print(f"Error reading DICOM file {file}: {str(e)}")
+                    # continue
+                # break            
                 #break
             #break
         
