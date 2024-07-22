@@ -94,10 +94,7 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
     Path(dir_files_fin).mkdir(parents=True, exist_ok=True)
 
     more_patient_stats_df_total = pd.DataFrame()
-    ID_problems = []
-    # pz_problems = pd.DataFrame()
     pz_problems = []
-    ID_with_problems = pd.DataFrame()
     
         
     for pz in range(0 , len(df_py)):
@@ -162,17 +159,13 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
                 print(f"Patient {ID} has problems with ROI.")
                 print(f"{e}")
                 ID_problems.append(ID)
-                # pz_problems = pd.concat([ID, f"{e}"], axis=1)
                 pz_problems.append([ID, str(e)])
-                df_problems = pd.DataFrame(pz_problems, columns=['ID', 'Errore'])
-                ID_with_problems = pd.concat([ID_with_problems, df_problems]) 
                 
         else:
             print("You caught a patient within the problem's ones.")
-            ID_problems.append(ID)
             pz_problems.append([ID, "You knew there was an error"])
-            ID_with_problems = pd.concat([ID_with_problems, pz_problems])
             print("")
+            # break
 
     if len(more_patient_stats_df_total!=0):
         # if save_all:
@@ -189,7 +182,8 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
         excel_ID_problems = Path(directory_out) / "ID_with_problems.xlsx"
         print("I have problems with patients: ")
         print(ID_problems)
-        ID_with_problems.to_excel(excel_ID_problems, index=False)
+        df_problems = pd.DataFrame(pz_problems, columns=['ID', 'Errore'])
+        df_problems.to_excel(excel_ID_problems, index=False)
     else:
         print("\nThere are no problems")
         
