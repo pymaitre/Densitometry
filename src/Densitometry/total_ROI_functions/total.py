@@ -164,7 +164,7 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
                 ID_problems.append(ID)
                 # pz_problems = pd.concat([ID, f"{e}"], axis=1)
                 pz_problems.append([ID, str(e)])
-                df_problems = pd.DataFrame(pz_problems, columns=['File Path', 'Errore'], index=False)
+                df_problems = pd.DataFrame(pz_problems, columns=['ID', 'Errore'])
                 ID_with_problems = pd.concat([ID_with_problems, df_problems]) 
                 
         else:
@@ -189,7 +189,7 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
         excel_ID_problems = Path(directory_out) / "ID_with_problems.xlsx"
         print("I have problems with patients: ")
         print(ID_problems)
-        ID_with_problems.to_excel(excel_ID_problems)
+        ID_with_problems.to_excel(excel_ID_problems, index=False)
     else:
         print("\nThere are no problems")
         
