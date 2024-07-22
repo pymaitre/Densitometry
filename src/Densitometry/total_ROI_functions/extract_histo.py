@@ -12,7 +12,7 @@ from scipy import stats
 import pandas as pd
 
 
-def features_ROI(ID, HU_ROI, counts_ROI,
+def features_ROI(ID, HU_ROI, counts_ROI, sp, ROI_name,
                  dir_histo, dir_files, save=False):
     """
     Function that call histo and file functions
@@ -31,13 +31,13 @@ def features_ROI(ID, HU_ROI, counts_ROI,
 
     n_size=1
     
-    HU_histo, counts_histo, stats_df = make_histo(HU_ROI, counts_ROI, n_size, dir_histo, f"{ID}", save)    
+    HU_histo, counts_histo, stats_df = make_histo(HU_ROI, counts_ROI, n_size, sp, ROI_name, dir_histo, f"{ID}", save)    
     diff_file = make_file(HU_histo, counts_histo, dir_files, f"{ID}", save)
 
     return stats_df
 
 
-def make_histo(HU_ROI_no_nan, counts_ROI_no_nan, n_size, save_path, name, save=False):
+def make_histo(HU_ROI_no_nan, counts_ROI_no_nan, n_size, sp, ROI_name, save_path, name, save=False):
     """
     This function has as input HU and counts of the ROI and returns a plot of the histogram.
 
@@ -74,7 +74,7 @@ def make_histo(HU_ROI_no_nan, counts_ROI_no_nan, n_size, save_path, name, save=F
     patient_ID = re.sub("_Justified", "", patient_ID)
     # print(patient_ID)
     region = save_path.parent.name
-    stats_df = calculate_and_save_statistics(patient_ID, region, weighted_values)
+    stats_df = calculate_and_save_statistics(patient_ID, region, weighted_values, sp, ROI_name)
     
     if save is True:
         print("")
@@ -148,7 +148,7 @@ def plot_stat(data):
     plt.legend()
 
 
-def calculate_and_save_statistics(histo_name, region, data):
+def calculate_and_save_statistics(histo_name, region, data, sp, ROI_name):
     """
     This function permits to choose which features you want to 
     extract from the histogram.
@@ -172,6 +172,8 @@ def calculate_and_save_statistics(histo_name, region, data):
 #         mode = st.mode(data)
     mode = max_count_hu
     tot_counts = np.sum(unique_counts)
+    volume = tot_counts * (sp[0] * sp[1] * sp[2])
+    volume_cc = volume / 1000. 
     std_dev = np.std(data)
     skewness = stats.skew(data)
     kurtosis = stats.kurtosis(data)
@@ -182,9 +184,15 @@ def calculate_and_save_statistics(histo_name, region, data):
 
     stats_data = {
         "PatientID": [histo_name],
+        "ROI_name": [str(ROI_name)],
+        "VoxelSpacingX" : [sp[0]], 
+        "VoxelSpacingY" : [sp[1]], 
+        "VoxelSpacingZ" : [sp[2]], 
+        f"Tot_counts_{region}": [tot_counts],
+        f"Volume_mm3_{region}": [volume],
+        f"Volume_cc_{region}": [volume_cc],
         f"Min_{region}": [mini],
         f"Max_{region}": [massi],
-        f"Tot_counts_{region}": [tot_counts],
         f"Mean_{region}": [mean],
         f"Mode_{region}": [mode],
         f"Count_Max_{region}": [max_count_value],        
