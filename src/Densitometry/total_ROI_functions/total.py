@@ -8,6 +8,7 @@ from src.Densitometry.total_ROI_functions import extract_info as info
 from src.Densitometry.total_ROI_functions import extract_histo as histo
 import pandas as pd
 import pydicom
+import numpy as np
   
 
 def get_roi_names(rtstruct_path):
@@ -44,7 +45,7 @@ def find_rt_st(ct_path, rt_kind, list_roi):
                 # print('Check nome: ', nome)
                 for ROI_name in ROI_names:
                     # print('ROI name: ', ROI_name)
-                    if nome == ROI_name:
+                    if nome in ROI_name:
                         print(f'ROI name {ROI_name} matched with name {nome}.')
                         # CT = dtn.read_dicom_image(ct_path)
                         # print('Letta CT')
@@ -93,7 +94,10 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
     Path(dir_files_fin).mkdir(parents=True, exist_ok=True)
 
     more_patient_stats_df_total = pd.DataFrame()
+    ID_problems = []
+    # pz_problems = pd.DataFrame()
     pz_problems = []
+    ID_with_problems = pd.DataFrame()
     
         
     for pz in range(0 , len(df_py)):
@@ -105,9 +109,11 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
                 ct_path = df_py.loc[pz, "Path"]
                 ROI_founded, ROI_path = find_rt_st(ct_path, rt_kind, list_roi)
                 
-                if (df_py.loc[pz,"VoxelSpacingX"]==new_sp[0] and 
-                    df_py.loc[pz,"VoxelSpacingY"]==new_sp[1] and 
-                    df_py.loc[pz,"VoxelSpacingZ"]==new_sp[2]):
+                old_sp = np.array([df_py.loc[pz,"VoxelSpacingX"], df_py.loc[pz,"VoxelSpacingY"], df_py.loc[pz,"VoxelSpacingZ"]])
+
+                if (old_sp[0]==new_sp[0] and 
+                    old_sp[1]==new_sp[1] and 
+                    old_sp[2]==new_sp[2]):
                     
                     print("")    
                     print("PZ", ID , " ok")
@@ -115,7 +121,7 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
                     HU_ROI, counts_ROI = info.ROI_ok(ct_path, ROI_path, ROI_founded, show_info_all, 
                                                      save_info_all, directory_out, ID, slice=40)
                     
-                    stats_df = histo.features_ROI(ID, HU_ROI, counts_ROI, dir_histo_fin, dir_files_fin, save_info_all)
+                    stats_df = histo.features_ROI(ID, HU_ROI, counts_ROI, new_sp, ROI_founded, dir_histo_fin, dir_files_fin, save_info_all)
                                     
                     more_patient_stats_df_total = pd.concat([more_patient_stats_df_total, stats_df])
     
@@ -134,7 +140,7 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
             
                     HU_ROI, counts_ROI = info.ROI_ok(ct_path, ROI_path, ROI_founded, show_info_all, 
                                                      save_info_all, directory_out, ID, slice=40)
-                    histo.features_ROI(ID, HU_ROI, counts_ROI, dir_histo_res, dir_files_res, save_info_all)
+                    histo.features_ROI(ID, HU_ROI, counts_ROI, old_sp, ROI_founded, dir_histo_res, dir_files_res, save_info_all)
                                 
             
                     print("")    
@@ -144,7 +150,7 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
                     HU_ROI_res, counts_ROI_res = info.ROI_res(ct_path, ROI_path, new_sp, ROI_founded, 
                                                               show_info_all, save_info_all, directory_out, ID, slice=100)
                     
-                    stats_df = histo.features_ROI(ID, HU_ROI_res, counts_ROI_res, dir_histo_fin, dir_files_fin, save_info_all)
+                    stats_df = histo.features_ROI(ID, HU_ROI_res, counts_ROI_res, new_sp, ROI_founded, dir_histo_fin, dir_files_fin, save_info_all)
                                    
                     compare = histo.compare_histo_res(HU_ROI_res, counts_ROI_res, HU_ROI, counts_ROI, 
                                                       dir_compare_ct_res, ID, save_info_all)
@@ -155,11 +161,17 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
                 # else:
                 print(f"Patient {ID} has problems with ROI.")
                 print(f"{e}")
-                pz_problems.append(ID) 
+                ID_problems.append(ID)
+                # pz_problems = pd.concat([ID, f"{e}"], axis=1)
+                pz_problems.append([ID, str(e)])
+                df_problems = pd.DataFrame(pz_problems, columns=['File Path', 'Errore'], index=False)
+                ID_with_problems = pd.concat([ID_with_problems, df_problems]) 
                 
         else:
             print("You caught a patient within the problem's ones.")
-            pz_problems.append(ID)
+            ID_problems.append(ID)
+            pz_problems.append([ID, "You knew there was an error"])
+            ID_with_problems = pd.concat([ID_with_problems, pz_problems])
             print("")
 
     if len(more_patient_stats_df_total!=0):
@@ -173,9 +185,11 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
         #     print("Saving the database with the densitometric features of the histograms of the entire region.")
             # display(more_patient_stats_df_total)
 
-    if len(pz_problems)!=0:
+    if len(ID_problems)!=0:
+        excel_ID_problems = Path(directory_out) / "ID_with_problems.xlsx"
         print("I have problems with patients: ")
-        print(pz_problems)
+        print(ID_problems)
+        ID_with_problems.to_excel(excel_ID_problems)
     else:
         print("\nThere are no problems")
         
