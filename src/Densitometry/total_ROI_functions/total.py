@@ -20,7 +20,33 @@ def get_roi_names(rtstruct_path):
 
     return roi_names
 
-
+def is_roi_empty(rtst_file, roi_name):
+    ds = pydicom.dcmread(rtst_file)
+    for roi in ds.StructureSetROISequence:
+        if roi_name == roi.ROIName:
+            roi_number = roi.ROINumber
+            break
+    
+    # Cerca la ROI Contour Sequence
+    if 'ROIContourSequence' in ds:
+        for roi_contour in ds.ROIContourSequence:
+            # Cerca la Contour Sequence
+            if str(roi_number) == str(roi_contour.ReferencedROINumber):
+                if 'ContourSequence' in roi_contour:
+                    for contour in roi_contour.ContourSequence:
+                        # Controlla se Contour Data è vuoto
+                        if 'ContourData' in contour and len(contour.ContourData) > 0:
+                            return False  # La ROI non è vuota
+                else:
+                    print('ContourSequence not in ROIContourSequence.')
+                    break
+            else:
+                print(roi_contour.ReferencedROINumber)
+                # print(roi_contour.ContourSequence)
+                continue
+    
+    return True  # La ROI è vuota
+    
 def find_rt_st(ct_path, rt_kind, list_roi):
     try:
         
@@ -47,11 +73,10 @@ def find_rt_st(ct_path, rt_kind, list_roi):
                     # print('ROI name: ', ROI_name)
                     if nome in ROI_name:
                         print(f'ROI name {ROI_name} matched with name {nome}.')
-                        # CT = dtn.read_dicom_image(ct_path)
-                        # print('Letta CT')
-                        # rt = dtn.read_dicom_rtstruct(path_rt_st, CT, ROI_name)
-                        # print(type(rt), rt)
-                        return ROI_name, path_rt_st
+                        if is_roi_empty(path_rt_st, ROI_name):
+                            continue
+                        else:
+                            return ROI_name, path_rt_st
                     # else:
                     #     print(f'{ROI_name} is catched.')
                     #     return ROI_name
