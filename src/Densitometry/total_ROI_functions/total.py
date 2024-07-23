@@ -41,7 +41,7 @@ def is_roi_empty(rtst_file, roi_name):
                     print('ContourSequence not in ROIContourSequence.')
                     break
             else:
-                print(roi_contour.ReferencedROINumber)
+                # print(roi_contour.ReferencedROINumber)
                 # print(roi_contour.ContourSequence)
                 continue
     
