@@ -11,9 +11,10 @@ from pathlib import Path
 from src.Densitometry.total_ROI_functions import extract_info as info
 import matplotlib.pyplot as plt
 import pandas as pd
+import pydicom
 
 
-def all_ROI(df_py, directory_out):
+def all_ROI(df_py, directory_out, rt_kind):
     """
     Read all ROIs from RTst linked to CT (in directory named by ID).
     This function create a dataframe where each row has PatientID
@@ -57,18 +58,22 @@ def all_ROI(df_py, directory_out):
             ID =  df_py.loc[pz,"PatientID"]
             ct_path = df_py.loc[pz, "Path"]
             
-            CT, CT_arr = info.read_and_show_ct(ct_path, show_CT_ROI, slice)    
-            rt_folder = (Path(ct_path).parent / "RTst")
-            rt_path = list(rt_folder.glob("RS*"))[0]
+            # CT, CT_arr = info.read_and_show_ct(ct_path, show_CT_ROI, slice)    
+            # rt_folder = (Path(ct_path).parent / "RTst")
+            # TODO: check RTst path by name in conf.  
+            rtstruct_path = list(Path(ct_path).parent.glob(f"{rt_kind}*/*.dcm"))[0]
             # rt_path = ct_path.parent.glob("RS*")
             # print("La RTst si trova in: ", rt_path)
-            rt = info.dtn.read_dicom_rtstruct(rt_path, CT)    
+            # rt = info.dtn.read_dicom_rtstruct(rt_path, CT)    
             # print(rt)
     
             contour=[]
             
-            for ROI in rt:
-                contour.append(ROI.name)                
+            rtstruct = pydicom.dcmread(rtstruct_path)
+
+            for roi in rtstruct.StructureSetROISequence:
+                contour.append(roi.ROIName)
+                
             print("ROIs of patient ", ID , " are: ", contour)
             print("")
             

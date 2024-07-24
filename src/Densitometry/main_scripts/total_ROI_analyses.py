@@ -25,8 +25,8 @@ def main():
     directory_out = Path(conf['directory_out'])
     Path(directory_out).mkdir(parents=True, exist_ok=True)
 
-    
-    df_py = info_dcm.find_ct_info(directory_dcm_out, directory_out)
+    image_modality = conf['image_modality']
+    df_py = info_dcm.find_ct_info(directory_dcm_out, directory_out, image_modality)
     print("")            
 
     
@@ -41,10 +41,11 @@ def main():
     
 
     save_ROI = conf['save_ROI_info']
-    
+    rt_kind = conf['rt_kind']
+   
     if save_ROI:
         #if True create db with all patient's ROI and relative counts
-        df_ROI, df_counts = ROI.all_ROI(df_py, directory_out)          
+        df_ROI, df_counts = ROI.all_ROI(df_py, directory_out, rt_kind)          
         print("")
     else:
         print("You chose to not extract all patients ROIs.") 
@@ -53,6 +54,7 @@ def main():
 
     # ID_problems = ["70230254", "70366136", "433906"] #bilaterali
     ID_problems = conf['ID_problems']
+    list_roi = conf['list_roi']
 
     all = conf['total_ROI_analyses']
     if all:
@@ -61,7 +63,7 @@ def main():
         show_info_all = conf['show_total_ROI_info']
         save_info_all = conf['save_total_ROI_info']
         
-        dir_files_fin = tot.res_and_create_histo(df_py, ID_problems, new_sp, directory_out, show_info_all, save_info_all)
+        dir_files_fin = tot.res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, directory_out, show_info_all, save_info_all)
         print("")
     
     else:

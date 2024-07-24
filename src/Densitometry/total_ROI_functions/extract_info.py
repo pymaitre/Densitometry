@@ -16,109 +16,29 @@ import SimpleITK as sitk
 import matplotlib.pyplot as plt
 
 
-def CT_and_ROI(df_py, pz, specific_ROI, show_CT_ROI, slice=40):
-    """
-    This function resumes the more important information for 
-    recreating and showing the ROI of a specific CT.
-
-    :param df_py: database of headers information.
-    :param pz: iterator on the database for selecting the patient.
-    :param show_CT_ROI: selector for showing CT slice and ROI.
-    :param slice: input number for slice view.
-
-    :return CT: CT image.
-    :return CT_arr: CT conversion in array for reading and showing
-                    in Python.
-    :return rt_path: RTst's dcm file.
-    :return rt: RTst with all ROI's masks.
-    :return ROI_founded: ROI you are looking for.
-    """
+def save_info_nifti(save_info_all, directory_out, CT, rt, ID):
+    if save_info_all:
+        dir_nifti = Path(directory_out) / "dataset" / "imagesTr"
+        Path(dir_nifti).mkdir(parents=True, exist_ok=True)
     
-    ct_path = df_py.loc[pz, "Path"]
-    print("")
-    print("The CT is in: ", Path(ct_path).parent)
-    CT, CT_arr = read_and_show_ct(ct_path, show_CT_ROI, slice)
-    
-    rt_folder = (Path(ct_path).parent / "RTst")
-    rt_path = list(rt_folder.glob("RS*"))[0]
-    rt = dtn.read_dicom_rtstruct(rt_path, CT)    
-    # print(rt)
-    ROI_founded = ""
-    if not specific_ROI[0]:
-        ROI_founded = find_ROI(rt)
+        dir_RTst = Path(directory_out) / "dataset" / "labelsTr"
+        Path(dir_RTst).mkdir(parents=True, exist_ok=True)
+
+        CT_nifti_path = dir_nifti / f'lr_{ID}_0000.nii.gz'
+        RTst_nifti_path = dir_RTst / f'lr_{ID}.nii.gz'
         
-    return CT, CT_arr, rt_path, rt, ROI_founded
+        try:
+            sitk.WriteImage(CT, str(CT_nifti_path))
+            print("CT_saved in:")
+            print(CT_nifti_path)
+            sitk.WriteImage(rt, str(RTst_nifti_path))
+            print("RTst_saved in: ")
+            print(RTst_nifti_path)
+            print("")
+        except Exception as e:
+            print("problem: ", e)
 
-
-def read_and_show_ct(ct_path, show_CT_ROI, slice=40):
-    """
-    Take CT from ct_path and show the slice you want.
-
-    :param ct_path: path of CT directory.
-    :param show_CT_ROI: selector for showing CT slice and ROI.
-    :param slice: input number for slice view.
-    
-    :return ct: CT image
-    :return ct_arr: CT array showable
-    """
-    
-    ct = dtn.read_dicom_image(ct_path)
-    ct_arr = sitk.GetArrayFromImage(ct)
-    
-    if show_CT_ROI:
-        print("The CT has a shape: ", ct_arr.shape)        
-        # plt.imshow(ct_arr[slice])
-        # plt.show()
-
-    return ct, ct_arr
-
-
-def find_ROI(rt):
-    """
-    This function checks correspondences in ROIs names.
-
-    :param rt: RTst image
-
-    :return ROI_fin: ROI found.
-    """
-    
-    nomi_ROI = ['CTV_Mammella', 'CTV', 'PTV_Mammella', 'PTV', 'ctv', 'ptv']
-    importanza = {'CTV_Mammella':6, 'CTV':5, 'ctv':4, 'PTV_Mammella':3, 'PTV':2, 'ptv':1}
-    # nomi_ROI = ['PTV_Mammella', 'PTV']
-    # importanza = {'PTV_Mammella':2, 'PTV':1}
-    
-    nomi_con_importanza = [(nome, importanza[nome]) for nome in nomi_ROI]
-    nomi_ordinati = sorted(nomi_con_importanza, key=lambda x: x[1], reverse=True)
-
-    nomi_contours = []    
-    for ROI in rt:        
-        nomi_contours.append(ROI.name)
-    
-    print("The contours of the patient are: ", nomi_contours)
-    print("")
-
-    ROI_fin = None
-    for nome, _ in nomi_ordinati:
-        for ROI_founded in nomi_contours:
-            # print("Check Nomi", nome, ROI_founded)
-            if (ROI_founded is not None and ROI_founded == nome):                 
-                print("Match found for equality between ", nome, "and ", ROI_founded)  
-                ROI_fin = ROI_founded               
-                break
-                
-            else:
-                if (ROI_founded is not None and nome in ROI_founded):
-                    print("Match found because ", nome, "is in", ROI_founded)  
-                    ROI_fin = ROI_founded               
-                    break
-                
-        if ROI_fin is not None:
-            break
-        
-    return ROI_fin
-
-
-def ROI_ok(rt, ROI_founded, CT_arr, show_CT_ROI, slice=40):
+def ROI_ok(ct_path, rt_path, ROI_founded, show_CT_ROI, save_info_all, directory_out, ID, slice):
     """
     Function for obtaining ROIs and its distribution of HU.
 
@@ -132,11 +52,68 @@ def ROI_ok(rt, ROI_founded, CT_arr, show_CT_ROI, slice=40):
     :return counts_ROI: array of HU relative counts.
     """
 
+    CT, CT_arr = read_and_show_ct(ct_path, show_CT_ROI, slice)
+    rt = dtn.read_dicom_rtstruct(rt_path, CT, ROI_founded)
+
+    # save_info_nifti(save_info_all, directory_out, CT, rt[0].mask, ID)
+    
     mask = read_and_show_RTst(rt, ROI_founded)
     HU_ROI, counts_ROI = obtain_ROI(mask, CT_arr, show_CT_ROI, slice)
     
     return HU_ROI, counts_ROI
-  
+
+
+def ROI_res(ct_path, rt_path, new_sp, ROI_founded, show_CT_ROI, save_info_all, directory_out, ID, slice):
+    """
+    Function for obtaining ROIs and its distribution of HU
+    in patients with different voxel spacing.
+
+    :param Ct: CT image.
+    :return rt_path: RTst's dcm file.
+    :param ROI_founded: ROI you are looking for.
+    :param new_sp: new voxel spacing for resampling.
+    :param show_CT_ROI: selector for showing CT slice and ROI.
+    :param slice: input number for slice view.
+    
+    :return HU_ROI_res: array of HU in the resampled ROI.
+    :return counts_ROI_res: array of HU relative counts of resampled ROI.
+    """
+    
+    CT, CT_arr = read_and_show_ct(ct_path, show_CT_ROI, slice)
+    CT_res, CT_res_arr = resample(CT, new_sp[0], new_sp[1], new_sp[2])
+    
+    rt_res = dtn.read_dicom_rtstruct(rt_path, CT_res, ROI_founded)
+    # print(type(rt_res), type(rt_res[0]))
+    # save_info_nifti(save_info_all, directory_out, CT_res, rt_res[0].mask, ID)    
+    
+    mask_res = read_and_show_RTst(rt_res, ROI_founded)    
+    HU_ROI_res, counts_ROI_res = obtain_ROI(mask_res, CT_res_arr, show_CT_ROI, slice)
+
+    return HU_ROI_res, counts_ROI_res
+ 
+
+def read_and_show_ct(ct_path, show_CT_ROI, slice):
+    """
+    Take CT from ct_path and show the slice you want.
+
+    :param ct_path: path of CT directory.
+    :param show_CT_ROI: selector for showing CT slice and ROI.
+    :param slice: input number for slice view.
+    
+    :return ct: CT image
+    :return ct_arr: CT array showable
+    """
+    
+    ct = dtn.read_dicom_image(ct_path)
+    ct_arr = sitk.GetArrayFromImage(ct)
+    print("The CT has a shape: ", ct_arr.shape)
+    
+    # if show_CT_ROI:
+    #     plt.imshow(ct_arr[slice])
+    #     plt.show()
+
+    return ct, ct_arr
+
 
 def read_and_show_RTst(rt, ROI_founded):
     """
@@ -151,9 +128,13 @@ def read_and_show_RTst(rt, ROI_founded):
     """
  
     for ROI in rt:
-        if ROI.name == ROI_founded:
-            rt = ROI.mask
-            # print("Prendo la ROI con nome: ", ROI.name, "coincidente con ", ROI_founded)
+        if ROI_founded in ROI.name:
+            print("Prendo la ROI con nome: ", ROI.name, "coincidente con ", ROI_founded)
+            break
+        else:
+            print("I'm analyzing the ROI: ", ROI.name)
+            
+    rt = ROI.mask
                     
     rt_arr = sitk.GetArrayFromImage(rt)
     print("The RTst has a shape: ", rt_arr.shape, " and contains: ", np.unique(rt_arr, return_counts=True)[1][1], " 1")
@@ -165,10 +146,11 @@ def read_and_show_RTst(rt, ROI_founded):
     #     print("The ROI has a shape: ", np.unique(rt_arr, return_counts=True))
     #     plt.imshow(rt_arr[slice])
 
-    #     print("The CT mask has a shape: ", np.unique(mask, return_counts=True))
-    #     plt.imshow(mask[slice])
+        # print("The CT mask has a shape: ", np.unique(mask, return_counts=True))
+        # plt.imshow(mask[slice])
         
     return mask
+    
 
 
 def obtain_ROI(mask, ct_arr, show_CT_ROI, slice):
@@ -192,9 +174,9 @@ def obtain_ROI(mask, ct_arr, show_CT_ROI, slice):
     HU_ROI_no_nan=HU_ROI[np.where(~np.isnan(HU_ROI))[0]]
     counts_ROI_no_nan=counts_ROI[np.where(~np.isnan(HU_ROI))[0]]
     
-    if show_CT_ROI:
-        print("The number of HU and counts in the ROI is: ", len(HU_ROI_no_nan), " and ", len(counts_ROI_no_nan))
-        # print("La CT di partenza nella ROI è del tipo: ", ct_ROI.shape, " e contiene: ")
+    # if show_CT_ROI:
+    #     print("The number of HU and counts in the ROI is: ", len(HU_ROI_no_nan), " and ", len(counts_ROI_no_nan))
+        # print("La CT di partenza nella ROI è del tipo: ", ct_ROI.shape)
         # print(HU_ROI_no_nan)
         # print(counts_ROI_no_nan)
         # plt.imshow(ct_ROI[slice])
@@ -204,34 +186,11 @@ def obtain_ROI(mask, ct_arr, show_CT_ROI, slice):
     return HU_ROI_no_nan, counts_ROI_no_nan
 
 
-def ROI_res(CT, new_sp, rt_path, ROI_founded, show_CT_ROI, slice=40):
-    """
-    Function for obtaining ROIs and its distribution of HU
-    in patients with different voxel spacing.
-
-    :param Ct: CT image.
-    :return rt_path: RTst's dcm file.
-    :param ROI_founded: ROI you are looking for.
-    :param new_sp: new voxel spacing for resampling.
-    :param show_CT_ROI: selector for showing CT slice and ROI.
-    :param slice: input number for slice view.
-    
-    :return HU_ROI_res: array of HU in the resampled ROI.
-    :return counts_ROI_res: array of HU relative counts of resampled ROI.
-    """
-    
-    CT_res, CT_res_arr = resample(CT, new_sp[0], new_sp[1], new_sp[2])
-    rt_res = dtn.read_dicom_rtstruct(rt_path, CT_res)
-    mask_res = read_and_show_RTst(rt_res, ROI_founded)    
-    HU_ROI_res, counts_ROI_res = obtain_ROI(mask_res, CT_res_arr, show_CT_ROI, slice)
-
-    return HU_ROI_res, counts_ROI_res
-    
-
+from typing import Tuple
 def resample(
     # image: sitk.Image, xy_rescale_factor: float = 2, z_rescale_factor: float = 1,
     image: sitk.Image, new_x, new_y, new_z
-) -> sitk.Image:
+) -> Tuple[sitk.Image, np.array]:
     """
     Resample image (increase pixel density) in order to increase computation accuracy.
 
