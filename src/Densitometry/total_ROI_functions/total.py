@@ -38,7 +38,7 @@ def is_roi_empty(rtst_file, roi_name):
                         if 'ContourData' in contour and len(contour.ContourData) > 0:
                             return False  # La ROI non è vuota
                 else:
-                    print('ContourSequence not in ROIContourSequence.')
+                    print(f'ContourSequence not in ROIContourSequence: probably {roi_name} is empty.')
                     break
             else:
                 # print(roi_contour.ReferencedROINumber)
