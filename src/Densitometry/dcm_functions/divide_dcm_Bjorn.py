@@ -101,16 +101,22 @@ def divide_dcm(directory_in, directory_out, divide=False, mode=False):
 
 def prog_count(counter, ID_dir, RS_dir, Altro_dir, modality, file, file_path, index):
     if modality == "CT":
-        temp = "CT_"+str(counter[0])
+        temp = "CT_"+str(counter[0])+".dcm"
         folder = ID_dir / temp
         shutil.copy(file_path, folder)
         counter[0]+=1
 
+    if modality == "MR":
+        temp = "MR_"+str(counter[0])+".dcm"
+        folder = ID_dir / temp
+        shutil.copy(file_path, folder)
+        counter[0]+=1 
     
     if modality == "RTSTRUCT":
-        temp = "RS_"+str(index)
+        temp = "RS_"+str(counter[1])+".dcm"
         folder = RS_dir / temp
         shutil.copy(file_path, folder)
+        counter[1]+=1
                     
     
     if modality == "RTDOSE":
