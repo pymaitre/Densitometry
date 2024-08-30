@@ -12,6 +12,7 @@ import re
 from src.Densitometry.total_ROI_functions import extract_histo as histo
 from pathlib import Path
 import pandas as pd
+import numpy as np
 
 
 def just_variable():
@@ -84,7 +85,12 @@ def histo_just(dir_files_fin, directory_out, delimiter):
     print("")
     
     # HU_min, HU_max, min_counts = just_variable()
-    HU_min, HU_max, min_counts = delimiter[0], delimiter[1], delimiter[2], 
+    HU_min, HU_max, min_counts = delimiter[0], delimiter[1], delimiter[2]
+
+    total_ROI_analysis = Path(directory_out) / "Total_ROI" / "Histo_total_stats.xlsx"
+    df_total_ROI = pd.read_excel(total_ROI_analysis)
+    print("The dataframe with all total ROI information is in: ", total_ROI_analysis)
+    df_total_ROI.set_index("PatientID", inplace=True)
     
     pz_no_just = []
     more_patient_stats_df_justified = pd.DataFrame()
@@ -95,6 +101,9 @@ def histo_just(dir_files_fin, directory_out, delimiter):
         name = Path(diff_file).name
         # print(name)
         ID = re.sub(".xlsx", "", name)
+        sp_total_ROI = np.array([df_total_ROI.loc[ID,"VoxelSpacingX"], df_total_ROI.loc[ID,"VoxelSpacingY"], df_total_ROI.loc[ID,"VoxelSpacingZ"]])
+        name_total_ROI = str(df_total_ROI.loc[ID,"ROI_name"])
+
         df = pd.read_excel(diff_file, header=0, names=["HU", "Counts"])
 
         HU_ROI = df["HU"]
@@ -110,7 +119,7 @@ def histo_just(dir_files_fin, directory_out, delimiter):
             dir_files_just = Path(directory_out) / "Specific_Regions" / f"Region_{HU_min}_{HU_max}_{min_counts}" / f"Files"
             Path(dir_files_just).mkdir(parents=True, exist_ok=True)
 
-            stats_df_just = histo.features_ROI(ID, HU_just, counts_just, dir_histo_just, dir_files_just, save_just)
+            stats_df_just = histo.features_ROI(ID, HU_just, counts_just, sp_total_ROI, name_total_ROI, dir_histo_just, dir_files_just, save_just)
             more_patient_stats_df_justified = pd.concat([more_patient_stats_df_justified, stats_df_just])
 
         else:
