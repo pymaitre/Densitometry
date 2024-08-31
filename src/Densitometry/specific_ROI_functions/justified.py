@@ -90,6 +90,7 @@ def histo_just(dir_files_fin, directory_out, delimiter):
     total_ROI_analysis = Path(directory_out) / "Total_ROI" / "Histo_total_stats.xlsx"
     df_total_ROI = pd.read_excel(total_ROI_analysis)
     print("The dataframe with all total ROI information is in: ", total_ROI_analysis)
+    df_total_ROI['PatientID'] = df_total_ROI['PatientID'].astype(str)
     df_total_ROI.set_index("PatientID", inplace=True)
     
     pz_no_just = []
