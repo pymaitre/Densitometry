@@ -55,12 +55,12 @@ def merge_db(directory, show_merge, save_opt):
             if "y" in merge_col_2.lower():
                 db_2 = merge_column(db_2, show)
 
-            db_1 = merge_df(db_1, db_2, show)
-            save_merge(db_1, directory, save)
+            db_1, dropped_in_df1, dropped_in_df2 = merge_df(db_1, db_2, show)
+            save_merge(db_1, dropped_in_df1, dropped_in_df2, directory, save)
             
         else:
             dropped_db = drop_pz(db_1, directory, show)
-            save_merge(dropped_db, directory, save)
+            save_merge(dropped_db, dropped_in_df1, dropped_in_df2, directory, save)
             print("")
             print("You have finished.")
             break
@@ -257,7 +257,8 @@ def merge_df(df1, df2, show):
     for column in df1.columns:
         if name_col_sx in column.strip():
             print("I matched the name: ", column)
-            df1['LinkCol'] = df1[column]
+            df1['LinkCol'] = df1[column].astype(str)
+            df1 = df1.sort_values(by='LinkCol', ascending=True).reset_index(drop=True)
             break
 
     print("")
@@ -265,20 +266,32 @@ def merge_df(df1, df2, show):
     for column in df2.columns:
         if name_col_dx in column.strip():
             print("I matched the name: ", column)
-            df2['LinkCol'] = df2[column]
+            df2['LinkCol'] = df2[column].astype(str)
+            df2 = df2.sort_values(by='LinkCol', ascending=True).reset_index(drop=True)
             break
                         
-    merge = pd.merge(df1, df2, on=['LinkCol'], how='inner')
+    merged_in = pd.merge(df1, df2, on=['LinkCol'], how='inner')
+
+    merged_out = pd.merge(df1, df2, on=['LinkCol'], how='outer', indicator=True)
+    # Selezionare le righe che sono presenti solo in uno dei DataFrame
+    dropped_in_df1 = merged_out[merged_out['_merge'] == 'left_only'].drop('_merge', axis=1)
+    dropped_in_df2 = merged_out[merged_out['_merge'] == 'right_only'].drop('_merge', axis=1)
     
     if show:
-        display(merge)
+        display(merged_in)
+        # Stampa le righe mancanti in ciascun DataFrame
+        print("Dropped rows in df1:")
+        display(dropped_in_df1)
+
+        print("\nDropped rows in df2:")
+        display(dropped_in_df2)
     
-    merge = drop_columns(merge, show)
+    merge = drop_columns(merged_in, show)
     
-    return merge
+    return merge, dropped_in_df1, dropped_in_df2
     
 
-def save_merge(df, directory, save):
+def save_merge(df, dropped_in_df1, dropped_in_df2, directory, save):
     """
     This function permits to save a database.
 
@@ -288,16 +301,18 @@ def save_merge(df, directory, save):
     """
     
     if save:
-        dir_merge = directory / "Merged_db"
+        dir_merge = Path(directory) / "Merged_db"
         Path(dir_merge).mkdir(exist_ok=True, parents=True)
 
         print("")
         name = str(input("Which is the name of these merged dataframes? "))
         
         print('')
-        print(f'Saving the merged database {name} in {dir_merge}.')
+        print(f'Saving the merged database {name} with not matched rows in {dir_merge}.')
         with pd.ExcelWriter(dir_merge / f'{name}.xlsx') as writer:
-            df.to_excel(writer, sheet_name="Sheet1", index=False)
+            df.to_excel(writer, sheet_name="matched_rows", index=False)
+            dropped_in_df1.to_excel(writer, sheet_name="left_db_rows_not_in_right_one", index=False)
+            dropped_in_df2.to_excel(writer, sheet_name="right_db_rows_not_in_left_one", index=False)
 
 
 
