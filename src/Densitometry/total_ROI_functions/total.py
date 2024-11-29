@@ -4,8 +4,8 @@ Module for reading dcm images and obtaining densitometry histograms.
 
 import os
 from pathlib import Path
-from src.Densitometry.total_ROI_functions import extract_info as info
-from src.Densitometry.total_ROI_functions import extract_histo as histo
+from Densitometry.total_ROI_functions import extract_info as info
+from Densitometry.total_ROI_functions import extract_histo as histo
 import pandas as pd
 import pydicom
 import numpy as np
@@ -47,12 +47,12 @@ def is_roi_empty(rtst_file, roi_name):
     
     return True  # La ROI è vuota
     
-def find_rt_st(ct_path, rt_kind, list_roi):
+def find_rt_st(ct_path, rt_kind, ID, list_roi):
     try:
         
         # rt_folder = list(Path(ct_path).parent.glob(f"{rt_kind}*"))
         # TODO: check RTst path by name in conf.
-        path_rt_structures = list(Path(ct_path).parent.glob(f"{rt_kind}*/*.dcm"))
+        path_rt_structures = list(Path(ct_path).parent.glob(f"**/*{rt_kind}*.dcm"))
 
         nomi_con_importanza = {}
         for i in range(0, len(list_roi)):
@@ -123,13 +123,14 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
     
         
     for pz in range(0 , len(df_py)):
+    # for pz in range(0 , 1):
         ID = df_py.loc[pz,"PatientID"]
         
         if str(ID) not in ID_problems:
 
             try:
                 ct_path = df_py.loc[pz, "Path"]
-                ROI_founded, ROI_path = find_rt_st(ct_path, rt_kind, list_roi)
+                ROI_founded, ROI_path = find_rt_st(ct_path, rt_kind, ID, list_roi)
                 
                 old_sp = np.array([df_py.loc[pz,"VoxelSpacingX"], df_py.loc[pz,"VoxelSpacingY"], df_py.loc[pz,"VoxelSpacingZ"]])
 
