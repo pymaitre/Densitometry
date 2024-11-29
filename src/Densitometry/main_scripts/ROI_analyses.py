@@ -2,16 +2,16 @@
 from pathlib import Path
 import os
 import sys
-path_tot = Path(Path(os.getcwd()).parent.parent.parent)
-print( path_tot )
-sys.path.append(str(path_tot) )
+# path_tot = Path(Path(os.getcwd()).parent.parent.parent)
+# print( path_tot )
+# sys.path.append(str(path_tot) )
 
 # from import extract_histo
-from src.Densitometry.other_functions import *
+from Densitometry.other_functions import rtv_configuration_file
 
-from src.Densitometry.specific_ROI_functions import justified as just
-from src.Densitometry.specific_ROI_functions import check_over as over
-from src.Densitometry.specific_ROI_functions import check_rate as rate
+from Densitometry.specific_ROI_functions import justified as just
+from Densitometry.specific_ROI_functions import check_over as over
+from Densitometry.specific_ROI_functions import check_rate as rate
 
 
 def main():

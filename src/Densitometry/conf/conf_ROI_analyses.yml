@@ -1,10 +1,11 @@
-    directory_out : 'C:/Users/belardo.alfonso/Desktop/Cardio/.venv_Fin/Histo_Heart/Analyses'
+    directory_out : 'F:\Belardo\BAROTRAUMA\try_exe\5_Dens_analysis'
 
     
     specific_ROI_analyses : True #  'False'
     
     #insert specific ROI delimiter: HU_min, HU_max, min_counts.
-    specific_ROI_delimiter : [-200, 100, 100]
+    specific_ROI_delimiter : [-200, 200, 0]
+    # specific_ROI_delimiter : [-778, -34, 0]
 
     over_ROI_analyses : False #  ' True'
     

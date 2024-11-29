@@ -10,7 +10,7 @@ Module for:
 
 import os
 from pathlib import Path
-from src.Densitometry.total_ROI_functions import dicom_to_nifti as dtn
+from Densitometry.total_ROI_functions import dicom_to_nifti as dtn
 import numpy as np
 import SimpleITK as sitk
 import matplotlib.pyplot as plt

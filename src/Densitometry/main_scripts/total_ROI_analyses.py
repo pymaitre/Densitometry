@@ -3,16 +3,16 @@ from pathlib import Path
 import numpy as np
 import os
 import sys
-path_func = Path(Path(os.getcwd()).parent.parent.parent)
-sys.path.append(str(path_func) )
+# path_func = Path(Path(os.getcwd()).parent.parent.parent)
+# sys.path.append(str(path_func) )
 
-from src.Densitometry.other_functions import *
+from Densitometry.other_functions import rtv_configuration_file
 
-from src.Densitometry.dcm_functions import analyze_dcm as info_dcm
+from Densitometry.dcm_functions import analyze_dcm as info_dcm
 
-from src.Densitometry.total_ROI_functions import analyze_spacing as sp
-from src.Densitometry.total_ROI_functions import analyze_ROI as ROI
-from src.Densitometry.total_ROI_functions import total as tot
+from Densitometry.total_ROI_functions import analyze_spacing as sp
+from Densitometry.total_ROI_functions import analyze_ROI as ROI
+from Densitometry.total_ROI_functions import total as tot
 
 
 

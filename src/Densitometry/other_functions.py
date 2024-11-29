@@ -16,7 +16,7 @@ def rtv_configuration_file(name_conf, path_conf=None, save=True, pathout=''):
     if path_conf is not None:
         config_path = Path(path_conf)
     else:
-        config_path = Path.cwd().parent / "conf" / f"{name_conf}.yml"
+        config_path = Path("//IHSR.dom/OSRFileServices") / "Ric.FisicaSanitaria" / "Belardo" / "BAROTRAUMA" / "try_exe" / "conf" / f"{name_conf}.yml"
     # READING THE CONFIGURATION FILE
     with open(config_path) as file:
         config_parameters = yaml.load(file, Loader=yaml.FullLoader)

@@ -1,15 +1,9 @@
-    # directory_dcm_files = (Path("//IHSR.dom/OSRFileServices") / "Ric.FisicaSanitaria" / "AAAshared" / "dataset" / 
-    #                            "segmentazione" / "breast_Fodor22_upto2017" / "DB_Resume_Scripts" / "DB_uncomposed")
+    directory_dcm_in : '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\original_dataset\BAROTRAUMA\PNRR\POTENZA\DB_07062024\Potenza_pz336' #input directory
     
-    directory_dcm_in : '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\original_dataset\ERI\ERI__hSR\pazienti_HSR_Eri'
-    
-    # directory_ct_files = (Path("//IHSR.dom/OSRFileServices") / "Ric.FisicaSanitaria" / "AAAshared" / "dataset" / 
-    #                            "segmentazione" / "breast_Fodor22_upto2017" / "DB_Resume_Scripts" / "DB_composed")
-    
-    directory_dcm_out : '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\dataset\ERI\pazienti_ADC'
+    directory_dcm_out: '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\dataset\BAROTRAUMA\PNRR\POTENZA\Prova' #output directory
 
-    directory_out : '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\progetti\ERI\NIfTI'
+    directory_out : 'F:\Belardo\BAROTRAUMA\Analyses\POTENZA\dcm_organization'
 
-    image_modality : 'MR'
+    image_modality : 'CT'
     
-    divide_dcm : 'yes' # 'no'  #
+    divide_dcm : 'yes'  #'yes' # 

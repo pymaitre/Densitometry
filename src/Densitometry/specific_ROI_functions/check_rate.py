@@ -11,7 +11,7 @@ Module for:
 import os
 import re
 from pathlib import Path
-from src.Densitometry.total_ROI_functions import extract_histo as histo
+from Densitometry.total_ROI_functions import extract_histo as histo
 import pandas as pd
 
 

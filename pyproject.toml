@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "Densitometry"
+requires-python = ">= 3.10"
+version = "0.0.1"
+dependencies = [
+    "srmip@git+https://github.com/pymaitre/srmip",
+    "pydicom",
+    "numpy",
+    "pandas",
+    "pyyaml",
+    "matplotlib",
+    "scipy"
+]

@@ -1,10 +1,10 @@
 
-import sys
-sys.path.append("../../..")
+# import sys
+# sys.path.append("../..")
 
-from src.Densitometry.dcm_functions import divide_dcm_Bjorn
-from src.Densitometry.dcm_functions import analyze_dcm
-from src.Densitometry.other_functions import *
+from Densitometry.dcm_functions import divide_dcm_Bjorn
+from Densitometry.dcm_functions import analyze_dcm
+from Densitometry.other_functions import *
 from pathlib import Path
 
 

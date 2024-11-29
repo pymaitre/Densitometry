@@ -39,7 +39,7 @@ setup(
     license="None",
     author="A. Belardo",
     author_email="belardo.alfonso@hsr.it",
-    url="https://github.com/AlfonsoBelardo/Densitometry",
+    url="https://github.com/AlfonsoBelardo/Densitometry_Alfo.git",
     package_dir={"": package_root},
     packages=find_packages(package_root),
     zip_safe=False,

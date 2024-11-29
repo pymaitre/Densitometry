@@ -1,10 +1,7 @@
-    # directory_ct_files = (Path("//IHSR.dom/OSRFileServices") / "Ric.FisicaSanitaria" / "AAAshared" / "dataset" / 
-    #                            "segmentazione" / "breast_Fodor22_upto2017" / "DB_Resume_Scripts" / "DB_composed")
-    
-    directory_dcm_out : '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\dataset\segmentazione\breast_Fodor22_from2017\no_boost\ANONYMIZED_Sx\ANONYMIZED_Breast_Monica_Sx\12504567'
+  
+    directory_dcm_out : 'F:\Belardo\BAROTRAUMA\DB_images\OSR'
 
-    # directory_out : '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\Belardo\Breast\Analyses\breast_Fodor22_from2017\no_boost\ANONYMIZED_Sx\ANONYMIZED_Breast_Monica_Sx'
-    directory_out : '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\Belardo\Breast\Analyses\New_extraction'
+    directory_out : 'F:\Belardo\BAROTRAUMA\Scripts\Dens_analysis'
 
     image_modality : "CT"
 
@@ -12,7 +9,7 @@
 
     save_ROI_info : True  #False #
     
-    total_ROI_analyses : True # False  #
+    total_ROI_analyses :  True #False  #
 
     show_total_ROI_info : True # False  #
 
@@ -20,6 +17,6 @@
     
     ID_problems : []
 
-    rt_kind : 'RTst'
-    list_roi : ['CTV Mammella', 'CTV_Mammella', 'CTV Mamm', 'CTV', 'ctv', 'PTV Mammella', 'PTV_Mammella', 'PTV', 'ptv']
-    # list_roi : ['CTV', 'ctv', 'PTV', 'ptv']
+    rt_kind : 'RS_1.1'
+    # list_roi : ['CTV Mammella', 'CTV_Mammella', 'CTV Mamm', 'CTV', 'ctv', 'PTV Mammella', 'PTV_Mammella', 'PTV', 'ptv']
+    list_roi : ['lungs']

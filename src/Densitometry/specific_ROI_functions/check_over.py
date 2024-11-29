@@ -8,7 +8,7 @@ Module for:
 
 import os
 import re
-from src.Densitometry.total_ROI_functions import extract_histo as histo
+from Densitometry.total_ROI_functions import extract_histo as histo
 from pathlib import Path
 import pandas as pd
 
