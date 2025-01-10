@@ -61,7 +61,7 @@ def all_ROI(df_py, directory_out, rt_kind):
             # CT, CT_arr = info.read_and_show_ct(ct_path, show_CT_ROI, slice)    
             # rt_folder = (Path(ct_path).parent / "RTst")
             # TODO: check RTst path by name in conf.  
-            rtstruct_path = list(Path(ct_path).parent.glob(f"**/*{rt_kind}*.dcm"))[0]
+            rtstruct_path = list(Path(ct_path).parents[1].glob(f"**/*{rt_kind}*.dcm"))[0]
             # rt_path = ct_path.parent.glob("RS*")
             # print("La RTst si trova in: ", rt_path)
             # rt = info.dtn.read_dicom_rtstruct(rt_path, CT)    
