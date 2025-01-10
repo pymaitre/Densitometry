@@ -6,6 +6,8 @@ import sys
 # print( path_tot )
 # sys.path.append(str(path_tot) )
 
+import argparse
+import yaml
 # from import extract_histo
 from Densitometry.other_functions import rtv_configuration_file
 
@@ -14,8 +16,8 @@ from Densitometry.specific_ROI_functions import check_over as over
 from Densitometry.specific_ROI_functions import check_rate as rate
 
 
-def main():
-    conf = rtv_configuration_file("conf_ROI_analyses", save=False)
+def main(conf):
+    # conf = rtv_configuration_file("conf_ROI_analyses", save=False)
 
     directory_out = Path(conf['directory_out'])
     Path(directory_out).mkdir(parents=True, exist_ok=True)  
@@ -70,7 +72,17 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Script with configurable YAML file.")
+    parser.add_argument(
+        '--config', 
+        type=Path, 
+        # default=Path(r"C:\Users\belardo.alfonso\Desktop\GitHub\Densitometry_Alfo\src\Densitometry\conf\conf_total_ROI.yml"),
+        default= Path(__file__).parents[1] / "conf" / "conf_ROI_analyses.yml", 
+        help='Path to the configuration file'
+    )
+    args = parser.parse_args()
+    config = yaml.safe_load(args.config.read_text())
+    main(config)
 
 
 

@@ -6,6 +6,9 @@ import sys
 # path_func = Path(Path(os.getcwd()).parent.parent.parent)
 # sys.path.append(str(path_func) )
 
+import argparse
+import yaml
+
 from Densitometry.other_functions import rtv_configuration_file
 
 from Densitometry.dcm_functions import analyze_dcm as info_dcm
@@ -16,8 +19,8 @@ from Densitometry.total_ROI_functions import total as tot
 
 
 
-def main():
-    conf = rtv_configuration_file("conf_total_ROI", save=False)
+def main(conf):
+    # conf = rtv_configuration_file("conf_total_ROI", save=False)
 
     directory_dcm_out = Path(conf['directory_dcm_out'])
     Path(directory_dcm_out).mkdir(parents=True, exist_ok=True)
@@ -73,7 +76,18 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Script with configurable YAML file.")
+    parser.add_argument(
+        '--config', 
+        type=Path, 
+        # default=Path("/Users") / "dimay_kerby" / "dcm_folder" / "src" / "dcm_folder" / "conf" / "conf_dcm.yml", 
+        # default=Path(r"C:\Users\belardo.alfonso\Desktop\GitHub\Densitometry_Alfo\src\Densitometry\conf\conf_total_ROI.yml"),
+        default= Path(__file__).parents[1] / "conf" / "conf_total_ROI.yml", 
+        help='Path to the configuration file'
+    )
+    args = parser.parse_args()
+    config = yaml.safe_load(args.config.read_text())
+    main(config)
 
 
 
