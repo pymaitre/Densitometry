@@ -14,7 +14,7 @@ import pandas as pd
 import pydicom
 
 
-def all_ROI(df_py, directory_out, rt_kind):
+def all_ROI(df_py, ID_problems, directory_out, rt_kind):
     """
     Read all ROIs from RTst linked to CT (in directory named by ID).
     This function create a dataframe where each row has PatientID
@@ -55,36 +55,42 @@ def all_ROI(df_py, directory_out, rt_kind):
         df_ROI = pd.DataFrame()
     
         for pz in range(0, len(df_py)):
-            ID =  df_py.loc[pz,"PatientID"]
-            ct_path = df_py.loc[pz, "Path"]
-            
-            # CT, CT_arr = info.read_and_show_ct(ct_path, show_CT_ROI, slice)    
-            # rt_folder = (Path(ct_path).parent / "RTst")
-            # TODO: check RTst path by name in conf.  
-            rtstruct_path = list(Path(ct_path).parents[1].glob(f"**/*{rt_kind}*.dcm"))[0]
-            # rt_path = ct_path.parent.glob("RS*")
-            # print("La RTst si trova in: ", rt_path)
-            # rt = info.dtn.read_dicom_rtstruct(rt_path, CT)    
-            # print(rt)
-    
-            contour=[]
-            
-            rtstruct = pydicom.dcmread(rtstruct_path)
 
-            for roi in rtstruct.StructureSetROISequence:
-                contour.append(roi.ROIName)
+            ID =  df_py.loc[pz,"PatientID"]
+            if str(ID) not in ID_problems:
                 
-            print("ROIs of patient ", ID , " are: ", contour)
-            print("")
+                ct_path = df_py.loc[pz, "Path"]
+                
+                # CT, CT_arr = info.read_and_show_ct(ct_path, show_CT_ROI, slice)    
+                # rt_folder = (Path(ct_path).parent / "RTst")
+                rtstruct_paths = list(Path(ct_path).parents[0].glob(f"**/*{rt_kind}*"))
+                for rtstruct_path in rtstruct_paths:
+                    if rtstruct_path.is_dir():
+                        continue
+                    else:
+                        print("La RTst si trova in: ", rtstruct_path)
+                        print("")
+                        # rt = info.dtn.read_dicom_rtstruct(rt_path, CT)    
+                        # print(rt)
+                
+                        contour=[]
+                        
+                        rtstruct = pydicom.dcmread(rtstruct_path)
+
+                        for roi in rtstruct.StructureSetROISequence:
+                            contour.append(roi.ROIName)
+                            
+                        print("ROIs of patient ", ID , " are: ", contour)
+                        print("")
+                        
+                        df_ROI_1pz = pd.DataFrame(
+                            [contour],
+                            index=[ID],
+                        )
+                        df_ROI = pd.concat([df_ROI, df_ROI_1pz])
+                                
+                    # print(df_ROI)
             
-            df_ROI_1pz = pd.DataFrame(
-                [contour],
-                index=[ID],
-            )
-            df_ROI = pd.concat([df_ROI, df_ROI_1pz])
-                    
-        # print(df_ROI)
-        
         with pd.ExcelWriter(Path(directory_out) / "ROI_tot_pz.xlsx") as writer:
             df_ROI.to_excel(writer, index=True)
         print("")

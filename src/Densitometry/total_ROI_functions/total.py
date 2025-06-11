@@ -52,8 +52,9 @@ def find_rt_st(ct_path, rt_kind, ID, list_roi):
         
         # rt_folder = list(Path(ct_path).parent.glob(f"{rt_kind}*"))
         # TODO: check RTst path by name in conf.
-        path_rt_structures = list(Path(ct_path).parents[1].glob(f"**/*{rt_kind}*.dcm"))
-
+        # path_rt_structures = list(Path(ct_path).parents[1].glob(f"**/*{rt_kind}*.dcm"))
+        path_rt_structures = [path_rt_st for path_rt_st in list(Path(ct_path).parents[1].glob(f"**/*{rt_kind}*")) if path_rt_st.is_dir() == False]
+        
         nomi_con_importanza = {}
         for i in range(0, len(list_roi)):
             nomi_con_importanza[list_roi[i]] = len(list_roi)-i
@@ -80,7 +81,7 @@ def find_rt_st(ct_path, rt_kind, ID, list_roi):
                     # else:
                     #     print(f'{ROI_name} is catched.')
                     #     return ROI_name
-        
+            
     except Exception as e:
         print('ROI not founded with error: ', e)
 
