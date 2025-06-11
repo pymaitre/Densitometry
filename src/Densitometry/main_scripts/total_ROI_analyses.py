@@ -46,17 +46,19 @@ def main(conf):
     save_ROI = conf['save_ROI_info']
     rt_kind = conf['rt_kind']
    
+ 
+    # ID_problems = ["70230254", "70366136", "433906"] #bilaterali
+    ID_problems = conf['ID_problems']
+    
     if save_ROI:
         #if True create db with all patient's ROI and relative counts
-        df_ROI, df_counts = ROI.all_ROI(df_py, directory_out, rt_kind)          
+        df_ROI, df_counts = ROI.all_ROI(df_py, ID_problems, directory_out, rt_kind)          
         print("")
     else:
         print("You chose to not extract all patients ROIs.") 
         print("")
 
 
-    # ID_problems = ["70230254", "70366136", "433906"] #bilaterali
-    ID_problems = conf['ID_problems']
     list_roi = conf['list_roi']
 
     all = conf['total_ROI_analyses']
