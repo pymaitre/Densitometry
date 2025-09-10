@@ -24,14 +24,29 @@ def save_info_nifti(save_info_all, directory_out, CT, rt, ID):
         dir_RTst = Path(directory_out) / "dataset" / "labelsTr"
         Path(dir_RTst).mkdir(parents=True, exist_ok=True)
 
-        CT_nifti_path = dir_nifti / f'lr_{ID}_0000.nii.gz'
-        RTst_nifti_path = dir_RTst / f'lr_{ID}.nii.gz'
+        # CT_nifti_path = dir_nifti / f'PAN_NET_{ID}_0000.nii.gz'
+        CT_nifti_path = dir_nifti / f'prova_colangio_{ID}_0000.nii.gz'
+        RTst_nifti_path = dir_RTst / f'prova_colangio_{ID}.nii.gz'
         
         try:
             sitk.WriteImage(CT, str(CT_nifti_path))
             print("CT_saved in:")
             print(CT_nifti_path)
             sitk.WriteImage(rt, str(RTst_nifti_path))
+            
+            # for roi in rt:
+            #     if roi.name == "pancreas":
+            #         roi1_label = 1
+            #         roi1_labeled = sitk.Multiply(roi.mask, roi1_label)
+            #     else:
+            #         roi2_label = 2
+            #         roi2_labeled = sitk.Multiply(roi.mask, roi2_label)
+
+            # # Combina le due maschere. Se ci sono sovrapposizioni, la seconda ROI può sovrascrivere la prima.
+            # combined_mask = sitk.Maximum(roi1_labeled, roi2_labeled)
+
+            # # Salva come NIfTI
+            # sitk.WriteImage(combined_mask, str(RTst_nifti_path))
             print("RTst_saved in: ")
             print(RTst_nifti_path)
             print("")
@@ -54,8 +69,9 @@ def ROI_ok(ct_path, rt_path, ROI_founded, show_CT_ROI, save_info_all, directory_
 
     CT, CT_arr = read_and_show_ct(ct_path, show_CT_ROI, slice)
     rt = dtn.read_dicom_rtstruct(rt_path, CT, ROI_founded)
+    rt_nifti = dtn.read_dicom_rtstruct(rt_path, CT)
 
-    # save_info_nifti(save_info_all, directory_out, CT, rt[0].mask, ID)
+    # save_info_nifti(save_info_all, directory_out, CT, rt_nifti, ID)
     
     mask = read_and_show_RTst(rt, ROI_founded)
     HU_ROI, counts_ROI = obtain_ROI(mask, CT_arr, show_CT_ROI, slice)
@@ -80,11 +96,14 @@ def ROI_res(ct_path, rt_path, new_sp, ROI_founded, show_CT_ROI, save_info_all, d
     """
     
     CT, CT_arr = read_and_show_ct(ct_path, show_CT_ROI, slice)
+    # new_sp = [0.703125,	0.703125,	1.25]
     CT_res, CT_res_arr = resample(CT, new_sp[0], new_sp[1], new_sp[2])
     
     rt_res = dtn.read_dicom_rtstruct(rt_path, CT_res, ROI_founded)
     # print(type(rt_res), type(rt_res[0]))
-    # save_info_nifti(save_info_all, directory_out, CT_res, rt_res[0].mask, ID)    
+    rt_res_nifti = dtn.read_dicom_rtstruct(rt_path, CT_res)
+
+    # save_info_nifti(save_info_all, directory_out, CT_res, rt_res_nifti, ID)    
     
     mask_res = read_and_show_RTst(rt_res, ROI_founded)    
     HU_ROI_res, counts_ROI_res = obtain_ROI(mask_res, CT_res_arr, show_CT_ROI, slice)

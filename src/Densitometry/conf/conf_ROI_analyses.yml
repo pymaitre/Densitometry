@@ -1,9 +1,9 @@
-    directory_out : 'F:\Belardo\BAROTRAUMA\try_exe\5_Dens_analysis'
+    directory_out : 'F:\Belardo\BAROTRAUMA\Analyses\OSR\TS\Covid\Problems'
 
     
     specific_ROI_analyses : True #  'False'
     
-    #insert specific ROI delimiter: HU_min, HU_max, min_counts.
+    # insert specific ROI delimiter: HU_min, HU_max, min_counts.
     specific_ROI_delimiter : [-200, 200, 0]
     # specific_ROI_delimiter : [-778, -34, 0]
 

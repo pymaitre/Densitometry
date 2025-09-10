@@ -63,7 +63,7 @@ def all_ROI(df_py, ID_problems, directory_out, rt_kind):
                 
                 # CT, CT_arr = info.read_and_show_ct(ct_path, show_CT_ROI, slice)    
                 # rt_folder = (Path(ct_path).parent / "RTst")
-                rtstruct_paths = list(Path(ct_path).parents[0].glob(f"**/*{rt_kind}*"))
+                rtstruct_paths = list(Path(ct_path).parents[2].glob(f"**/*{rt_kind}*"))
                 for rtstruct_path in rtstruct_paths:
                     if rtstruct_path.is_dir():
                         continue

@@ -53,7 +53,7 @@ def find_rt_st(ct_path, rt_kind, ID, list_roi):
         # rt_folder = list(Path(ct_path).parent.glob(f"{rt_kind}*"))
         # TODO: check RTst path by name in conf.
         # path_rt_structures = list(Path(ct_path).parents[1].glob(f"**/*{rt_kind}*.dcm"))
-        path_rt_structures = [path_rt_st for path_rt_st in list(Path(ct_path).parents[1].glob(f"**/*{rt_kind}*")) if path_rt_st.is_dir() == False]
+        path_rt_structures = [path_rt_st for path_rt_st in list(Path(ct_path).parents[2].glob(f"**/*{rt_kind}*")) if path_rt_st.is_dir() == False]
         
         nomi_con_importanza = {}
         for i in range(0, len(list_roi)):
@@ -134,6 +134,7 @@ def res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, director
                 ROI_founded, ROI_path = find_rt_st(ct_path, rt_kind, ID, list_roi)
                 
                 old_sp = np.array([df_py.loc[pz,"VoxelSpacingX"], df_py.loc[pz,"VoxelSpacingY"], df_py.loc[pz,"VoxelSpacingZ"]])
+                # new_sp = [0.703125,	0.703125,	1.25]
 
                 if (old_sp[0]==new_sp[0] and 
                     old_sp[1]==new_sp[1] and 
