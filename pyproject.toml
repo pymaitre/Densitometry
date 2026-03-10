@@ -1,18 +1,23 @@
-[build-system]
-requires = ["setuptools >= 61.0"]
-build-backend = "setuptools.build_meta"
-
-
 [project]
-name = "Densitometry"
-requires-python = ">= 3.10"
-version = "0.0.1"
-dependencies = [
-    "srmip@git+https://github.com/pymaitre/srmip",
-    "pydicom",
-    "numpy",
-    "pandas",
-    "pyyaml",
-    "matplotlib",
-    "scipy"
+name = "densitometry"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "AlfonsoBelardo",email = "alfa.bela98@gmail.com"}
 ]
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "numpy (>=2.0.0,<3.0.0)",
+    "pydicom (>=3.0.1,<4.0.0)",
+    "resmip @ git+https://github.com/pymaitre/resmip.git",
+    "pandas (>=2.0.0,<3.0.0)",
+    "pyyaml (>=6.0.3,<7.0.0)",
+    "matplotlib (>=3.10.8,<4.0.0)",
+    "scipy (>=1.11.4,<2.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
