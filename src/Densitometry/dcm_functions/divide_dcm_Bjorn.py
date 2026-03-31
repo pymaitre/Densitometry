@@ -14,11 +14,20 @@ import numpy as np
 from datetime import datetime
 
 
-def divide_dcm(directory_in, directory_out, divide=False, mode=False):
+def divide_dcm(directory_in:Path, directory_out:Path, divide=False, mode=False)->None:
     """
-    Move dcm files from directory_in with unsorted files to sorted files in directory_out.
-
-    mode=False uses prog_count while mode=True uses ct_sorted
+    Move DICOM files from directory_in with unsorted files to sorted files in directory_out.
+    
+    :param directory_in: folder with unsorted DICOM files
+    :type directory_in: Path
+    :param directory_out: folder with sorted DICOM files
+    :type directory_out: Path
+    :param divide: flag to divide DICOM files (default=False) 
+    :param divide: Bool
+    :param mode: set False uses prog_count while mode=True uses ct_sorted
+    :param mode: Bool
+    
+    return None
     """
     
     mod_vec = 'CT'
@@ -63,6 +72,7 @@ def divide_dcm(directory_in, directory_out, divide=False, mode=False):
                     #array_dict[index_ID]['count_ct'].append([1])
                                        
             #print(thisdict)
+            #Create folders
             ID_dir = Path(directory_out) / ID 
             Path(ID_dir).mkdir(parents=True, exist_ok=True)
 
@@ -84,7 +94,7 @@ def divide_dcm(directory_in, directory_out, divide=False, mode=False):
             else:
                 temp = ct_sorted(counter, imm_dir, RS_dir, Altro_dir, modality, file, file_path, index_uid)
                 counter = temp
-    
+    #Check
     index_uids = [index for index, item in enumerate(array_dict) if item.get('count_uid') > 1]  
     id_problems = [ array_dict[i]['id_num'] for i in index_uids ]     
     print("The number of different IDs are:"+str(len(array_dict))+".")
@@ -99,7 +109,28 @@ def divide_dcm(directory_in, directory_out, divide=False, mode=False):
 
 
 
-def prog_count(counter, ID_dir, RS_dir, Altro_dir, modality, file, file_path, index):
+def prog_count(counter:np.array, ID_dir:Path, RS_dir:Path, Altro_dir:Path, modality:str, file, file_path:Path, index)->np.array:
+    """
+    Count each type of file using a 2D counter
+    
+    :param counter: 2D array that counts CT (or MR) files and RTSTRUCT (or RTDOSE or RTPLAN or RAW)
+    :type counter: np.array
+    :param ID_dir: input ID directory
+    :type ID_dir: Path
+    :param RS_dir: input RTSTRUCT directory
+    :type RS_dir: Path
+    :param Altro_dir: input directory with other files
+    :type Altro_dir: Path
+    :param modality: name of the modality
+    :type modality: str
+    :param file_path: path of the file
+    :type file_path: Path
+    
+    return counter: array with counts
+    :rtype counter: np.array
+    
+    """
+    
     if modality == "CT":
         temp = "CT_"+str(counter[0])+".dcm"
         folder = ID_dir / temp
@@ -141,8 +172,31 @@ def prog_count(counter, ID_dir, RS_dir, Altro_dir, modality, file, file_path, in
                                      
     return counter
 
-def ct_sorted(counter, imm_dir, RS_dir, Altro_dir, modality, file, file_path, index):
-
+def ct_sorted(counter:np.array, imm_dir:Path, RS_dir:Path, Altro_dir:Path, modality:str, file, file_path:Path, index:str)->np.array:
+    
+    """
+    Copy and sort in a CT files and count each type of file using a 2D counter
+    
+    :param counter: 2D array that counts CT (or MR) files and RTSTRUCT (or RTDOSE or RTPLAN or RAW)
+    :type counter: np.array
+    :param imm_dir: input CT directory
+    :type imm_dir: Path
+    :param RS_dir: input RTSTRUCT directory
+    :type RS_dir: Path
+    :param Altro_dir: input directory with other files
+    :type Altro_dir: Path
+    :param modality: name of the modality
+    :type modality: str
+    :param file_path: path of the file
+    :type file_path: Path
+    :param index: index for RTSTRUCT
+    :type index: str
+    
+    return counter: array with counts
+    :rtype counter: np.array
+    
+    """
+    
     #if modality == "CT":
     #    if file[34]=='.':
     #        temp = "CT_"+str(file[33])

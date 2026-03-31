@@ -1,8 +1,8 @@
-    directory_dcm_out : '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\dataset\BAROTRAUMA\OSR\COVID\21664607'
+    directory_dcm_out : "C:\\Users\\volon\\Desktop\\14_mont_nim"
     #PZ MEDIASTINO PROB:
     #['20240509080132977', '20240718184023147']
 
-    directory_out : 'F:\Belardo\BAROTRAUMA\Analyses\OSR\TS\Covid\Problems'
+    directory_out : "C:\\Users\\volon\\Desktop\\densitometry_mont_nim"
 
     image_modality : "CT"
 
@@ -19,7 +19,7 @@
     # ID_problems : ["20240509080132977", "20240718184023147"]
     ID_problems : []
 
-    rt_kind : 'lungs_Ortu2'
+    rt_kind : 'MV_RQ'
     # list_roi_no : ['CTV Mammella', 'CTV_Mammella', 'CTV Mamm', 'CTV', 'ctv', 'PTV Mammella', 'PTV_Mammella', 'PTV', 'ptv']
-    list_roi : ['lungs_TS', 'lungs_Protege', 'lungs']
+    list_roi : ['Heart']
     # list_roi : ['pancreas', 'EG']    

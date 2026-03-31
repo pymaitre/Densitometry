@@ -1,4 +1,5 @@
 #requirements: numpy, pandas, openpyxl, SimpleITK, pydicom, platipy
+import time
 from pathlib import Path
 import numpy as np
 import os
@@ -20,6 +21,10 @@ from Densitometry.total_ROI_functions import total as tot
 
 
 def main(conf):
+    
+    #Time to see how long does it take to extract all densitometric information
+    start_time = time.time()
+    
     # conf = rtv_configuration_file("conf_total_ROI", save=False)
 
     directory_dcm_out = Path(conf['directory_dcm_out'])
@@ -32,7 +37,6 @@ def main(conf):
     df_py = info_dcm.find_ct_info(directory_dcm_out, directory_out, image_modality)
     print("")            
 
-    
     save_sp = conf['save_spacing_histo']   
     #if save=True create voxel spacing distribution for each dimension
     new_x, new_y, new_z = sp.read_spacing(df_py, directory_out, save_sp)
@@ -73,7 +77,12 @@ def main(conf):
     
     else:
         print("You preferred to not analyze the histograms.")
-        print("")        
+        print("")   
+    
+    #Count the total extraction time
+    end_time = time.time()  
+    elapsed_time = end_time - start_time 
+    print(f"Total execution time: {elapsed_time:.2f} seconds")     
 
 
 
