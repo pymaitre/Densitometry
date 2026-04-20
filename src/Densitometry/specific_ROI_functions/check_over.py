@@ -13,12 +13,13 @@ from pathlib import Path
 import pandas as pd
 
 
-def over_variable():
+def over_variable()->tuple[int, int]:
     """
     Function for inserting input HU and counts thresholds.
 
     :return HU_min: minimum HU threshold.
     :return min_counts: minimum counts threshold.
+    
     """
 
     HU_min = int(input("Enter the minimum HU threshold above which to control: "))
@@ -37,8 +38,9 @@ def over_HU_counts(HU, counts, HU_min, min_counts):
     :param HU_min: minimum HU threshold.
     :param min_counts: minimum counts threshold.
 
-    :return HU_over: HU beetween thresholds.
-    :return counts_over: counts above threshold.    
+    :return new_x: more present value of coordinate x of voxel spacing
+    :return new_y: more present value of coordinate y of voxel spacing
+    :return new_z: more present value of coordinate z of voxel spacing
     """
     
     coppie = {'HU': HU, 'Counts': counts}
@@ -54,7 +56,7 @@ def over_HU_counts(HU, counts, HU_min, min_counts):
     return HU_over, counts_over
 
 
-def check_over(dir_files_fin, directory_out, delimiter_over_ROI):
+def check_over(dir_files_fin, directory_out, delimiter_over_ROI)->None:
     """
     Here almost functions are called for all patients. Especially:
     - establishing thresholds;
@@ -68,11 +70,13 @@ def check_over(dir_files_fin, directory_out, delimiter_over_ROI):
 
     :param dir_files_fin: directory of all patients df with HU and counts.
     :param directory_out: the directory of analyses.
-    :param save_over: if true save all histograms and relatives 
-                    excel file with HU and counts;
-                    if false, histograms are plotted.
+    :param delimiter_over_ROI
+
+    return None
     """
 
+    #save_over: if true save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
+    
     save_over=True       
         
     print("The saving variable is on: ", save_over)

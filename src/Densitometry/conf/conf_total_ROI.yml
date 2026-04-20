@@ -1,8 +1,8 @@
-    directory_dcm_out : "C:\\Users\\volon\\Desktop\\14_mont_nim"
+    directory_dcm_out : "C:\\Users\\volon\\Desktop\\test_pz"
     #PZ MEDIASTINO PROB:
     #['20240509080132977', '20240718184023147']
 
-    directory_out : "C:\\Users\\volon\\Desktop\\densitometry_mont_nim"
+    directory_out : "C:\\Users\\volon\\Desktop\\test"
 
     image_modality : "CT"
 

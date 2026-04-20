@@ -25,7 +25,7 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str)->pd.DataFrame:
     :type imm_mod: str
 
     :return df: database of headers information.
-    :rtype df: pd.DataFrame
+
     """
     
     #Patient file
@@ -115,7 +115,7 @@ def find_ct_info_input(directory:Path, directory_out:str, excel_name:str)->pd.Da
     :type excel_name: str
 
     :return df: database of headers information.
-    :rtype df: pd.DataFrame
+    
     """
     
     #File of the patient

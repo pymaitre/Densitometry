@@ -14,7 +14,7 @@ import pandas as pd
 import pydicom
 
 
-def all_ROI(df_py, ID_problems, directory_out, rt_kind):
+def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:str)->tuple[pd.DataFrame,pd.DataFrame]:
     """
     Read all ROIs from RTst linked to CT (in directory named by ID).
     This function create a dataframe where each row has PatientID
@@ -22,10 +22,13 @@ def all_ROI(df_py, ID_problems, directory_out, rt_kind):
     A dataframe with all ROIs and their counts is also created.
 
     :param df_py: database of headers information.
+    :type df_py: pd.DataFrame
     :param directory_out: the directory of analyses.
-    :param save: if true, saves the database of ROI for each patient
-                and the other one of their counts;
-                if false, shows them.
+    :type directory_out: Path
+    :param ID_problems: list of problems
+    :type ID_problems: list
+    :param rt_kind: type of RT
+    :type rt_kind: str
 
     :return df_ROI: database of ROI for each patient.
     :return df_counts: database of ROI's counts.

@@ -127,7 +127,6 @@ def prog_count(counter:np.array, ID_dir:Path, RS_dir:Path, Altro_dir:Path, modal
     :type file_path: Path
     
     return counter: array with counts
-    :rtype counter: np.array
     
     """
     
@@ -193,7 +192,6 @@ def ct_sorted(counter:np.array, imm_dir:Path, RS_dir:Path, Altro_dir:Path, modal
     :type index: str
     
     return counter: array with counts
-    :rtype counter: np.array
     
     """
     

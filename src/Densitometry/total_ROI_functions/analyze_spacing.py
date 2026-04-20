@@ -8,24 +8,29 @@ Module for:
 
 import os
 from pathlib import Path
+import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-def read_spacing(df_py, directory_out, save_sp):
+def read_spacing(df_py: pd.DataFrame, directory_out:Path, save_sp:bool):
     """
     Function that calls the database of header dicom where are stored
     all the voxel spacing values of each patient. It establishes the
     new voxel spacing for resampling where is necessary.
 
     :param df_py: database of headers information.
+    :type df_py: pd.DataFrame
     :param directory_out: the directory of analyses.
-    :param save: if true, saves the histogram plots of each coordinate
+    :type directory_out: Path
+    :param save_sp: if true, saves the histogram plots of each coordinate
                 of voxel spacing distribution;
                 if false, shows them.
+    :type save_sp:bool
 
     :return new_x: more present value of coordinate x of voxel spacing
     :return new_y: more present value of coordinate y of voxel spacing
     :return new_z: more present value of coordinate z of voxel spacing
+
     """
     
     print("Save distribution about voxel spacing is set on: ", save_sp)
@@ -33,6 +38,7 @@ def read_spacing(df_py, directory_out, save_sp):
 
     bin_size_sp = 0.01
     
+    #Extract new_coords
     new_x = histo_spacing(df_py["VoxelSpacingX"], directory_out, "X", bin_size_sp, save_sp)
     new_y = histo_spacing(df_py["VoxelSpacingY"], directory_out, "Y", bin_size_sp, save_sp)
     new_z = histo_spacing(df_py["VoxelSpacingZ"], directory_out, "Z", bin_size_sp, save_sp)
@@ -48,7 +54,7 @@ def histo_spacing(coordinata, directory_out, name, n_size, save_sp):
     :param directory_out: the directory of analyses.
     :param name: title of histogram and file.
     :param n_size: bin size of histogram.
-    :param save: if true, saves the histogram plots of each coordinate
+    :param save_sp: if true, saves the histogram plots of each coordinate
                 of voxel spacing distribution;
                 if false, shows them.
 
@@ -65,11 +71,13 @@ def histo_spacing(coordinata, directory_out, name, n_size, save_sp):
         save_path = directory_out / "Voxel_Analyses"
         Path(save_path).mkdir(parents=True, exist_ok=True)
         
+        #Range of the coordinate
         min_co = min(coordinata)
         max_co = max(coordinata)
         print("The number of ", name, " is: ", len(coordinata), "with min: ", min(coordinata), " and max: ", max(coordinata))
         print("The ", name, " more present is: ", co_mas_in, " and has: ", count_mas_in, "counts")
 
+        #Edge
         bin_edges = np.arange(min_co, max_co + 2*n_size, n_size)
         count, co, _ = plt.hist(coordinata, bins=bin_edges, \
                                 align='left', color="black", edgecolor="black")

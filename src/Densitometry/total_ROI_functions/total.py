@@ -367,7 +367,7 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
     ######## PARALLEL IMPLEMENTATION #########
     
     #Parallel function
-    results = Parallel(n_jobs=3, timeout=None)(
+    results = Parallel(n_jobs=2, timeout=None)(
         delayed(parallel_fun)(
             pz, dir_histo_fin, dir_files_fin, df_py, ID_problems,
             new_sp, rt_kind, list_roi, directory_out, show_info_all, save_info_all
