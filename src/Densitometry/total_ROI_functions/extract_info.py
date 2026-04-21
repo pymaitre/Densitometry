@@ -10,10 +10,11 @@ Module for:
 
 import os
 from pathlib import Path
-from Densitometry.total_ROI_functions import dicom_to_nifti as dtn
+#from Densitometry.total_ROI_functions import dicom_to_nifti as dtn
 import numpy as np
 import SimpleITK as sitk
 import matplotlib.pyplot as plt
+import resmip as rsm
 
 
 def save_info_nifti(save_info_all, directory_out, CT, rt, ID):
@@ -68,8 +69,14 @@ def ROI_ok(ct_path, rt_path, ROI_founded, show_CT_ROI, save_info_all, directory_
     """
 
     CT, CT_arr = read_and_show_ct(ct_path, show_CT_ROI, slice)
-    rt = dtn.read_dicom_rtstruct(rt_path, CT, ROI_founded)
-    rt_nifti = dtn.read_dicom_rtstruct(rt_path, CT)
+    #rt = dtn.read_dicom_rtstruct(rt_path, CT, ROI_founded) #QUI
+    
+    rt=rsm.RTStructureSet.read(filename=rt_path,structure_names=ROI_founded,reference_image=CT)
+    
+    #rt_nifti = dtn.read_dicom_rtstruct(rt_path, CT) #QUI
+    #st_name=None
+    #rt_nifti=rsm.RTStructure.read(filename=rt_path,structure_name=st_name,reference_image=CT)
+    #print(f"RT type{type(rt_nifti)}")
 
     # save_info_nifti(save_info_all, directory_out, CT, rt_nifti, ID)
     
@@ -96,12 +103,17 @@ def ROI_res(ct_path, rt_path, new_sp, ROI_founded, show_CT_ROI, save_info_all, d
     """
     
     CT, CT_arr = read_and_show_ct(ct_path, show_CT_ROI, slice)
+    
+    
     # new_sp = [0.703125,	0.703125,	1.25]
     CT_res, CT_res_arr = resample(CT, new_sp[0], new_sp[1], new_sp[2])
     
-    rt_res = dtn.read_dicom_rtstruct(rt_path, CT_res, ROI_founded)
+    #rt_res = dtn.read_dicom_rtstruct(rt_path, CT_res, ROI_founded) #QUI
+    
+    rt_res=rsm.RTStructureSet.read(filename=rt_path,structure_names=ROI_founded,reference_image=CT_res)
+    
     # print(type(rt_res), type(rt_res[0]))
-    rt_res_nifti = dtn.read_dicom_rtstruct(rt_path, CT_res)
+    #rt_res_nifti = dtn.read_dicom_rtstruct(rt_path, CT_res) #QUI
 
     # save_info_nifti(save_info_all, directory_out, CT_res, rt_res_nifti, ID)    
     
@@ -123,7 +135,11 @@ def read_and_show_ct(ct_path, show_CT_ROI, slice):
     :return ct_arr: CT array showable
     """
     
-    ct = dtn.read_dicom_image(ct_path)
+    #ct = dtn.read_dicom_image(ct_path) #QUI
+    
+    ct=rsm.Image.read(ct_path)
+    #print(type(ct))
+    
     ct_arr = sitk.GetArrayFromImage(ct)
     print("The CT has a shape: ", ct_arr.shape)
     
@@ -145,15 +161,20 @@ def read_and_show_RTst(rt, ROI_founded):
 
     :return mask: ROI's mask of 1 and nan instead of 1 and 0.
     """
- 
-    for ROI in rt:
-        if ROI_founded in ROI.name:
-            print("Prendo la ROI con nome: ", ROI.name, "coincidente con ", ROI_founded)
+    print(f"ROI: {rt.keys()}")
+    
+    roi_obj = None
+    
+    for name_ROI in rt.keys():
+        if ROI_founded==name_ROI:
+            print("Prendo la ROI con nome: ", name_ROI, "coincidente con ", ROI_founded)
+            roi_obj = rt[name_ROI]
             break
         else:
-            print("I'm analyzing the ROI: ", ROI.name)
-            
-    rt = ROI.mask
+            print("I'm analyzing the ROI: ", name_ROI)
+    
+    
+    rt = roi_obj
                     
     rt_arr = sitk.GetArrayFromImage(rt)
     print("The RTst has a shape: ", rt_arr.shape, " and contains: ", np.unique(rt_arr, return_counts=True)[1][1], " 1")
