@@ -141,7 +141,7 @@ def read_and_show_ct(ct_path, show_CT_ROI, slice):
     ct=rsm.Image.read(ct_path)
     #print(type(ct))
     
-    ct_arr = sitk.GetArrayFromImage(ct)
+    ct_arr = ct.__array__()
     print("The CT has a shape: ", ct_arr.shape)
     
     # if show_CT_ROI:
@@ -151,7 +151,7 @@ def read_and_show_ct(ct_path, show_CT_ROI, slice):
     return ct, ct_arr
 
 
-def read_and_show_RTst(rt, ROI_founded):
+def read_and_show_RTst(rt_0, ROI_founded):
     """
     This function relates to and shows the specific ROI founded for the CT.
     Because of significative value for 0 HU in CT, ROI of 0 and 1 is 
@@ -162,14 +162,14 @@ def read_and_show_RTst(rt, ROI_founded):
 
     :return mask: ROI's mask of 1 and nan instead of 1 and 0.
     """
-    print(f"ROI: {rt.keys()}")
+    print(f"ROI: {rt_0.keys()}")
     
     roi_obj = None
     
-    for name_ROI in rt.keys():
+    for name_ROI in rt_0.keys():
         if ROI_founded==name_ROI:
             print("Prendo la ROI con nome: ", name_ROI, "coincidente con ", ROI_founded)
-            roi_obj = rt[name_ROI]
+            roi_obj = rt_0[name_ROI]
             break
         else:
             print("I'm analyzing the ROI: ", name_ROI)
@@ -177,7 +177,7 @@ def read_and_show_RTst(rt, ROI_founded):
     
     rt = roi_obj
                     
-    rt_arr = sitk.GetArrayFromImage(rt)
+    rt_arr = rt.__array__()
     print("The RTst has a shape: ", rt_arr.shape, " and contains: ", np.unique(rt_arr, return_counts=True)[1][1], " 1")
 
     mask = rt_arr.astype(float)
