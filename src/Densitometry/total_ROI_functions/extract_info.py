@@ -11,6 +11,7 @@ Module for:
 import os
 from pathlib import Path
 #from Densitometry.total_ROI_functions import dicom_to_nifti as dtn
+from typing import Tuple
 import numpy as np
 import SimpleITK as sitk
 import matplotlib.pyplot as plt
@@ -226,37 +227,76 @@ def obtain_ROI(mask, ct_arr, show_CT_ROI, slice):
     return HU_ROI_no_nan, counts_ROI_no_nan
 
 
-from typing import Tuple
+#def resample(
+#    # image: sitk.Image, xy_rescale_factor: float = 2, z_rescale_factor: float = 1,
+#    image: sitk.Image, new_x, new_y, new_z
+#) -> Tuple[sitk.Image, np.array]:
+#    """
+#    Resample image (increase pixel density) in order to increase computation accuracy.
+#
+#    :param image: image to be resampled (sitk.Image)
+#    :param xy_rescale_factor: new_pixels/old_pixels ratio for the x-y plane (float)
+#    :param z_rescale_factor: new_pixels/old_pixels ratio for the z axis (float)
+#    :return: resampled image (sitk.Image)
+#    """   
+#    original_spacing = image.GetSpacing()
+#    original_size = image.GetSize()
+#    spacing = min(original_spacing)
+#    new_spacing = [new_x, new_y, new_z]
+#    new_size = list(original_size)
+#    for i in range(3):
+#        new_size[i] = int(round(original_spacing[i] / new_spacing[i] * original_size[i]))
+#    resampled_image = sitk.Resample(
+#        image,
+#        new_size,
+#        sitk.Transform(),
+#        sitk.sitkNearestNeighbor,
+#        # sitk.sitkLinear,
+#        # sitk.sitkBSpline,
+#        image.GetOrigin(),
+#        new_spacing,
+#        image.GetDirection(),
+#        0,
+#        image.GetPixelID(),
+#    )
+#    return resampled_image, sitk.GetArrayFromImage(resampled_image)
+
+
+
+
+
+
+
 def resample(
     # image: sitk.Image, xy_rescale_factor: float = 2, z_rescale_factor: float = 1,
-    image: sitk.Image, new_x, new_y, new_z
-) -> Tuple[sitk.Image, np.array]:
+    image: rsm.Image, new_x, new_y, new_z
+) -> Tuple[rsm.Image, np.array]:
     """
     Resample image (increase pixel density) in order to increase computation accuracy.
 
-    :param image: image to be resampled (sitk.Image)
+    :param image: image to be resampled (rsm.Image)
     :param xy_rescale_factor: new_pixels/old_pixels ratio for the x-y plane (float)
     :param z_rescale_factor: new_pixels/old_pixels ratio for the z axis (float)
-    :return: resampled image (sitk.Image)
+    :return: resampled image (rsm.Image)
     """   
-    original_spacing = image.GetSpacing()
-    original_size = image.GetSize()
-    spacing = min(original_spacing)
-    new_spacing = [new_x, new_y, new_z]
-    new_size = list(original_size)
-    for i in range(3):
-        new_size[i] = int(round(original_spacing[i] / new_spacing[i] * original_size[i]))
-    resampled_image = sitk.Resample(
-        image,
-        new_size,
-        sitk.Transform(),
-        sitk.sitkNearestNeighbor,
-        # sitk.sitkLinear,
-        # sitk.sitkBSpline,
-        image.GetOrigin(),
-        new_spacing,
-        image.GetDirection(),
-        0,
-        image.GetPixelID(),
-    )
-    return resampled_image, sitk.GetArrayFromImage(resampled_image)
+    
+    #Fill new_spacing
+    new_spacing=np.array([new_x,new_y,new_z])
+    
+    #Check if all the dimensions are acceptable
+    orig_size=image.size
+    #print(f"original size {orig_size}")
+    
+    for s in orig_size: 
+        if s==0: 
+            print("The image has one dimension equal to zero")
+
+    #Resample the image
+    new_image=rsm.Image.resample(image,new_spacing,sitk.sitkNearestNeighbor,0)
+    
+    
+    #array from new_image
+    new_array_image = new_image.__array__()
+    
+    
+    return new_image,new_array_image
