@@ -2,7 +2,7 @@
     #PZ MEDIASTINO PROB:
     #['20240509080132977', '20240718184023147']
 
-    directory_out : "C:\\Users\\volon\\Desktop\\test"
+    directory_out : "C:\\Users\\volon\\Desktop\\test_parallel"
 
     image_modality : "CT"
 
