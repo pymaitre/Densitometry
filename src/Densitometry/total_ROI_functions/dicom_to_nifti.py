@@ -43,7 +43,7 @@ def read_dicom_image(image_path: Union[str, Path]) -> sitk.Image:
     Wrapper function for platipy's read_dicom_image.
 
     :param image_path: Path to the DICOM series to read (str|Path)
-    :return: The 3d image as a SimpleITK Image (sitk.Image)
+    :return: The 3D image as a SimpleITK Image (sitk.Image)
     """
     return rtstruct_to_nifti.read_dicom_image(image_path)
 

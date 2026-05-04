@@ -8,20 +8,26 @@ import os
 from pathlib import Path
 import pandas as pd
 import re
+from IPython.display import display
 
 
-def merge_db(directory, show_merge, save_opt):
+def merge_db(directory:Path, show_merge:str, save_opt:str)->None:
     """
     This function permits to read a db, modify its columns 
     and merge it with others. If you want, you can also drop
     patients looking at other dbs in case.
 
     :param directory: directory of the general analyses.
+    :type directory: Path
     :param show_merge: if true, all forms of databases are showed.
+    :type show_merge: str
     :param save_opt: if true, merged or dropped row's databases are saved.
+    :type save_opt: str
     
+    return None
     """
 
+    #Settings
     if "y" in show_merge.lower():
         show = True
         print("The showing option is set on: ", show)
@@ -36,9 +42,10 @@ def merge_db(directory, show_merge, save_opt):
         save = False
         print("The saving option is set on: ", save)
 
-    
+    #Read dataset
     db_1 = read_db(directory, show)       
-        
+    
+    #Merge and drop
     for i in range(0, 100):
         print("")
         comb = str(input("Do you have a database that has to be merged?"))
@@ -67,17 +74,21 @@ def merge_db(directory, show_merge, save_opt):
 
 
 
-def read_db(directory, show):   
+def read_db(directory:Path, show:bool)->pd.DataFrame:   
     """
     This function permits to read a db into the directory path,
     matched by name.
 
     :param directory: directory of the general analyses.
+    :type directory: Path
     :param show: if true, all forms of databases are showed.
+    :type show: bool
 
     :return df: database read.
+
     """
     
+    #Try to read the file
     for attempt in range(0, 100):
         print("")
         name = input("Insert the name of the database: ")        
@@ -87,13 +98,15 @@ def read_db(directory, show):
                 if name in file:
                     file_path = os.path.join(root, file)
                     break
-
+                
+        #Database found
         if file_path is not None:
             print(f"The database is in: {file_path}")
             df = pd.read_excel(file_path)
             if show:
                 display(df)
             
+            #Check
             print("")
             ok = input("Is this the file you were looking for? ").lower()
             if "y" in ok.lower():
@@ -101,19 +114,24 @@ def read_db(directory, show):
             else:
                 print("\nTry again.")
         else:
+            
+            #File not found
             print("")
             print(f"No Excel file found with the name '{name}'. Try again.")
 
 
-def merge_column(df, show):    
+def merge_column(df:pd.DataFrame, show:bool)->pd.DataFrame:    
     """
     This function permits to modify and drop db columns 
     for merging with other databases.
 
     :param df: database of which you want to modify columns for merging.
+    :type df: pd.DataFrame
     :param show: if true, all forms of databases are showed.
+    :type show: bool
 
-    :return df: database modified.    
+    :return df: database modified.   
+
     """
     
     found_cols = match_column(df)
@@ -126,6 +144,7 @@ def merge_column(df, show):
     print("The new column for the merge is: ")
     display(df['LinkCol'])
     
+    #Delete columns
     for i in range(0, 100):
         print("")
         delete = str(input("Do you want to delete anything from the column values? "))
@@ -150,16 +169,19 @@ def merge_column(df, show):
     return df
 
 
-def match_column(df):
+def match_column(df:pd.DataFrame)->list:
     """
     This function permits to match a specific number of columns 
     for merging with other databases.
 
     :param df: database of which you want to find columns for merging.
+    :type df: pd.DataFrame
 
-    :return found_cols: columns found for merging.    
+    :return found_cols: columns found for merging.
+
     """
     
+    #Columns
     print("The columns names are:")
     # print(df.columns.str.strip().str.lower())
     print(df.columns)
@@ -169,6 +191,7 @@ def match_column(df):
     found_cols = []
     found = []
     
+    #Modify columns
     for i in range(0, 100):
         if len(found_cols) != n_col:            
             if len(found) != 1:
@@ -193,21 +216,24 @@ def match_column(df):
     return found_cols
 
 
-def drop_columns(df, show):
+def drop_columns(df:pd.DataFrame, show:bool)->pd.DataFrame:
     """
     This function permits to drop columns of a database.
 
     :param df: database of which you want to drop columns.
+    :type df: pd.DataFrame
     :param show: if true, all forms of databases are showed.
+    :type show: bool
 
     :return df: database without dropped columns.
     
     """
-    
+    #Columns
     print("")
     print("The columns names are:")
     print(df.columns)
     
+    #Drop the columns
     for i in range(0,100):
         print("")
         drop_col = str(input("Do you want to drop a column? "))
@@ -233,25 +259,32 @@ def drop_columns(df, show):
     return df
 
 
-def merge_df(df1, df2, show):
+def merge_df(df1:pd.DataFrame, df2:pd.DataFrame, show:bool):
     """
     This function permits to merge 2 databases.
 
     :param df1: left database you want to merge.
+    :type df1: pd.DataFrame
     :param df2: right database you want to merge.
+    :type df2: pd.DataFrame
     :param show: if true, all forms of databases are showed.
+    :type show: bool
 
-    :return merge: merged database.    
+    :return merged database and rows in df1 and df2 only.      
+
     """
     
+    #Columns of the left dataset
     print("")
     print("The columns names of the left db are:")
     print(df1.columns)
 
+    #Columns of the right dataset
     print("")
     print("The columns names of the right db are:")
     print(df2.columns)
     
+    #Merging columns
     print("")
     name_col_sx = str(input("Which column you want to merge left db on?"))
     for column in df1.columns:
@@ -273,13 +306,13 @@ def merge_df(df1, df2, show):
     merged_in = pd.merge(df1, df2, on=['LinkCol'], how='inner')
 
     merged_out = pd.merge(df1, df2, on=['LinkCol'], how='outer', indicator=True)
-    # Selezionare le righe che sono presenti solo in uno dei DataFrame
+    # Rows in only one dataset
     dropped_in_df1 = merged_out[merged_out['_merge'] == 'left_only'].drop('_merge', axis=1)
     dropped_in_df2 = merged_out[merged_out['_merge'] == 'right_only'].drop('_merge', axis=1)
     
     if show:
         display(merged_in)
-        # Stampa le righe mancanti in ciascun DataFrame
+        #Print dropped rows
         print("Dropped rows in df1:")
         display(dropped_in_df1)
 
@@ -291,15 +324,24 @@ def merge_df(df1, df2, show):
     return merge, dropped_in_df1, dropped_in_df2
     
 
-def save_merge(df, dropped_in_df1, dropped_in_df2, directory, save):
+def save_merge(df:pd.DataFrame, dropped_in_df1:pd.DataFrame, dropped_in_df2:pd.DataFrame, directory:Path, save:bool)->None:
     """
     This function permits to save a database.
 
     :param df: database you want to save.
+    :type df: pd.DataFrame
+    :param dropped_in_df1: dataset with patients only in df1
+    :type dropped_in_df1: pd.DataFrame
+    :param dropped_in_df2: dataset with patients only in df2
+    :type dropped_in_df2: pd.DataFrame
     :param directory: directory of the general analyses.
+    :type directory: Path
     :param save: if true, merged or dropped row's databases are saved.
-    """
+    :type save: bool
     
+    return None
+    """
+    #Save the merged dataset and the dropped rows
     if save:
         dir_merge = Path(directory) / "Merged_db"
         Path(dir_merge).mkdir(exist_ok=True, parents=True)
@@ -316,20 +358,25 @@ def save_merge(df, dropped_in_df1, dropped_in_df2, directory, save):
 
 
 
-def drop_pz(df_tot, directory, show):
+def drop_pz(df_tot:pd.DataFrame, directory:Path, show:bool)->pd.DataFrame:
     """
     This function permits to drop database rows looking at other database values.
 
     :param df_tot: database whose rows you want to drop.
+    :type df_tot: pd.DataFrame
     :param directory: directory of the general analyses.
+    :type directory: Path
     :param show: if true, all forms of databases are showed.
+    :type show: bool
 
     :return df_tot: database whose rows you have dropped.
+    
     """
     
     # ['BERTOGLIO, ALDINA' , 'SIGNORELLI, PAOLA' , 'MANINCHEDDA, SILVANA' , 'GOMES, IZABEL CRISTINA', 'SALA, PAOLA']
     # ['70263936', '70102927', '70362000', 50242541, 12484472]
     
+    #Drop dataset rows
     print("")
     drop_or_no = str(input("Do you want to drop patients from the merged db?"))
     if "y" in drop_or_no.lower():
@@ -404,7 +451,7 @@ def drop_pz(df_tot, directory, show):
     return df_tot
 
 
-def search_col(df, show):
+def search_col(df:pd.DataFrame, show:bool)->str:
     """
     This function permits to match a specific column in a database. 
 
@@ -414,6 +461,7 @@ def search_col(df, show):
     :return column_found: column found.    
     """
     
+    #Search for a specific column
     for attempt in range(0, 100):
         print("")
         name_col = str(input("Insert the name of the column whose value you want to drop: "))
@@ -442,16 +490,17 @@ def search_col(df, show):
     return column_found
 
 
-def search_value(df, column_found):
+def search_value(df:pd.DataFrame, column_found:list)->str:
     """
     This function permits to match a specific value in a database. 
 
     :param df: database of which you want to find value by name.
     :param column_found: column of which you want to find a value.
 
-    :return value_tot: value found.    
+    :return value_tot: value found.   
     """
     
+    #Search for a specific value
     for attempt_row in range(0, 100):
         values = df[column_found].astype(str).values.tolist()
         print(f"\nThese are the values of the column {column_found} you chose from the dropping db.")

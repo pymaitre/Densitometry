@@ -15,13 +15,14 @@ import pandas as pd
 import numpy as np
 
 
-def just_variable():
+def just_variable()->tuple[int,int,int]:
     """
     Function for inserting input HU and counts thresholds.
 
     :return HU_min: minimum HU threshold.
     :return HU_max: maximum HU threshold.
     :return min_counts: minimum counts threshold.
+
     """
 
     
@@ -74,11 +75,10 @@ def histo_just(dir_files_fin, directory_out, delimiter):
 
     :param dir_files_fin: directory of all patients df with HU and counts.
     :param directory_out: the directory of analyses.
-    :param save_just: if true save all histograms and relatives 
-                    excel file with HU and counts;
-                    if false, histograms are plotted.
+    :param delimiter
     """
 
+    #if true save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
     save_just=True
     
     print("The saving variable is on: ", save_just)

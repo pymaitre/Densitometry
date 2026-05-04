@@ -15,7 +15,7 @@ from Densitometry.total_ROI_functions import extract_histo as histo
 import pandas as pd
 
 
-def rate_variable():
+def rate_variable()->tuple[int,int,float]:
     """
     Function for inserting input HU and counts thresholds.
 
@@ -23,6 +23,7 @@ def rate_variable():
     :return HU_max: maximum HU threshold.
     :return rate: rate thresholds beetween counts outside 
                 and counts inside the region of (HU_min, HU_max).
+
     """
 
     HU_min = int(input("Enter the minimum HU threshold above which to check: "))
@@ -43,7 +44,7 @@ def analyze_rate(HU, counts, HU_min, HU_max):
     :param HU_max: maximum HU threshold.
 
     :return diff: rate beetween parts of the histograms inside
-                and outside the HU thresholds.
+                and outside the HU thresholds
     :return HU_rate: HU outside the region.
     :return counts_rate: counts outside the region.    
     """
@@ -84,11 +85,10 @@ def check_rate(dir_files_fin, directory_out, rate_over_ROI):
 
     :param dir_files_fin: directory of all patients df with HU and counts.
     :param directory_out: the directory of analyses.
-    :param save_just: if true save all histograms and relatives 
-                    excel file with HU and counts;
-                    if false, histograms are plotted.
+    :param rate_over_ROI
     """
 
+    #if true save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
     save_rate=True        
         
     print("The saving variable is set on: ", save_rate)
