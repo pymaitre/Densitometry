@@ -15,6 +15,8 @@ import numpy as np
 import SimpleITK as sitk
 import matplotlib.pyplot as plt
 import resmip as rsm
+import matplotlib
+matplotlib.use("Agg")
 
 
 def save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, rt:rsm.RTStructureSet, ID:str)->None:

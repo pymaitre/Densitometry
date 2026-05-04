@@ -39,16 +39,31 @@ def main(conf):
     df_py = info_dcm.find_ct_info(directory_dcm_out, directory_out, image_modality)
     print("")    
     
+    #Parallelization
+    flag_parallel=conf["flag_parallel"]
+    
+    if flag_parallel: 
+        
+        N_jobs=conf["N_jobs"]
+        
+        print(f"Parallelization with N_jobs equal to: {N_jobs}")
+    
+    else: 
+        N_jobs=1
+        
+        print("No parallelization, working with sequential approach")
     
     
     flag_resampling=conf["flag_resampling"]
     flag_new_spacing=conf["flag_new_spacing"]
-    #se vuoi fare resampling ==> procedi come al solito
     
-    # se non vuoi fare resampling, estrai ROI di ciascuno
+    
+
     
     #save_sp = conf['save_spacing_histo'] 
-            
+    
+    
+    #Resampling and spacing        
     if flag_resampling:
         
         #If True: new_spacing from the distribution, else: provide the new spacing
@@ -60,7 +75,7 @@ def main(conf):
             new_sp = np.array([new_x, new_y, new_z])
             
         else:
-            print("QUI")
+            
             new_sp=np.array(conf["new_spacing"])
         
         
@@ -93,7 +108,7 @@ def main(conf):
             show_info_all = conf['show_total_ROI_info']
             save_info_all = conf['save_total_ROI_info']
             
-            dir_files_fin = tot.res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, directory_out, show_info_all, save_info_all)
+            dir_files_fin = tot.res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, directory_out, show_info_all, save_info_all,N_jobs)
             print("")
         
         else:
@@ -133,7 +148,7 @@ def main(conf):
             show_info_all = conf['show_total_ROI_info']
             save_info_all = conf['save_total_ROI_info']
             
-            dir_files_fin = tot.no_res_and_create_histo(df_py, ID_problems, rt_kind, list_roi, directory_out, show_info_all, save_info_all) #QUI
+            dir_files_fin = tot.no_res_and_create_histo(df_py, ID_problems, rt_kind, list_roi, directory_out, show_info_all, save_info_all,N_jobs) #QUI
             print("")
         
         else:

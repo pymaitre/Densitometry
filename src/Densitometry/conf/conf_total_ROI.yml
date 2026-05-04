@@ -1,8 +1,8 @@
-    directory_dcm_out : "C:\\Users\\volon\\Desktop\\resample_test\\santiago"
+    directory_dcm_out : "C:\\Users\\volon\\Desktop\\leicester"
     #PZ MEDIASTINO PROB:
     #['20240509080132977', '20240718184023147']
 
-    directory_out : "C:\\Users\\volon\\Desktop\\check_spacing\\resample\\Densitometry_Heart_santiago"
+    directory_out : "C:\\Users\\volon\\Desktop\\check_parallel"
 
     image_modality : "CT"
 
@@ -18,12 +18,14 @@
 
     flag_resampling: True #Flag for the resampling (True: resample, False: dot not resample)
 
-    flag_new_spacing: False #Flag to manage the type of resampling (if True: frequency-based new_spacing, if False: insert the desired new_spacing below)
+    flag_new_spacing: True #Flag to manage the type of resampling (if True: frequency-based new_spacing, if False: insert the desired new_spacing below)
 
-    new_spacing: [1,1,3]
+    new_spacing: [1,1,3] #Insert the desired new spacing (during the resampling)
 
-    #Insert the desired new spacing (during the resampling)
-    
+    flag_parallel: False #Flag to manage parallelization (if True: insert manually N_jobs below, if False: N_jobs=1 automatically)
+
+    N_jobs: 3 
+
     # ID_problems : ["20240509080132977", "20240718184023147"]
     ID_problems : []
 

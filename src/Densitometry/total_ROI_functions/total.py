@@ -11,6 +11,8 @@ import pydicom
 from joblib import Parallel, delayed
 import numpy as np
 import gc
+import matplotlib
+matplotlib.use("Agg")
   
 
 def get_roi_names(rtstruct_path:Path)->list:
@@ -246,7 +248,7 @@ def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFr
    
 
 def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, rt_kind:str, list_roi:list, 
-                         directory_out:Path, show_info_all:bool, save_info_all:bool)->Path:
+                         directory_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int)->Path:
     """
     Here almost functions are called for all patients. Especially:
     - CT and RTst are possibly showed; 
@@ -272,6 +274,8 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
                     excel file with HU and counts;
                     if false, histograms are plotted.
     :type save_info_all: bool
+    :param n_jobs: number of jobs for parallelization 
+    :type n_jobs: int
 
     :return dir_files_fin: directory of all patients df with HU and counts.
     :rtype dir_files_fin: Path
@@ -291,7 +295,7 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
     
 
     #Parallel function
-    results = Parallel(n_jobs=1,timeout=None)(
+    results = Parallel(n_jobs=N_jobs,timeout=None)(
         delayed(parallel_fun)(
             pz, dir_histo_fin, dir_files_fin, df_py, ID_problems,
             new_sp, rt_kind, list_roi, directory_out, show_info_all, save_info_all
@@ -439,7 +443,7 @@ def no_res_parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd
    
 
 def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, list_roi:list, 
-                         directory_out:Path, show_info_all:bool, save_info_all:bool)->Path:
+                         directory_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int)->Path:
     """
     Here almost functions are called for all patients. Especially:
     - CT and RTst are possibly showed; 
@@ -486,7 +490,7 @@ def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, l
     ######## PARALLEL IMPLEMENTATION #########
     
     #Parallel function
-    results = Parallel(n_jobs=1,timeout=None)(
+    results = Parallel(n_jobs=N_jobs,timeout=None)(
         delayed(no_res_parallel_fun)(
             pz, dir_histo_fin, dir_files_fin, df_py, ID_problems, rt_kind, list_roi, directory_out, show_info_all, save_info_all
         )
