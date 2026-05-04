@@ -11,7 +11,7 @@ Index of documentation
    :maxdepth: 2
    :caption: Contents:
 
-   installing_procedure
+   installation_procedure
    Densitometry
    
 
