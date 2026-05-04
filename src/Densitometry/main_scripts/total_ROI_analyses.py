@@ -1,4 +1,6 @@
 #requirements: numpy, pandas, openpyxl, SimpleITK, pydicom, platipy
+import matplotlib
+matplotlib.use("Agg")
 import time
 from pathlib import Path
 import numpy as np
@@ -35,54 +37,113 @@ def main(conf):
 
     image_modality = conf['image_modality']
     df_py = info_dcm.find_ct_info(directory_dcm_out, directory_out, image_modality)
-    print("")            
-
-    save_sp = conf['save_spacing_histo']   
-    #if save=True create voxel spacing distribution for each dimension
-    new_x, new_y, new_z = sp.read_spacing(df_py, directory_out, save_sp)
-    print("")
+    print("")    
     
-    new_sp = np.array([new_x, new_y, new_z])
-    print("The most common voxel spacing is: ", new_sp)
-    print("")
     
-
-    save_ROI = conf['save_ROI_info']
-    rt_kind = conf['rt_kind']
-   
- 
-    # ID_problems = ["70230254", "70366136", "433906"] #bilaterali
-    ID_problems = conf['ID_problems']
     
-    if save_ROI:
-        #if True create db with all patient's ROI and relative counts
-        df_ROI, df_counts = ROI.all_ROI(df_py, ID_problems, directory_out, rt_kind)          
-        print("")
-    else:
-        print("You chose to not extract all patients ROIs.") 
-        print("")
-
-
-    list_roi = conf['list_roi']
-
-    all = conf['total_ROI_analyses']
-    if all:
-        print("Analyzing total histograms is set on: ", all)
+    flag_resampling=conf["flag_resampling"]
+    flag_new_spacing=conf["flag_new_spacing"]
+    #se vuoi fare resampling ==> procedi come al solito
+    
+    # se non vuoi fare resampling, estrai ROI di ciascuno
+    
+    #save_sp = conf['save_spacing_histo'] 
+            
+    if flag_resampling:
         
-        show_info_all = conf['show_total_ROI_info']
-        save_info_all = conf['save_total_ROI_info']
+        #If True: new_spacing from the distribution, else: provide the new spacing
+        if flag_new_spacing:
+            
+            save_sp = conf['save_spacing_histo'] 
+            new_x, new_y, new_z = sp.read_spacing(df_py, directory_out, save_sp) # NO more necessary ==> you insert the desired voxel_spacing
+            print("")
+            new_sp = np.array([new_x, new_y, new_z])
+            
+        else:
+            print("QUI")
+            new_sp=np.array(conf["new_spacing"])
         
-        dir_files_fin = tot.res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, directory_out, show_info_all, save_info_all)
+        
+        print("The new voxel spacing is: ", new_sp)
         print("")
+        
+
+        save_ROI = conf['save_ROI_info']
+        rt_kind = conf['rt_kind']
     
-    else:
-        print("You preferred to not analyze the histograms.")
-        print("")   
     
-    #Count the total extraction time
-    end_time = time.time()  
-    elapsed_time = end_time - start_time 
-    print(f"Total execution time: {elapsed_time:.2f} seconds")     
+        # ID_problems = ["70230254", "70366136", "433906"] #bilaterali
+        ID_problems = conf['ID_problems']
+        
+        if save_ROI:
+            #if True create db with all patient's ROI and relative counts
+            df_ROI, df_counts = ROI.all_ROI(df_py, ID_problems, directory_out, rt_kind)          
+            print("")
+        else:
+            print("You chose to not extract all patients ROIs.") 
+            print("")
+
+
+        list_roi = conf['list_roi']
+
+        all = conf['total_ROI_analyses']
+        if all:
+            print("Analyzing total histograms is set on: ", all)
+            
+            show_info_all = conf['show_total_ROI_info']
+            save_info_all = conf['save_total_ROI_info']
+            
+            dir_files_fin = tot.res_and_create_histo(df_py, ID_problems, new_sp, rt_kind, list_roi, directory_out, show_info_all, save_info_all)
+            print("")
+        
+        else:
+            print("You preferred to not analyze the histograms.")
+            print("")   
+        
+        #Count the total extraction time
+        end_time = time.time()  
+        elapsed_time = end_time - start_time 
+        print(f"Total execution time: {elapsed_time:.2f} seconds")     
+        
+
+    else: 
+        
+        save_ROI = conf['save_ROI_info']
+        rt_kind = conf['rt_kind']
+    
+    
+        # ID_problems = ["70230254", "70366136", "433906"] #bilaterali
+        ID_problems = conf['ID_problems']
+        
+        if save_ROI:
+            #if True create db with all patient's ROI and relative counts
+            df_ROI, df_counts = ROI.all_ROI(df_py, ID_problems, directory_out, rt_kind) #QUI          
+            print("")
+        else:
+            print("You chose to not extract all patients ROIs.") 
+            print("")
+
+
+        list_roi = conf['list_roi']
+
+        all = conf['total_ROI_analyses']
+        if all:
+            print("Analyzing total histograms is set on: ", all)
+            
+            show_info_all = conf['show_total_ROI_info']
+            save_info_all = conf['save_total_ROI_info']
+            
+            dir_files_fin = tot.no_res_and_create_histo(df_py, ID_problems, rt_kind, list_roi, directory_out, show_info_all, save_info_all) #QUI
+            print("")
+        
+        else:
+            print("You preferred to not analyze the histograms.")
+            print("")   
+        
+        #Count the total extraction time
+        end_time = time.time()  
+        elapsed_time = end_time - start_time 
+        print(f"Total execution time: {elapsed_time:.2f} seconds")     
 
 
 

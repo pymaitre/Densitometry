@@ -167,10 +167,6 @@ def read_and_show_ct(ct_path:Path, show_CT_ROI:bool, slice:int)->Tuple[rsm.Image
     ct_arr = ct.__array__()
     print("The CT has a shape: ", ct_arr.shape)
     
-    #Remove comments if you want to see the slice
-    # if show_CT_ROI:
-    #     plt.imshow(ct_arr[slice])
-    #     plt.show()
 
     return ct, ct_arr
 
@@ -243,16 +239,6 @@ def obtain_ROI(mask:np.array, ct_arr:np.array, show_CT_ROI:bool, slice:int):
     HU_ROI_no_nan=HU_ROI[np.where(~np.isnan(HU_ROI))[0]]
     counts_ROI_no_nan=counts_ROI[np.where(~np.isnan(HU_ROI))[0]]
     
-    
-    #Remove comments if you want the following prints
-    # if show_CT_ROI:
-        # print("The number of HU and counts in the ROI is: ", len(HU_ROI_no_nan), " and ", len(counts_ROI_no_nan))
-        # print("starting CT in ROI has type: ", ct_ROI.shape)
-        # print(HU_ROI_no_nan)
-        # print(counts_ROI_no_nan)
-        # plt.imshow(ct_ROI[slice])
-        # plt.colorbar()
-        # plt.show()
 
     return HU_ROI_no_nan, counts_ROI_no_nan
 
