@@ -6,10 +6,10 @@ Densitometry is a repository used to extract the densitometric variables for a g
 This file is a guide for the installation of both the code and the necessary requirements. 
 The installation flow is divided in the following four steps: 
 
-1. :ref:`Clone the repository`
-2. :ref:`Creation of a virtual environment`
-3. :ref:`Installation of Poetry`
-4. :ref:`Installation of the requirements`
+1. `Clone the repository`
+2. `Creation of a virtual environment`
+3. `Installation of Poetry`
+4. `Installation of the requirements`
 
 
 
@@ -76,4 +76,4 @@ To check whether the installation has been successful, run from the terminal:
     pip show densitometry
 
 
-After completing this flow, follow the Densitometry guide, which explains how files should be organized and how to run the code.
+After completing this flow, follow the :doc:`setting` guide, which explains how files should be organized and how to run the code.

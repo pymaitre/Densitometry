@@ -134,7 +134,7 @@ def find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] |
 
 def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFrame, ID_problems:list,
                  new_sp:np.array, rt_kind:str, list_roi:list, directory_out:Path,
-                 show_info_all:bool, save_info_all:bool):
+                 show_info_all:bool, save_info_all:bool,resampler):
     """
     This function is used to obtain the statistical features extracted or append the ID in a list (if there is a problem). 
     This function is implemented at patient-level and used for the parallelization.
@@ -219,7 +219,7 @@ def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFr
                 print("")
         
                 HU_ROI_res, counts_ROI_res = info.ROI_res(ct_path, ROI_path, new_sp, ROI_founded, 
-                                                            show_info_all, save_info_all, directory_out, ID, slice=100)
+                                                            show_info_all, save_info_all, directory_out, ID, resampler,slice=100)
                 #Extract information
                 stats_df = histo.features_ROI(ID, HU_ROI_res, counts_ROI_res, new_sp, ROI_founded, dir_histo_fin, dir_files_fin, save_info_all)
                                 
@@ -248,7 +248,7 @@ def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFr
    
 
 def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, rt_kind:str, list_roi:list, 
-                         directory_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int)->Path:
+                         directory_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int,resampler)->Path:
     """
     Here almost functions are called for all patients. Especially:
     - CT and RTst are possibly showed; 
@@ -298,7 +298,7 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
     results = Parallel(n_jobs=N_jobs,timeout=None)(
         delayed(parallel_fun)(
             pz, dir_histo_fin, dir_files_fin, df_py, ID_problems,
-            new_sp, rt_kind, list_roi, directory_out, show_info_all, save_info_all
+            new_sp, rt_kind, list_roi, directory_out, show_info_all, save_info_all,resampler
         )
         for pz in range(len(df_py))
     )

@@ -100,3 +100,46 @@ def histo_spacing(coordinata, directory_out, name, n_size, save_sp):
         # plt.close()
 
     return co_mas_in
+
+
+def find_global_scale(df_py: pd.DataFrame,flag_new_spacing:bool)->np.array:
+    """
+    Create the new voxel spacing given by min_x, min_y and min_z of the given dataset 
+    (to be found when flag_new_spacing=="min_global)
+    
+    :param df_py: input dataframe
+    :type df_py: pd.DataFrame
+    :param flag_new_spacing: flag to choose the global spacing (min_global, mean_global and max_global)
+    :type flag_new_spacing: bool
+    
+    :return new_scale: voxel spacing given by min_x, min_y and min_z
+    
+    """
+    if flag_new_spacing=="min_global":
+        
+        print("I am extracting the global minimum spacing")
+
+        min_x=df_py["VoxelSpacingX"].min()
+        min_y=df_py["VoxelSpacingY"].min()
+        min_z=df_py["VoxelSpacingZ"].min()
+        
+    if flag_new_spacing=="mean_global":
+        
+        print("I am extracting the global mean spacing")
+
+        min_x=df_py["VoxelSpacingX"].mean()
+        min_y=df_py["VoxelSpacingY"].mean()
+        min_z=df_py["VoxelSpacingZ"].mean()
+        
+    if flag_new_spacing=="max_global":
+        
+        print("I am extracting the global maximum spacing")
+
+        min_x=df_py["VoxelSpacingX"].max()
+        min_y=df_py["VoxelSpacingY"].max()
+        min_z=df_py["VoxelSpacingZ"].max()
+    
+    new_spacing=np.array([min_x,min_y,min_z])
+    
+    return new_spacing
+    

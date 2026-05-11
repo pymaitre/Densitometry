@@ -101,7 +101,7 @@ def ROI_ok(ct_path:Path, rt_path:Path, ROI_founded:str, show_CT_ROI:bool, save_i
 
 
 def ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool,
-            directory_out:Path, ID:str, slice:int)->Tuple[np.array,np.array]:
+            directory_out:Path, ID:str, resampler,slice:int)->Tuple[np.array,np.array]:
     """
     Function for obtaining ROIs and its distribution of HU
     in patients with different voxel spacing.
@@ -133,7 +133,7 @@ def ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, show_C
     CT, CT_arr = read_and_show_ct(ct_path, show_CT_ROI, slice)
     
     #Resampling
-    CT_res, CT_res_arr = resample(CT, new_sp[0], new_sp[1], new_sp[2])
+    CT_res, CT_res_arr = resample(CT, new_sp[0], new_sp[1], new_sp[2],resampler)
 
     #Get RTStructure Set
     rt_res=rsm.RTStructureSet.read(filename=rt_path,structure_names=ROI_founded,reference_image=CT_res)
@@ -244,7 +244,7 @@ def obtain_ROI(mask:np.array, ct_arr:np.array, show_CT_ROI:bool, slice:int):
 
     return HU_ROI_no_nan, counts_ROI_no_nan
 
-def resample(image: rsm.Image, new_x:float, new_y:float, new_z:float) -> Tuple[rsm.Image, np.array]:
+def resample(image: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) -> Tuple[rsm.Image, np.array]:
     """
     Resample image (increase pixel density) in order to increase computation accuracy.
 
@@ -272,7 +272,7 @@ def resample(image: rsm.Image, new_x:float, new_y:float, new_z:float) -> Tuple[r
             print("The image has one dimension equal to zero")
 
     #Resample the image
-    new_image=rsm.Image.resample(image,new_spacing,sitk.sitkNearestNeighbor,0)
+    new_image=rsm.Image.resample(image,new_spacing,resampler,0)
     
     
     #array from new_image

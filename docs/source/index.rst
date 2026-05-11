@@ -12,7 +12,7 @@ Index of documentation
    :caption: Contents:
 
    installation_procedure
-   Densitometry
+   setting
    
 
 
