@@ -1,9 +1,8 @@
-Densitometry
-===========
+Densitometry.dcm_functions.analyze_dcm 
+--------------------------------------
 
-Temp
-
-.. code-block:: bash
-
-    pip install poetry
+.. automodule:: Densitometry.dcm_functions.analyze_dcm 
+    :members:
+    :show_inheritance:
+    :undoc_members:
 

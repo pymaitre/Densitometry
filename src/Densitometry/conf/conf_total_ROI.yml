@@ -1,6 +1,6 @@
-    directory_dcm_out : "C:\\Users\\volon\\Desktop\\check"
+    directory_dcm_out : "C:\\Users\\volon\\Desktop\\resample_test\\mannheim"
 
-    directory_out : "C:\\Users\\volon\\Desktop\\output_1"
+    directory_out : "C:\\Users\\volon\\Desktop\\qui_nocrop"
 
     image_modality : "CT"
 
@@ -16,7 +16,7 @@
 
     flag_resampling: True #Flag for the resampling (True: resample, False: dot not resample)
 
-    flag_new_spacing: "min_global" #Flag to choose the spacing (min_global, mean_global, max_global,frequency,manual)
+    flag_new_spacing: "manual" #Flag to choose the spacing (min_global, mean_global, max_global,frequency, manual)
 
     new_spacing: [0.78125, 0.78125,2] #Insert the desired new spacing (during the resampling)
 
@@ -24,7 +24,7 @@
 
     N_jobs: 3 
 
-    resampler: sitkBSpline #choose the proper resampler
+    resampler: sitkBSpline #choose the proper resampler (e.g. sitkBSpline, sitkNearestNeighbor, sitkLinear)
 
     ID_problems : []
 

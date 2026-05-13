@@ -1,7 +1,7 @@
 Setting
 ===========
 
-After having followed the instructions described in :doc:`installation_procedure`, it comes a brief description of
+After having followed the instructions described in `installation_procedure`, it comes a brief description of
 how files should be organized and how to run the code used to extract the densitometric information.
 
 File organization
