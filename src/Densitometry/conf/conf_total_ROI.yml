@@ -1,8 +1,6 @@
-    directory_dcm_out : "C:\\Users\\volon\\Desktop\\resmip_pz"
-    #PZ MEDIASTINO PROB:
-    #['20240509080132977', '20240718184023147']
+    directory_dcm_out : "C:\\Users\\volon\\Desktop\\resample_test\\mannheim"
 
-    directory_out : "C:\\Users\\volon\\Desktop\\test_parallel"
+    directory_out : "C:\\Users\\volon\\Desktop\\qui_nocrop"
 
     image_modality : "CT"
 
@@ -15,11 +13,22 @@
     show_total_ROI_info : False  # True #
 
     save_total_ROI_info :  True #False  #
-    
-    # ID_problems : ["20240509080132977", "20240718184023147"]
+
+    flag_resampling: True #Flag for the resampling (True: resample, False: dot not resample)
+
+    flag_new_spacing: "manual" #Flag to choose the spacing (min_global, mean_global, max_global,frequency, manual)
+
+    new_spacing: [0.78125, 0.78125,2] #Insert the desired new spacing (during the resampling)
+
+    flag_parallel: False #Flag to manage parallelization (if True: insert manually N_jobs below, if False: N_jobs=1 automatically)
+
+    N_jobs: 3 
+
+    resampler: sitkBSpline #choose the proper resampler (e.g. sitkBSpline, sitkNearestNeighbor, sitkLinear)
+
     ID_problems : []
 
     rt_kind : 'MV_RQ'
-    # list_roi_no : ['CTV Mammella', 'CTV_Mammella', 'CTV Mamm', 'CTV', 'ctv', 'PTV Mammella', 'PTV_Mammella', 'PTV', 'ptv']
+
     list_roi : ['Heart']
-    # list_roi : ['pancreas', 'EG']    
+   
