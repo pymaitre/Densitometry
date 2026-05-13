@@ -225,7 +225,6 @@ def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFr
                                 
                 compare = histo.compare_histo_res(HU_ROI_res, counts_ROI_res, HU_ROI, counts_ROI, 
                                                     dir_compare_ct_res, ID, save_info_all)
-                #Free memory
 
                 return stats_df,None
 
