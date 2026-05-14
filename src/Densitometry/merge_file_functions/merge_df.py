@@ -24,7 +24,7 @@ def merge_db(directory:Path, show_merge:str, save_opt:str)->None:
     :param save_opt: if true, merged or dropped row's databases are saved.
     :type save_opt: str
     
-    return None
+    :return: None
     """
 
     #Settings
@@ -84,7 +84,8 @@ def read_db(directory:Path, show:bool)->pd.DataFrame:
     :param show: if true, all forms of databases are showed.
     :type show: bool
 
-    :return df: database read.
+    :return: database read
+    :rtype: pd.DataFrame
 
     """
     
@@ -130,7 +131,8 @@ def merge_column(df:pd.DataFrame, show:bool)->pd.DataFrame:
     :param show: if true, all forms of databases are showed.
     :type show: bool
 
-    :return df: database modified.   
+    :return: database modified.  
+    :rtype: pd.DataFrame 
 
     """
     
@@ -177,7 +179,8 @@ def match_column(df:pd.DataFrame)->list:
     :param df: database of which you want to find columns for merging.
     :type df: pd.DataFrame
 
-    :return found_cols: columns found for merging.
+    :return: columns found for merging.
+    :rtype: list
 
     """
     
@@ -225,7 +228,8 @@ def drop_columns(df:pd.DataFrame, show:bool)->pd.DataFrame:
     :param show: if true, all forms of databases are showed.
     :type show: bool
 
-    :return df: database without dropped columns.
+    :return: database without dropped columns.
+    :rtype: pd.DataFrame
     
     """
     #Columns
@@ -259,7 +263,7 @@ def drop_columns(df:pd.DataFrame, show:bool)->pd.DataFrame:
     return df
 
 
-def merge_df(df1:pd.DataFrame, df2:pd.DataFrame, show:bool):
+def merge_df(df1:pd.DataFrame, df2:pd.DataFrame, show:bool)->tuple[pd.DataFrame,pd.DataFrame,pd.DataFrame]:
     """
     This function permits to merge 2 databases.
 
@@ -270,7 +274,8 @@ def merge_df(df1:pd.DataFrame, df2:pd.DataFrame, show:bool):
     :param show: if true, all forms of databases are showed.
     :type show: bool
 
-    :return merged database and rows in df1 and df2 only.      
+    :return: merged database and rows in df1 and df2 only.      
+    :rtype: tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]
 
     """
     
@@ -339,7 +344,7 @@ def save_merge(df:pd.DataFrame, dropped_in_df1:pd.DataFrame, dropped_in_df2:pd.D
     :param save: if true, merged or dropped row's databases are saved.
     :type save: bool
     
-    return None
+    :return: None
     """
     #Save the merged dataset and the dropped rows
     if save:
@@ -369,7 +374,8 @@ def drop_pz(df_tot:pd.DataFrame, directory:Path, show:bool)->pd.DataFrame:
     :param show: if true, all forms of databases are showed.
     :type show: bool
 
-    :return df_tot: database whose rows you have dropped.
+    :return: database whose rows you have dropped.
+    :rtype: pd.DataFrame
     
     """
     
@@ -458,7 +464,8 @@ def search_col(df:pd.DataFrame, show:bool)->str:
     :param df: database of which you want to find column by name.
     :param show: if true, the column is showed.
 
-    :return column_found: column found.    
+    :return: column found.
+    :rtype: str    
     """
     
     #Search for a specific column
@@ -497,7 +504,8 @@ def search_value(df:pd.DataFrame, column_found:list)->str:
     :param df: database of which you want to find value by name.
     :param column_found: column of which you want to find a value.
 
-    :return value_tot: value found.   
+    :return: value found. 
+    :rtype: str 
     """
     
     #Search for a specific value

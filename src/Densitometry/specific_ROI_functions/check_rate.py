@@ -19,10 +19,8 @@ def rate_variable()->tuple[int,int,float]:
     """
     Function for inserting input HU and counts thresholds.
 
-    :return HU_min: minimum HU threshold.
-    :return HU_max: maximum HU threshold.
-    :return rate: rate thresholds beetween counts outside 
-                and counts inside the region of (HU_min, HU_max).
+    :return: minimum HU threshold, maximum HU threshold and rate thresholds beetween counts outside and counts inside the region of (HU_min, HU_max).
+    :rtype: tuple[int,int,float]
 
     """
 
@@ -34,19 +32,21 @@ def rate_variable()->tuple[int,int,float]:
     return HU_min, HU_max, rate
 
 
-def analyze_rate(HU, counts, HU_min, HU_max):
+def analyze_rate(HU: pd.Series, counts: pd.Series, HU_min: int, HU_max: int)->tuple[float, pd.Series, pd.Series]:
     """
     Function for evalueting HU and counts above thresholds.
 
     :param HU: HU from excel file, referred to entire region histogram.
+    :type HU: pd.Series
     :param counts: counts from excel file, referred to entire region histogram.
+    :type counts: pd.Series
     :param HU_min: minimum HU threshold.
+    :type HU_min: int
     :param HU_max: maximum HU threshold.
+    :type HU_max: int
 
-    :return diff: rate beetween parts of the histograms inside
-                and outside the HU thresholds
-    :return HU_rate: HU outside the region.
-    :return counts_rate: counts outside the region.    
+    :return: rate beetween parts of the histograms insideand outside the HU thresholds, HU outside the region and counts outside the region.  
+    :rtype: tuple[float, pd.Series, pd.Series]
     """
     
     coppie = {'HU': HU, 'Counts': counts}
@@ -71,7 +71,7 @@ def analyze_rate(HU, counts, HU_min, HU_max):
     return diff, HU_rate, counts_rate
     
 
-def check_rate(dir_files_fin, directory_out, rate_over_ROI):
+def check_rate(dir_files_fin: str, directory_out: str, rate_over_ROI: tuple[int,int,float])->None:
     """
     Here almost functions are called for all patients. Especially:
     - establishing thresholds;
@@ -84,8 +84,14 @@ def check_rate(dir_files_fin, directory_out, rate_over_ROI):
       region of the histogram.
 
     :param dir_files_fin: directory of all patients df with HU and counts.
+    :type dire_files_fin: str
     :param directory_out: the directory of analyses.
-    :param rate_over_ROI
+    :type directory_out: str
+    :param rate_over_ROI: tuple containing min_HU, max_HU and rate threshold for the ROI considered
+    :type rate_over_ROI: tuple[int,int,float]
+    
+    :return: None
+    
     """
 
     #if true save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.

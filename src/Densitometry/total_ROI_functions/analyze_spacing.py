@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-def read_spacing(df_py: pd.DataFrame, directory_out:Path, save_sp:bool):
+def read_spacing(df_py: pd.DataFrame, directory_out:Path, save_sp:bool)->tuple[float,float,float]:
     """
     Function that calls the database of header dicom where are stored
     all the voxel spacing values of each patient. It establishes the
@@ -27,9 +27,8 @@ def read_spacing(df_py: pd.DataFrame, directory_out:Path, save_sp:bool):
                 if false, shows them.
     :type save_sp:bool
 
-    :return new_x: more present value of coordinate x of voxel spacing
-    :return new_y: more present value of coordinate y of voxel spacing
-    :return new_z: more present value of coordinate z of voxel spacing
+    :return: more present (x,y,z) voxel spacing
+    :rtype: tuple[float,float,float]
 
     """
     
@@ -45,20 +44,26 @@ def read_spacing(df_py: pd.DataFrame, directory_out:Path, save_sp:bool):
 
     return new_x, new_y, new_z
     
-def histo_spacing(coordinata, directory_out, name, n_size, save_sp):
+def histo_spacing(coordinata: pd.Series, directory_out: Path, name: str, n_size: float, save_sp: bool)->float:
     """
     Here are showed or saved the distributions of coordinate
     of the voxel spacing.
 
     :param coordinata: column of header's database with the list of coordinates.
+    :type coordinata: pd.Series
     :param directory_out: the directory of analyses.
+    :type directory_out: Path
     :param name: title of histogram and file.
+    :type name: str
     :param n_size: bin size of histogram.
+    :type n_size: float
     :param save_sp: if true, saves the histogram plots of each coordinate
                 of voxel spacing distribution;
                 if false, shows them.
-
+    :type save_sp:bool
+    
     :return co_mas_in: more present coordinate.
+    :rtype co_mas_in: float
     """
   
     
@@ -112,7 +117,8 @@ def find_global_scale(df_py: pd.DataFrame,flag_new_spacing:bool)->np.array:
     :param flag_new_spacing: flag to choose the global spacing (min_global, mean_global and max_global)
     :type flag_new_spacing: bool
     
-    :return new_scale: voxel spacing given by min_x, min_y and min_z
+    :return: voxel spacing given by min_x, min_y and min_z (or mean or max)
+    :rtype: np.array
     
     """
     if flag_new_spacing=="min_global":

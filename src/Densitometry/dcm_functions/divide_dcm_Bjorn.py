@@ -27,7 +27,7 @@ def divide_dcm(directory_in:Path, directory_out:Path, divide=False, mode=False)-
     :param mode: set False uses prog_count while mode=True uses ct_sorted
     :param mode: Bool
     
-    return None
+    :return: None
     """
     
     mod_vec = 'CT'
@@ -126,7 +126,8 @@ def prog_count(counter:np.array, ID_dir:Path, RS_dir:Path, Altro_dir:Path, modal
     :param file_path: path of the file
     :type file_path: Path
     
-    return counter: array with counts
+    :return: array with counts
+    :rtype: np.array
     
     """
     
@@ -191,7 +192,8 @@ def ct_sorted(counter:np.array, imm_dir:Path, RS_dir:Path, Altro_dir:Path, modal
     :param index: index for RTSTRUCT
     :type index: str
     
-    return counter: array with counts
+    :return: array with counts
+    :rtype: np.array
     
     """
     

@@ -24,7 +24,8 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str)->pd.DataFrame:
     :param imm_mod: modality of image
     :type imm_mod: str
 
-    :return df: database of headers information.
+    :return: Database of headers information.
+    :rtype: pd.DataFrame
 
     """
     
@@ -107,14 +108,15 @@ def find_ct_info_input(directory:Path, directory_out:str, excel_name:str)->pd.Da
     Create a dataframe reading a slice header of all CTs.
     It will contains ID, Name, Age, Modality, Path and number of files
     
-    :param directory: the directory of organized dcm.
+    :param directory: the directory of organized dcm
     :type directory: Path
-    :param directory_out: the directory of analyses.
+    :param directory_out: the directory of analyses
     :type directory_out: str
     :param excel_name: name of the dataset
     :type excel_name: str
 
-    :return df: database of headers information.
+    :return: database of headers information
+    :rtype: pd.DataFrame
     
     """
     

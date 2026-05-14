@@ -34,6 +34,7 @@ class RTStructure:
         Transform the SimpleITK mask to numpy array.
 
         :return: numpy array of shape=(z_length, y_length, x_length) and dtype=uint8.
+        :rtype: np.ndarray
         """
         return sitk.GetArrayFromImage(sitk.Cast(self.mask, sitk.sitkUInt8))
 
@@ -43,7 +44,10 @@ def read_dicom_image(image_path: Union[str, Path]) -> sitk.Image:
     Wrapper function for platipy's read_dicom_image.
 
     :param image_path: Path to the DICOM series to read (str|Path)
+    :type image_path: Union[str, Path]
+    
     :return: The 3D image as a SimpleITK Image (sitk.Image)
+    :rtype: sitk.Image
     """
     return rtstruct_to_nifti.read_dicom_image(image_path)
 

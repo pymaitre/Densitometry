@@ -19,9 +19,8 @@ def just_variable()->tuple[int,int,int]:
     """
     Function for inserting input HU and counts thresholds.
 
-    :return HU_min: minimum HU threshold.
-    :return HU_max: maximum HU threshold.
-    :return min_counts: minimum counts threshold.
+    :return: minimum HU threshold, maximum HU threshold and minimum counts threshold.
+    :rtype: tuple[int,int,int]
 
     """
 
@@ -34,18 +33,23 @@ def just_variable()->tuple[int,int,int]:
     return HU_min, HU_max, min_counts
 
 
-def justified(HU, counts, HU_min, HU_max, min_counts):
+def justified(HU: pd.Series, counts: pd.Series, HU_min:int , HU_max: int, min_counts:int)->tuple[pd.Series, pd.Series]:
     """
     Function for evalueting HU and counts above thresholds.
 
     :param HU: HU from excel file, referred to entire region histogram.
+    :type HU: pd.Series
     :param counts: counts from excel file, referred to entire region histogram.
+    :type counts: pd.Series
     :param HU_min: minimum HU threshold.
+    :type HU_min: int
     :param HU_max: maximum HU threshold.
+    :type HU_max: int
     :param min_counts: minimum counts threshold.
+    :type min_counts: int
 
-    :return HU_just: HU beetween thresholds.
-    :return counts_just: counts above threshold.    
+    :return: HU beetween thresholds and counts above threshold. 
+    :rtype: tuple[pd.Series, pd.Series]   
     """
     
     coppie = {'HU': HU, 'Counts': counts}
@@ -61,7 +65,7 @@ def justified(HU, counts, HU_min, HU_max, min_counts):
     return HU_just, counts_just
 
 
-def histo_just(dir_files_fin, directory_out, delimiter):
+def histo_just(dir_files_fin: str, directory_out: str, delimiter: tuple[int,int,int])->None:
     """
     Here almost functions are called for all patients. Especially:
     - establishing thresholds;
@@ -74,8 +78,13 @@ def histo_just(dir_files_fin, directory_out, delimiter):
       region of the histogram.
 
     :param dir_files_fin: directory of all patients df with HU and counts.
+    :type dir_files_fin: str
     :param directory_out: the directory of analyses.
-    :param delimiter
+    :type directory_out: str
+    :param delimiter: tuple with min_HU, max_HU and min_counts
+    :type delimiter: tuple[int,int,int]
+    
+    :return: None
     """
 
     #if true save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.

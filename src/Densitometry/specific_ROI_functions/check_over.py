@@ -17,8 +17,8 @@ def over_variable()->tuple[int, int]:
     """
     Function for inserting input HU and counts thresholds.
 
-    :return HU_min: minimum HU threshold.
-    :return min_counts: minimum counts threshold.
+    :return: minimum HU threshold and minimum counts threshold.
+    :rtype: tuple[int,int]
     
     """
 
@@ -29,18 +29,21 @@ def over_variable()->tuple[int, int]:
     return HU_min, min_counts
 
 
-def over_HU_counts(HU, counts, HU_min, min_counts):
+def over_HU_counts(HU:pd.Series, counts:pd.Series, HU_min:int, min_counts:int)->tuple[pd.Series,pd.Series]:
     """
     Function for evalueting HU and counts above thresholds.
 
-    :param HU: HU from excel file, referred to entire region histogram.
-    :param counts: counts from excel file, referred to entire region histogram.
+    :param HU: HU from Excel file, referred to entire region histogram.
+    :type HU: pd.Series
+    :param counts: counts from Excel file, referred to entire region histogram.
+    :type counts: pd.Series
     :param HU_min: minimum HU threshold.
+    :type HU_min: int
     :param min_counts: minimum counts threshold.
+    :type min_counts: int
 
-    :return new_x: more present value of coordinate x of voxel spacing
-    :return new_y: more present value of coordinate y of voxel spacing
-    :return new_z: more present value of coordinate z of voxel spacing
+    :return: HU beetween thresholds and the counts above threshold. 
+    :rtype: tuple[pd.Series,pd.Series]
     """
     
     coppie = {'HU': HU, 'Counts': counts}
@@ -56,7 +59,7 @@ def over_HU_counts(HU, counts, HU_min, min_counts):
     return HU_over, counts_over
 
 
-def check_over(dir_files_fin, directory_out, delimiter_over_ROI)->None:
+def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple[int,int])->None:
     """
     Here almost functions are called for all patients. Especially:
     - establishing thresholds;
@@ -69,10 +72,12 @@ def check_over(dir_files_fin, directory_out, delimiter_over_ROI)->None:
       region of the histogram.
 
     :param dir_files_fin: directory of all patients df with HU and counts.
+    :type dir_files_fin: str
     :param directory_out: the directory of analyses.
-    :param delimiter_over_ROI
+    :type directory_out: str
+    :param delimiter_over_ROI: tuple with min HU and min counts of threshold for the ROI
 
-    return None
+    :return: None
     """
 
     #save_over: if true save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.

@@ -1,8 +1,8 @@
-    directory_dcm_out : "C:\\Users\\volon\\Desktop\\resample_test\\tedeschi"
+    directory_dcm_out : "C:\\Users\\volon\\Desktop\\resample_test\\tedeschi" #input directory
 
-    directory_out : "C:\\Users\\volon\\Desktop\\check_spacing\\resample_BSpline\\resample_mean_glob\\Densitometry_Heart_tedeschi"
+    directory_out : "C:\\Users\\volon\\Desktop\\check_spacing\\resample_BSpline\\resample_mean_glob\\Densitometry_Heart_tedeschi" #output directory
 
-    image_modality : "CT"
+    image_modality : "CT" #Image modality
 
     save_spacing_histo :  True  #False #
 
@@ -22,13 +22,13 @@
 
     flag_parallel: False #Flag to manage parallelization (if True: insert manually N_jobs below, if False: N_jobs=1 automatically)
 
-    N_jobs: 3 
+    N_jobs: 3 #Number of jobs used during parallelization
 
     resampler: sitkBSpline #choose the proper resampler (e.g. sitkBSpline, sitkNearestNeighbor, sitkLinear)
 
-    ID_problems : []
+    ID_problems : [] #List of IDs with known problems
 
-    rt_kind : 'MV_RQ'
+    rt_kind : 'MV_RQ' #Type of RT 
 
-    list_roi : ['Heart']
+    list_roi : ['Heart'] #List of ROIs to be analysed
    

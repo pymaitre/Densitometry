@@ -30,8 +30,8 @@ def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:st
     :param rt_kind: type of RT
     :type rt_kind: str
 
-    :return df_ROI: database of ROI for each patient.
-    :return df_counts: database of ROI's counts.
+    :return: database of ROI for each patient and database of ROI's counts.
+    :rtype: tuple[pd.DataFrame, pd.DataFrame]
     """
     
     try:

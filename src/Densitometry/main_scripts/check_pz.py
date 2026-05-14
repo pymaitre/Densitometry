@@ -5,14 +5,15 @@ import glob
 
 
 def find_id_dir(directory:Path)->list:
+    
         """
         Find all ID directories
         
         :param directory: input folder
         :type directory: Path
         
-        return id_dirs: list of ID directories
-        :rtype id_dirs: list
+        :return: list of ID directories
+        :rtype: list
         
         """
         
