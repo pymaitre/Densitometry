@@ -1,6 +1,6 @@
-    directory_dcm_out : "C:\\Users\\volon\\Desktop\\resample_test\\mannheim"
+    directory_dcm_out : "C:\\Users\\volon\\Desktop\\resample_test\\tedeschi"
 
-    directory_out : "C:\\Users\\volon\\Desktop\\qui_nocrop"
+    directory_out : "C:\\Users\\volon\\Desktop\\check_spacing\\resample_BSpline\\resample_mean_glob\\Densitometry_Heart_tedeschi"
 
     image_modality : "CT"
 
@@ -18,7 +18,7 @@
 
     flag_new_spacing: "manual" #Flag to choose the spacing (min_global, mean_global, max_global,frequency, manual)
 
-    new_spacing: [0.78125, 0.78125,2] #Insert the desired new spacing (during the resampling)
+    new_spacing: [1.074743845, 1.074743845,4.391967871] #Insert the desired new spacing (during the resampling)
 
     flag_parallel: False #Flag to manage parallelization (if True: insert manually N_jobs below, if False: N_jobs=1 automatically)
 

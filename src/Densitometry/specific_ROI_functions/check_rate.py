@@ -2,7 +2,7 @@
 Module for: 
 - reading excel files referred to patients entire region histograms;
 - looking for HU and relatives counts;
-- evalueting statistic features referred to a specific 
+- evaluating statistic features referred to a specific 
   region of the histogram below minimum and above maximum 
   HU thresholds and above rate threshold beetween counts of
   the part outside and inside this region of HU.
