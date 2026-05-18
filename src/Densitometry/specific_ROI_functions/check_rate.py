@@ -2,7 +2,7 @@
 Module for: 
 - reading excel files referred to patients entire region histograms;
 - looking for HU and relatives counts;
-- evalueting statistic features referred to a specific 
+- evaluating statistic features referred to a specific 
   region of the histogram below minimum and above maximum 
   HU thresholds and above rate threshold beetween counts of
   the part outside and inside this region of HU.
@@ -19,10 +19,8 @@ def rate_variable()->tuple[int,int,float]:
     """
     Function for inserting input HU and counts thresholds.
 
-    :return HU_min: minimum HU threshold.
-    :return HU_max: maximum HU threshold.
-    :return rate: rate thresholds beetween counts outside 
-                and counts inside the region of (HU_min, HU_max).
+    :return: minimum HU threshold, maximum HU threshold and rate thresholds beetween counts outside and counts inside the region of (HU_min, HU_max).
+    :rtype: tuple[int,int,float]
 
     """
 
@@ -34,25 +32,27 @@ def rate_variable()->tuple[int,int,float]:
     return HU_min, HU_max, rate
 
 
-def analyze_rate(HU, counts, HU_min, HU_max):
+def analyze_rate(HU: pd.Series, counts: pd.Series, HU_min: int, HU_max: int)->tuple[float, pd.Series, pd.Series]:
     """
     Function for evalueting HU and counts above thresholds.
 
     :param HU: HU from excel file, referred to entire region histogram.
+    :type HU: pd.Series
     :param counts: counts from excel file, referred to entire region histogram.
+    :type counts: pd.Series
     :param HU_min: minimum HU threshold.
+    :type HU_min: int
     :param HU_max: maximum HU threshold.
+    :type HU_max: int
 
-    :return diff: rate beetween parts of the histograms inside
-                and outside the HU thresholds
-    :return HU_rate: HU outside the region.
-    :return counts_rate: counts outside the region.    
+    :return: rate beetween parts of the histograms insideand outside the HU thresholds, HU outside the region and counts outside the region.  
+    :rtype: tuple[float, pd.Series, pd.Series]
     """
     
     coppie = {'HU': HU, 'Counts': counts}
     df = pd.DataFrame(coppie)
-    # display(df)
 
+    #Rates
     under_threshold = df[ (df["HU"] >= HU_min) & (df["HU"] <= HU_max)]
     above_threshold = pd.concat( [df[ (df["HU"] < HU_min) ], df[ (df["HU"] > HU_max) ]])
     
@@ -71,7 +71,7 @@ def analyze_rate(HU, counts, HU_min, HU_max):
     return diff, HU_rate, counts_rate
     
 
-def check_rate(dir_files_fin, directory_out, rate_over_ROI):
+def check_rate(dir_files_fin: str, directory_out: str, rate_over_ROI: tuple[int,int,float])->None:
     """
     Here almost functions are called for all patients. Especially:
     - establishing thresholds;
@@ -84,18 +84,23 @@ def check_rate(dir_files_fin, directory_out, rate_over_ROI):
       region of the histogram.
 
     :param dir_files_fin: directory of all patients df with HU and counts.
+    :type dire_files_fin: str
     :param directory_out: the directory of analyses.
-    :param rate_over_ROI
+    :type directory_out: str
+    :param rate_over_ROI: tuple containing min_HU, max_HU and rate threshold for the ROI considered
+    :type rate_over_ROI: tuple[int,int,float]
+    
+    :return: None
+    
     """
 
-    #if true save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
+    #if True save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
     save_rate=True        
         
     print("The saving variable is set on: ", save_rate)
     print("")
 
 
-    # HU_min, HU_max, rate = rate_variable()
     HU_min, HU_max, rate = rate_over_ROI[0], rate_over_ROI[1]
     pz_rate = []
     more_patient_stats_df_rate = pd.DataFrame()
@@ -104,20 +109,20 @@ def check_rate(dir_files_fin, directory_out, rate_over_ROI):
 
     for diff_file in diff_files:
         name = Path(diff_file).name
-        # print(name)
+
         ID = re.sub(".xlsx", "", name)
         print("I analyze the patient: ", ID)
         df = pd.read_excel(diff_file, header=0, names=["HU", "Counts"])
 
         HU_ROI = df["HU"]
         counts_ROI = df["Counts"]
-        # print(HU_ROI, counts_ROI)
 
+        #Study the rate
         diff, HU_rate, counts_rate = analyze_rate(HU_ROI, counts_ROI, HU_min, HU_max)
-        # print(HU_over)
 
         if diff > (rate/100.):       
             
+            #Store information
             print("You have caught a patient who has significant components in the indicated region.")
             pz_rate.append(ID)
             print("")  
@@ -144,7 +149,6 @@ def check_rate(dir_files_fin, directory_out, rate_over_ROI):
         else:
             print("")
             print("I print the database with the densitometric features of the histograms of the region of interest.")
-            # display(more_patient_stats_df_rate)
 
     else:
         print("There are no patients with components in the indicated region.")   

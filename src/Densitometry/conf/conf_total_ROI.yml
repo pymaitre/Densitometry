@@ -1,8 +1,8 @@
-    directory_dcm_out : "C:\\Users\\volon\\Desktop\\resample_test\\mannheim"
+    directory_dcm_out : "C:\\Users\\volon\\Desktop\\test" #input directory
 
-    directory_out : "C:\\Users\\volon\\Desktop\\qui_nocrop"
+    directory_out : "C:\\Users\\volon\\Desktop\\test_out" #output directory
 
-    image_modality : "CT"
+    image_modality : "CT" #Image modality
 
     save_spacing_histo :  True  #False #
 
@@ -18,17 +18,17 @@
 
     flag_new_spacing: "manual" #Flag to choose the spacing (min_global, mean_global, max_global,frequency, manual)
 
-    new_spacing: [0.78125, 0.78125,2] #Insert the desired new spacing (during the resampling)
+    new_spacing: [1.074743845, 1.074743845,4.391967871] #Insert the desired new spacing (during the resampling)
 
     flag_parallel: False #Flag to manage parallelization (if True: insert manually N_jobs below, if False: N_jobs=1 automatically)
 
-    N_jobs: 3 
+    N_jobs: 3 #Number of jobs used during parallelization
 
     resampler: sitkBSpline #choose the proper resampler (e.g. sitkBSpline, sitkNearestNeighbor, sitkLinear)
 
-    ID_problems : []
+    ID_problems : [] #List of IDs with known problems
 
-    rt_kind : 'MV_RQ'
+    rt_kind : 'MV_RQ' #Type of RT 
 
-    list_roi : ['Heart']
+    list_roi : ['Heart'] #List of ROIs to be analysed
    

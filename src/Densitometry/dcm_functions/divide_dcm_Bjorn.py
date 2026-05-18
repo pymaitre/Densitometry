@@ -27,7 +27,7 @@ def divide_dcm(directory_in:Path, directory_out:Path, divide=False, mode=False)-
     :param mode: set False uses prog_count while mode=True uses ct_sorted
     :param mode: Bool
     
-    return None
+    :return: None
     """
     
     mod_vec = 'CT'
@@ -41,6 +41,7 @@ def divide_dcm(directory_in:Path, directory_out:Path, divide=False, mode=False)-
         for file in files:
             file_path = os.path.join(root, file)
             
+            #Read dcm and extract modality
             dcm = pydicom.dcmread(file_path)
             modality = dcm["Modality"].value
                        
@@ -55,23 +56,26 @@ def divide_dcm(directory_in:Path, directory_out:Path, divide=False, mode=False)-
                 thisdict['uid'] = [UID]
                 thisdict['count_uid'] = 1
                 index_uid = 1
-                #thisdict['count_ct'].append([1])
                 array_dict.append(thisdict)
-                #print(array_dict)
+                
             else:
                 index_ID = [index for index, item in enumerate(array_dict) if item.get('id_num') == ID]
+                
+                #Check ID 
                 if len(index_ID) > 1:
-                    #print(index_ID)
+                   
                     print('Error! There are more than two elements with the same ID in the array of dictionaries.')
                     break
                 occurrences_uid = array_dict[index_ID[0]]['uid'].count(UID)
+                
+                #Update UID count
                 if occurrences_uid == 0:
                     array_dict[index_ID[0]]['uid'].append(UID)
                     index_uid = array_dict[index_ID[0]]['uid'].index(UID) + 1
                     array_dict[index_ID[0]]['count_uid'] += 1
-                    #array_dict[index_ID]['count_ct'].append([1])
+                    
                                        
-            #print(thisdict)
+            
             #Create folders
             ID_dir = Path(directory_out) / ID 
             Path(ID_dir).mkdir(parents=True, exist_ok=True)
@@ -86,7 +90,7 @@ def divide_dcm(directory_in:Path, directory_out:Path, divide=False, mode=False)-
             Altro_dir=Path(n_imm) / 'ALTRO'
             Path(Altro_dir).mkdir(parents=True, exist_ok=True)
             
-            #print(counter)
+            #Counter
             if not mode:
                 temp = prog_count(counter, imm_dir, RS_dir, Altro_dir, modality, file, file_path, index_uid)
                 counter = temp
@@ -126,43 +130,44 @@ def prog_count(counter:np.array, ID_dir:Path, RS_dir:Path, Altro_dir:Path, modal
     :param file_path: path of the file
     :type file_path: Path
     
-    return counter: array with counts
+    :return: array with counts
+    :rtype: np.array
     
     """
-    
+    #CT
     if modality == "CT":
         temp = "CT_"+str(counter[0])+".dcm"
         folder = ID_dir / temp
         shutil.copy(file_path, folder)
         counter[0]+=1
-
+    #MR
     if modality == "MR":
         temp = "MR_"+str(counter[0])+".dcm"
         folder = ID_dir / temp
         shutil.copy(file_path, folder)
         counter[0]+=1 
-    
+    #RTSTRUCT
     if modality == "RTSTRUCT":
         temp = "RS_"+str(counter[1])+".dcm"
         folder = RS_dir / temp
         shutil.copy(file_path, folder)
         counter[1]+=1
                     
-    
+    #RTDOSE
     if modality == "RTDOSE":
         temp = "RD_"+str(counter[1])
         folder = Altro_dir/ temp            
         shutil.copy(file_path, folder)
         counter[1]+=1
                    
-    
+    #RTPLAN
     if modality == "RTPLAN":
         temp = "RP_"+str(counter[1])
         folder = Altro_dir/ temp
         shutil.copy(file_path, folder)
         counter[1]+=1
                    
-                    
+    #RAW              
     if modality == "RAW":  
         temp = "RAW_"+str(counter[1])
         folder = Altro_dir/ temp
@@ -191,52 +196,45 @@ def ct_sorted(counter:np.array, imm_dir:Path, RS_dir:Path, Altro_dir:Path, modal
     :param index: index for RTSTRUCT
     :type index: str
     
-    return counter: array with counts
+    :return: array with counts
+    :rtype: np.array
     
     """
     
-    #if modality == "CT":
-    #    if file[34]=='.':
-    #        temp = "CT_"+str(file[33])
-    #    else:
-    #        temp = "CT_"+str(file[33])+str(file[34])
-    #    folder = ID_dir / temp
-    #    shutil.copy(file_path, folder)
-    #    counter[0]+=1
-
+    #CT
     if modality == "CT":
         dcm = pydicom.dcmread(file_path)
         temp = "CT_"+str(dcm.InstanceNumber)
         folder = imm_dir / temp
         shutil.copy(file_path, folder)      
-
+    #MR
     if modality == "MR":
         dcm = pydicom.dcmread(file_path)
         temp = "MR_"+str(dcm.InstanceNumber)
         folder = imm_dir / temp
         shutil.copy(file_path, folder)      
 
-    
+    #RTSTRUCT
     if modality == "RTSTRUCT":
         temp = "RS_"+str(index)
         folder = RS_dir / temp
         shutil.copy(file_path, folder)
                     
-    
+    #RTDOSE
     if modality == "RTDOSE":
         temp = "RD_"+str(counter[1])
         folder = Altro_dir/ temp            
         shutil.copy(file_path, folder)
         counter[1]+=1
                    
-    
+    #RTPLAN
     if modality == "RTPLAN":
         temp = "RP_"+str(counter[1])
         folder = Altro_dir/ temp
         shutil.copy(file_path, folder)
         counter[1]+=1
                    
-                    
+    #RAW                    
     if modality == "RAW":  
         temp = "RAW_"+str(counter[1])
         folder = Altro_dir/ temp

@@ -13,6 +13,7 @@ Index of documentation
 
    installation_procedure
    setting
+   Densitometry
    
 
 

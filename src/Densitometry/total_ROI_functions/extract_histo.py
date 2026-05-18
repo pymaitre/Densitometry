@@ -29,8 +29,10 @@ def features_ROI(ID, HU_ROI, counts_ROI, sp, ROI_name,
     :return stats_df: statistical features extracted for each patient.
     """
 
+    #Size of the histogram
     n_size=1
     
+    #Create histogram
     HU_histo, counts_histo, stats_df = make_histo(HU_ROI, counts_ROI, n_size, sp, ROI_name, dir_histo, f"{ID}", save)    
     diff_file = make_file(HU_histo, counts_histo, dir_files, f"{ID}", save)
 
@@ -54,6 +56,7 @@ def make_histo(HU_ROI_no_nan, counts_ROI_no_nan, n_size, sp, ROI_name, save_path
     :return stats_df: statistical features extracted for each patient.   
     """
     
+    #Create histogram plot
     min_HU = min(HU_ROI_no_nan)
     max_HU = max(HU_ROI_no_nan)
     min_counts = min(counts_ROI_no_nan)
@@ -72,7 +75,7 @@ def make_histo(HU_ROI_no_nan, counts_ROI_no_nan, n_size, sp, ROI_name, save_path
     patient_ID = re.sub("Histo_CT_", "", name)
     patient_ID = re.sub(".xlsx", "", patient_ID)
     patient_ID = re.sub("_Justified", "", patient_ID)
-    # print(patient_ID)
+
     region = save_path.parent.name
     stats_df = calculate_and_save_statistics(patient_ID, region, weighted_values, sp, ROI_name)
     
@@ -112,7 +115,7 @@ def make_file(HU, count, save_path, name, save=False):
     """
     
     HU_file = pd.Series(HU, name="HU")
-    # print(HU)
+
     counts_file = pd.Series(count, name="Counts")
     df = pd.concat([HU_file, counts_file], axis=1)
     
@@ -133,6 +136,7 @@ def plot_stat(data):
     :param data: array of all HU values, equal to each value for its counts.
     """
     
+    #Plot the statistical features on the histogram 
     mean = np.mean(data)
     median = np.median(data)
     unique_values, unique_counts = np.unique(data, return_counts=True)
@@ -159,6 +163,8 @@ def calculate_and_save_statistics(histo_name, region, data, sp, ROI_name):
     :return stats_df: statistical features extracted for each patient.       
     """
 
+    
+    #Statistical features to be computed
     mini = min(data)
     massi = max(data)
     prova = np.array(data)
@@ -169,7 +175,6 @@ def calculate_and_save_statistics(histo_name, region, data, sp, ROI_name):
     max_count_index = np.argmax(unique_counts)
     max_count_value = unique_counts[max_count_index]
     max_count_hu = unique_values[max_count_index]
-#         mode = st.mode(data)
     mode = max_count_hu
     tot_counts = np.sum(unique_counts)
     volume = tot_counts * (sp[0] * sp[1] * sp[2])
@@ -207,8 +212,7 @@ def calculate_and_save_statistics(histo_name, region, data, sp, ROI_name):
     }
 
     stats_df = pd.DataFrame(stats_data, index=[0])
-    # display(stats_df)
-    
+
     return stats_df
     
 
@@ -229,6 +233,7 @@ def compare_histo_res(HU_ROI_res, counts_ROI_res, HU_ROI, counts_ROI, save_path,
     
     """
 
+    #Compare histograms (original and resampled) in semi-log scale
     n_size = 1
     
     fig, ax = plt.subplots(figsize=(8,6))
@@ -274,5 +279,4 @@ def extract_hist(HU, counts, n_size, color, label):
     """
     
     bin_edges = np.arange(min(HU), max(HU) + 2*n_size, n_size)
-    # print(HU.shape, counts.shape, bin_edges.shape)
     plt.hist(HU, bins=bin_edges, weights=counts, align='left', color=color, label=label)

@@ -24,7 +24,8 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str)->pd.DataFrame:
     :param imm_mod: modality of image
     :type imm_mod: str
 
-    :return df: database of headers information.
+    :return: Database of headers information.
+    :rtype: pd.DataFrame
 
     """
     
@@ -36,7 +37,6 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str)->pd.DataFrame:
         #Check if patient file has been already created
         df = pd.read_excel(py_patient_file)
         print("The dataframe with all headers information is in: ", py_patient_file)
-        # display(df)
     
     except:
         
@@ -51,12 +51,10 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str)->pd.DataFrame:
                     if str(file).lower().endswith(".dcm"):
                         file_path = os.path.join(root, file)
                         dcm = pydicom.dcmread(file_path, force=True)
-                        # print(dcm)
                         modality = dcm["Modality"].value
 
                         #Check if the modality is the same
                         if modality == str(imm_mod): 
-                        # try:
 
                             #Extract name, ID and age
                             patient_id = dcm.PatientID
@@ -85,14 +83,11 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str)->pd.DataFrame:
                             break
                 except Exception as e:
                     print(f"Error reading DICOM file {file}: {str(e)}")
-                    # continue
-                # break            
-                #break
-            #break
+                    
         
         #Generate the dataset
         df = pd.DataFrame(data, columns=["PatientID", "PatientName", "PatientAge", "VoxelSpacingX", "VoxelSpacingY", "VoxelSpacingZ", "Path"])
-        # print(df["Path"])
+        
     
         with pd.ExcelWriter(py_patient_file) as writer:
             df.to_excel(writer, index=False)
@@ -107,14 +102,15 @@ def find_ct_info_input(directory:Path, directory_out:str, excel_name:str)->pd.Da
     Create a dataframe reading a slice header of all CTs.
     It will contains ID, Name, Age, Modality, Path and number of files
     
-    :param directory: the directory of organized dcm.
+    :param directory: the directory of organized dcm
     :type directory: Path
-    :param directory_out: the directory of analyses.
+    :param directory_out: the directory of analyses
     :type directory_out: str
     :param excel_name: name of the dataset
     :type excel_name: str
 
-    :return df: database of headers information.
+    :return: database of headers information
+    :rtype: pd.DataFrame
     
     """
     
@@ -125,7 +121,7 @@ def find_ct_info_input(directory:Path, directory_out:str, excel_name:str)->pd.Da
         #File already exists
         df = pd.read_excel(py_patient_file)
         print("The dataframe with all headers information is in: ", py_patient_file)
-        # display(df)
+        
     
     except:
         
@@ -141,7 +137,7 @@ def find_ct_info_input(directory:Path, directory_out:str, excel_name:str)->pd.Da
                 if str(file).lower().endswith(".dcm"):
                     try:
                         dcm = pydicom.dcmread(file_path)
-                        # print(dcm)
+                        
                         #Modality
                         modality = dcm["Modality"].value
                 
@@ -167,14 +163,14 @@ def find_ct_info_input(directory:Path, directory_out:str, excel_name:str)->pd.Da
                         break            
                     except Exception as f:
                         print(f"Error reading DICOM file {file}: {str(f)}")
-                #break
+                
             
-            #break
+        
         
         #Generate the datase
         df = pd.DataFrame(data, columns=["PatientID", "PatientName", "PatientAge", "Modality", "Path", "n°_files"])
         df.sort_values(by=['PatientID'], inplace=True)
-        # print(df["Path"])
+        
         
         
         #Save the dataset
