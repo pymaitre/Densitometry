@@ -186,7 +186,6 @@ def match_column(df:pd.DataFrame)->list:
     
     #Columns
     print("The columns names are:")
-    # print(df.columns.str.strip().str.lower())
     print(df.columns)
 
     print("")
@@ -204,7 +203,7 @@ def match_column(df:pd.DataFrame)->list:
                 for column in df.columns:
                     if col in column.strip():
                         found.append(column)
-                        # break
+                        
                 print("")
                 print("I found these columns: ", found)
                    
@@ -378,9 +377,6 @@ def drop_pz(df_tot:pd.DataFrame, directory:Path, show:bool)->pd.DataFrame:
     :rtype: pd.DataFrame
     
     """
-    
-    # ['BERTOGLIO, ALDINA' , 'SIGNORELLI, PAOLA' , 'MANINCHEDDA, SILVANA' , 'GOMES, IZABEL CRISTINA', 'SALA, PAOLA']
-    # ['70263936', '70102927', '70362000', 50242541, 12484472]
     
     #Drop dataset rows
     print("")

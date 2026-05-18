@@ -1,4 +1,3 @@
-#requirements: numpy, pandas, openpyxl, SimpleITK, pydicom, platipy
 import matplotlib
 matplotlib.use("Agg")
 import time
@@ -7,16 +6,10 @@ from pathlib import Path
 import numpy as np
 import os
 import sys
-# path_func = Path(Path(os.getcwd()).parent.parent.parent)
-# sys.path.append(str(path_func) )
-
 import argparse
 import yaml
-
 from Densitometry.other_functions import rtv_configuration_file
-
 from Densitometry.dcm_functions import analyze_dcm as info_dcm
-
 from Densitometry.total_ROI_functions import analyze_spacing as sp
 from Densitometry.total_ROI_functions import analyze_ROI as ROI
 from Densitometry.total_ROI_functions import total as tot
@@ -26,6 +19,8 @@ from Densitometry.total_ROI_functions import total as tot
 def main(conf):
     
     start_time = time.time()
+    
+    #Read the configuration file
     
     # conf = rtv_configuration_file("conf_total_ROI", save=False)
 
@@ -98,7 +93,7 @@ def main(conf):
         ID_problems = conf['ID_problems']
         
         if save_ROI:
-            #if True create db with all patient's ROI and relative counts
+            #If True create db with all patient's ROI and relative counts
             df_ROI, df_counts = ROI.all_ROI(df_py, ID_problems, directory_out, rt_kind)          
             print("")
         else:
@@ -134,7 +129,7 @@ def main(conf):
         ID_problems = conf['ID_problems']
         
         if save_ROI:
-            #if True create db with all patient's ROI and relative counts
+            #If True create db with all patient's ROI and relative counts
             df_ROI, df_counts = ROI.all_ROI(df_py, ID_problems, directory_out, rt_kind) #QUI          
             print("")
         else:

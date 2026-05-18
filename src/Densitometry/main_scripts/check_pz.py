@@ -24,7 +24,6 @@ def find_id_dir(directory:Path)->list:
         id_dirs = []
         for folder in folders:
             id_dirs.append(os.path.basename(folder))
-            # break
 
         return id_dirs
 

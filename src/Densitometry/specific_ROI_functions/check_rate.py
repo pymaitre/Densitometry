@@ -51,8 +51,8 @@ def analyze_rate(HU: pd.Series, counts: pd.Series, HU_min: int, HU_max: int)->tu
     
     coppie = {'HU': HU, 'Counts': counts}
     df = pd.DataFrame(coppie)
-    # display(df)
 
+    #Rates
     under_threshold = df[ (df["HU"] >= HU_min) & (df["HU"] <= HU_max)]
     above_threshold = pd.concat( [df[ (df["HU"] < HU_min) ], df[ (df["HU"] > HU_max) ]])
     
@@ -94,14 +94,13 @@ def check_rate(dir_files_fin: str, directory_out: str, rate_over_ROI: tuple[int,
     
     """
 
-    #if true save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
+    #if True save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
     save_rate=True        
         
     print("The saving variable is set on: ", save_rate)
     print("")
 
 
-    # HU_min, HU_max, rate = rate_variable()
     HU_min, HU_max, rate = rate_over_ROI[0], rate_over_ROI[1]
     pz_rate = []
     more_patient_stats_df_rate = pd.DataFrame()
@@ -110,20 +109,20 @@ def check_rate(dir_files_fin: str, directory_out: str, rate_over_ROI: tuple[int,
 
     for diff_file in diff_files:
         name = Path(diff_file).name
-        # print(name)
+
         ID = re.sub(".xlsx", "", name)
         print("I analyze the patient: ", ID)
         df = pd.read_excel(diff_file, header=0, names=["HU", "Counts"])
 
         HU_ROI = df["HU"]
         counts_ROI = df["Counts"]
-        # print(HU_ROI, counts_ROI)
 
+        #Study the rate
         diff, HU_rate, counts_rate = analyze_rate(HU_ROI, counts_ROI, HU_min, HU_max)
-        # print(HU_over)
 
         if diff > (rate/100.):       
             
+            #Store information
             print("You have caught a patient who has significant components in the indicated region.")
             pz_rate.append(ID)
             print("")  
@@ -150,7 +149,6 @@ def check_rate(dir_files_fin: str, directory_out: str, rate_over_ROI: tuple[int,
         else:
             print("")
             print("I print the database with the densitometric features of the histograms of the region of interest.")
-            # display(more_patient_stats_df_rate)
 
     else:
         print("There are no patients with components in the indicated region.")   

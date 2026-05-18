@@ -25,9 +25,11 @@ def get_roi_names(rtstruct_path:Path)->list:
     return roi_names: list with names of the ROI
     :rtype roi_names: list
     """
-    
+
+    #RTSTRUCT
     rtstruct = pydicom.dcmread(rtstruct_path)
 
+    #ROI names
     roi_names = []
     for roi in rtstruct.StructureSetROISequence:
         roi_names.append(roi.ROIName)
@@ -93,10 +95,7 @@ def find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] |
     """
     
     try:
-        
-        # rt_folder = list(Path(ct_path).parent.glob(f"{rt_kind}*"))
-        # TODO: check RTst path by name in conf.
-        # path_rt_structures = list(Path(ct_path).parents[1].glob(f"**/*{rt_kind}*.dcm"))
+
         path_rt_structures = [path_rt_st for path_rt_st in list(Path(ct_path).parents[2].glob(f"**/*{rt_kind}*")) if path_rt_st.is_dir() == False]
         
         nomi_con_importanza = {}
@@ -111,23 +110,19 @@ def find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] |
 
             #List of ROI names
             ROI_names = get_roi_names(path_rt_st)
-            # print(ROI_names)
             
             #Check the same name
             for nome in nomi_con_importanza:
-                # print('Check nome: ', nome)
+
                 for ROI_name in ROI_names:
-                    # print('ROI name: ', ROI_name)
+
                     if nome in ROI_name:
                         print(f'ROI name {ROI_name} matched with name {nome}.')
                         if is_roi_empty(path_rt_st, ROI_name):
                             continue
                         else:
                             return ROI_name, path_rt_st
-                    # else:
-                    #     print(f'{ROI_name} is catched.')
-                    #     return ROI_name
-            
+       
     except Exception as e:
         print('ROI not founded with error: ', e)
         
@@ -168,7 +163,7 @@ def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFr
     :rtype list
     
     """
-    #Id patient
+    #ID patient
     ID = df_py.loc[pz,"PatientID"]
     
     if str(ID) not in ID_problems:
@@ -179,7 +174,7 @@ def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFr
             
             #Old spacing
             old_sp = np.array([df_py.loc[pz,"VoxelSpacingX"], df_py.loc[pz,"VoxelSpacingY"], df_py.loc[pz,"VoxelSpacingZ"]])
-            # new_sp = [0.703125,	0.703125,	1.25]
+
 
             if (old_sp[0]==new_sp[0] and 
                 old_sp[1]==new_sp[1] and 
@@ -200,6 +195,7 @@ def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFr
                 print("")    
                 print("PZ", ID , " has to be resampled")
 
+                #Store information
                 dir_histo_res = Path(directory_out) / "Total_ROI" / "To_be_resampled" / "Histograms"
                 Path(dir_histo_res).mkdir(parents=True, exist_ok=True)
             
@@ -229,7 +225,8 @@ def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFr
                 return stats_df,None
 
         except Exception as e:
-            #If error
+            
+            #If Patient has problems with ROI
             print(f"Patient {ID} has problems with ROI.")
             print(f"{e}")
             
@@ -237,13 +234,10 @@ def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFr
             return None, (ID, str(e))
             
     else:
-        #If error
         print("You caught a patient within the problem's ones.")
         print("")
         
-
         return None,[ID, "You knew there was an error"]
-        # break
    
 
 def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, rt_kind:str, list_roi:list, 
@@ -315,11 +309,10 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
             ID_problems.append(err[0])
             
             
-    ########### FROM HERE IS THE SAME AS THE ORIGINAL (Sequential) VERSION ########
     
-    #Where stored
     if len(more_patient_stats_df_total!=0):
-        # if save_all:
+        
+        #Save information
         excel_file_tot = Path(directory_out) / "Total_ROI" / "Histo_total_stats.xlsx"
         more_patient_stats_df_total.to_excel(excel_file_tot, index=False)
         print(f"All ROI's densitometric features are in {excel_file_tot}")
@@ -327,7 +320,7 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
         # else:
         #     print("")
         #     print("Saving the database with the densitometric features of the histograms of the entire region.")
-            # display(more_patient_stats_df_total)
+        #     display(more_patient_stats_df_total)
 
     #If you have problems with patients
     if len(ID_problems)!=0:
@@ -340,26 +333,6 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
         print("\nThere are no problems")
         
     return dir_files_fin
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-######################## FUNZIONI QUANDO NON DEVI FARE RESAMPLING ########################################
 
 
 def no_res_parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFrame, ID_problems:list,
@@ -397,7 +370,7 @@ def no_res_parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd
     :rtype list
     
     """
-    #Id patient
+    #ID patient
     ID = df_py.loc[pz,"PatientID"]
     
     if str(ID) not in ID_problems:
@@ -409,8 +382,6 @@ def no_res_parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd
             #Old spacing
             old_sp = np.array([df_py.loc[pz,"VoxelSpacingX"], df_py.loc[pz,"VoxelSpacingY"], df_py.loc[pz,"VoxelSpacingZ"]])
 
-            
-            #Ti riconduci esclusivamente al caso old=new
             print("")    
             print("PZ", ID , " ok")
             
@@ -419,12 +390,12 @@ def no_res_parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd
             #Extract information
             stats_df = histo.features_ROI(ID, HU_ROI, counts_ROI, old_sp, ROI_founded, dir_histo_fin, dir_files_fin, save_info_all)
             
-            #Free memory
          
             return stats_df,None
 
         except Exception as e:
-            #If error
+            
+            #If Patient has problems
             print(f"Patient {ID} has problems with ROI.")
             print(f"{e}")
             
@@ -432,13 +403,13 @@ def no_res_parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd
             return None, (ID, str(e))
             
     else:
-        #If error
+
         print("You caught a patient within the problem's ones.")
         print("")
         
 
         return None,[ID, "You knew there was an error"]
-        # break
+
    
 
 def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, list_roi:list, 
@@ -486,8 +457,6 @@ def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, l
     pz_problems = []
 
     
-    ######## PARALLEL IMPLEMENTATION #########
-    
     #Parallel function
     results = Parallel(n_jobs=N_jobs,timeout=None)(
         delayed(no_res_parallel_fun)(
@@ -508,10 +477,7 @@ def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, l
         if err is not None:
             ID_problems.append(err[0])
             
-            
-    ########### FROM HERE IS THE SAME AS THE ORIGINAL (Sequential) VERSION ########
     
-    #Where stored
     if len(more_patient_stats_df_total!=0):
         # if save_all:
         excel_file_tot = Path(directory_out) / "Total_ROI" / "Histo_total_stats.xlsx"
@@ -523,7 +489,7 @@ def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, l
         #     print("Saving the database with the densitometric features of the histograms of the entire region.")
             # display(more_patient_stats_df_total)
 
-    #If you have problems with patients
+    #If you have problems with Patients
     if len(ID_problems)!=0:
         excel_ID_problems = Path(directory_out) / "ID_with_problems.xlsx"
         print("I have problems with patients: ")

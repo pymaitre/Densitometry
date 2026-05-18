@@ -12,15 +12,17 @@ def rtv_configuration_file(name_conf, path_conf=None, save=True, pathout=''):
     :param: pathout: where to save a copy of configuration file.
     :return: config_parameters = dictionary with parameters config.
     """
-    # TODO: modify parameters read as global params read directly from yml or sql
+    
     if path_conf is not None:
         config_path = Path(path_conf)
     else:
-        # config_path = Path("//IHSR.dom/OSRFileServices") / "Ric.FisicaSanitaria" / "Belardo" / "BAROTRAUMA" / "try_exe" / "conf" / f"{name_conf}.yml"
+        
         config_path = Path(r"C:\Users\belardo.alfonso\Desktop\GitHub\Densitometry_Alfo\src\Densitometry\conf\conf_dcm.yml")
+    
     # READING THE CONFIGURATION FILE
     with open(config_path) as file:
         config_parameters = yaml.load(file, Loader=yaml.FullLoader)
+        
     if save and pathout!='':
         # pathout = Path.cwd().parent.parent / "wrk" / "Models" / config_parameters["survey_name"] / folder
         if not os.path.exists(pathout):

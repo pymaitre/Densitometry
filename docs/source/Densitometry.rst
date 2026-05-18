@@ -7,7 +7,7 @@ Densitometry.dcm_functions.analyze_dcm module
 .. automodule:: Densitometry.dcm_functions.analyze_dcm
     :members:
     :show_inheritance:
-    :imported_members:
+    :undoc_members:
 
 
 Densitometry.dcm_functions.divide_dcm_Bjorn module
@@ -16,7 +16,7 @@ Densitometry.dcm_functions.divide_dcm_Bjorn module
 .. automodule:: Densitometry.dcm_functions.divide_dcm_Bjorn
     :members:
     :show_inheritance:
-    :imported_members:
+    :undoc_members:
 
 
 

@@ -54,8 +54,8 @@ def justified(HU: pd.Series, counts: pd.Series, HU_min:int , HU_max: int, min_co
     
     coppie = {'HU': HU, 'Counts': counts}
     df = pd.DataFrame(coppie)
-    # display(df)
-
+    
+    #Above or under thresholds
     above_threshold = df[(df["Counts"] > min_counts) & (HU_min < df["HU"]) & \
                             (df["HU"]< HU_max)]
     
@@ -87,13 +87,13 @@ def histo_just(dir_files_fin: str, directory_out: str, delimiter: tuple[int,int,
     :return: None
     """
 
-    #if true save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
+    #if True save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
     save_just=True
     
     print("The saving variable is on: ", save_just)
     print("")
     
-    # HU_min, HU_max, min_counts = just_variable()
+
     HU_min, HU_max, min_counts = delimiter[0], delimiter[1], delimiter[2]
 
     total_ROI_analysis = Path(directory_out) / "Total_ROI" / "Histo_total_stats.xlsx"
@@ -109,7 +109,7 @@ def histo_just(dir_files_fin: str, directory_out: str, delimiter: tuple[int,int,
 
     for diff_file in diff_files:
         name = Path(diff_file).name
-        # print(name)
+        
         ID = re.sub(".xlsx", "", name)
         sp_total_ROI = np.array([df_total_ROI.loc[ID,"VoxelSpacingX"], df_total_ROI.loc[ID,"VoxelSpacingY"], df_total_ROI.loc[ID,"VoxelSpacingZ"]])
         name_total_ROI = str(df_total_ROI.loc[ID,"ROI_name"])
@@ -119,8 +119,10 @@ def histo_just(dir_files_fin: str, directory_out: str, delimiter: tuple[int,int,
         HU_ROI = df["HU"]
         counts_ROI = df["Counts"]
 
+        #Justified HU and counts
         HU_just, counts_just = justified(HU_ROI, counts_ROI, HU_min, HU_max, min_counts)
 
+        #Store information 
         if len(counts_just) != 0:       
             
             dir_histo_just = Path(directory_out) / "Specific_Regions" / f"Region_{HU_min}_{HU_max}_{min_counts}" / f"Histograms"
@@ -147,7 +149,7 @@ def histo_just(dir_files_fin: str, directory_out: str, delimiter: tuple[int,int,
         else:
             print("")
             print("I print the database with the densitometric features of the histograms of the region of interest.")
-            # display(more_patient_stats_df_justified)
+            
 
     if len(pz_no_just)!=0:
         print("I have problems with patients: ")

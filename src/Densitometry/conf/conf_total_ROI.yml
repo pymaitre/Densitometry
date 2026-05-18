@@ -1,6 +1,6 @@
-    directory_dcm_out : "C:\\Users\\volon\\Desktop\\resample_test\\tedeschi" #input directory
+    directory_dcm_out : "C:\\Users\\volon\\Desktop\\test" #input directory
 
-    directory_out : "C:\\Users\\volon\\Desktop\\check_spacing\\resample_BSpline\\resample_mean_glob\\Densitometry_Heart_tedeschi" #output directory
+    directory_out : "C:\\Users\\volon\\Desktop\\test_out" #output directory
 
     image_modality : "CT" #Image modality
 

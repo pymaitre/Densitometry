@@ -96,14 +96,6 @@ def histo_spacing(coordinata: pd.Series, directory_out: Path, name: str, n_size:
         plt.savefig(save_path / f'Histogram of {name}.png')
         plt.close()
     
-    # else:
-        
-    #     print(f"I showed the information of coordinate {name}")
-    #     print("")
-        
-        # plt.show()
-        # plt.close()
-
     return co_mas_in
 
 
@@ -121,6 +113,8 @@ def find_global_scale(df_py: pd.DataFrame,flag_new_spacing:bool)->np.array:
     :rtype: np.array
     
     """
+    
+    #Find min global scaling
     if flag_new_spacing=="min_global":
         
         print("I am extracting the global minimum spacing")
@@ -129,6 +123,7 @@ def find_global_scale(df_py: pd.DataFrame,flag_new_spacing:bool)->np.array:
         min_y=df_py["VoxelSpacingY"].min()
         min_z=df_py["VoxelSpacingZ"].min()
         
+    #Find mean global scaling
     if flag_new_spacing=="mean_global":
         
         print("I am extracting the global mean spacing")
@@ -136,7 +131,8 @@ def find_global_scale(df_py: pd.DataFrame,flag_new_spacing:bool)->np.array:
         min_x=df_py["VoxelSpacingX"].mean()
         min_y=df_py["VoxelSpacingY"].mean()
         min_z=df_py["VoxelSpacingZ"].mean()
-        
+    
+    #Find max global scaling
     if flag_new_spacing=="max_global":
         
         print("I am extracting the global maximum spacing")

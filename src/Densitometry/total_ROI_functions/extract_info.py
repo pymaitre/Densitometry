@@ -43,8 +43,7 @@ def save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, rt:rsm
     
         dir_RTst = Path(directory_out) / "dataset" / "labelsTr"
         Path(dir_RTst).mkdir(parents=True, exist_ok=True)
-
-        # CT_nifti_path = dir_nifti / f'PAN_NET_{ID}_0000.nii.gz'
+        
         CT_nifti_path = dir_nifti / f'prova_colangio_{ID}_0000.nii.gz'
         RTst_nifti_path = dir_RTst / f'prova_colangio_{ID}.nii.gz'
         

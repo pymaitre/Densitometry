@@ -34,21 +34,19 @@ def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:st
     :rtype: tuple[pd.DataFrame, pd.DataFrame]
     """
     
+    #Extract information from the dataset
     try:
         df_ROI = pd.read_excel(Path(directory_out) / "ROI_tot_pz.xlsx")
         print("")
         print("I read the dataframe with all the ROIs of each patient")
         print("")    
 
-        # display(df_ROI)
-        # display(df_ROI.loc[0,:].dropna())
 
         df_counts = pd.read_excel(Path(directory_out) / "counts_ROI.xlsx")
         print("")
         print("I read the dataframe with the ROI counts for each patient")
         print("")  
 
-        # display(df_counts)
     
     except:
         print("I am going to analyse all patient's ROIs.")
@@ -66,15 +64,15 @@ def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:st
                 
                 # CT, CT_arr = info.read_and_show_ct(ct_path, show_CT_ROI, slice)    
                 # rt_folder = (Path(ct_path).parent / "RTst")
+                
+                #Analyze RSTRCUCT
                 rtstruct_paths = list(Path(ct_path).parents[2].glob(f"**/*{rt_kind}*"))
                 for rtstruct_path in rtstruct_paths:
                     if rtstruct_path.is_dir():
                         continue
                     else:
                         print("La RTst si trova in: ", rtstruct_path)
-                        print("")
-                        # rt = info.dtn.read_dicom_rtstruct(rt_path, CT)    
-                        # print(rt)
+                        print("")   
                 
                         contour=[]
                         
@@ -92,8 +90,8 @@ def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:st
                         )
                         df_ROI = pd.concat([df_ROI, df_ROI_1pz])
                                 
-                    # print(df_ROI)
-            
+        
+        #Store information
         with pd.ExcelWriter(Path(directory_out) / "ROI_tot_pz.xlsx") as writer:
             df_ROI.to_excel(writer, index=True)
         print("")
@@ -102,7 +100,6 @@ def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:st
     
         series = pd.Series(df_ROI.values.flatten(), name='Counts').dropna()
         unique_values_counts = series.value_counts()
-        # display(unique_values_counts)
         
         with pd.ExcelWriter(Path(directory_out) / "counts_ROI.xlsx") as writer:
             unique_values_counts.to_excel(writer, index=True)

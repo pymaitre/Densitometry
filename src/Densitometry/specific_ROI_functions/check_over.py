@@ -48,13 +48,14 @@ def over_HU_counts(HU:pd.Series, counts:pd.Series, HU_min:int, min_counts:int)->
     
     coppie = {'HU': HU, 'Counts': counts}
     df = pd.DataFrame(coppie)
-    # display(df)
 
+    #Counts above the threshold
     above_threshold = df[ ( (df["HU"]> HU_min) & (df["Counts"] > min_counts) ) ]
     
+    #Select HU and the associated counts above the threshold
     HU_over = above_threshold["HU"]
     counts_over = above_threshold["Counts"]
-    # print(HU_over)
+
 
     return HU_over, counts_over
 
@@ -80,34 +81,33 @@ def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple
     :return: None
     """
 
-    #save_over: if true save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
+    #save_over: if True save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
     
     save_over=True       
         
     print("The saving variable is on: ", save_over)
     print("")
     
-
-    # HU_min, min_counts = over_variable()
+    # Delimiter the ROI
     HU_min, min_counts = delimiter_over_ROI[0], delimiter_over_ROI[1]
     pz_over = []
     more_patient_stats_df_over = pd.DataFrame()
     
     diff_files = Path(dir_files_fin).glob("*.xlsx")
 
+    #Find the statistic features
     for diff_file in diff_files:
         name = Path(diff_file).name
-        # print(name)
+        
         ID = re.sub(".xlsx", "", name)
         print("I analyze the patient", ID)
         df = pd.read_excel(diff_file, header=0, names=["HU", "Counts"])
 
         HU_ROI = df["HU"]
         counts_ROI = df["Counts"]
-        # print(HU_ROI, counts_ROI)
-
+       
+        # Evaluate HU and counts above thresholds
         HU_over, counts_over = over_HU_counts(HU_ROI, counts_ROI, HU_min, min_counts)
-        # print(HU_over)
 
         if len(counts_over) != 0:       
             
@@ -115,6 +115,7 @@ def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple
             pz_over.append(ID)
             print("")  
             
+            #Store information
             dir_histo_over = Path(directory_out) / "Over_counts_regions" / f"Region_over_{HU_min}_{min_counts}" / f"Histograms"
             Path(dir_histo_over).mkdir(parents=True, exist_ok=True)
         
@@ -136,7 +137,7 @@ def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple
         else:
             print("")
             print("I print the database with the densitometric features of the histograms of the region of interest.")
-            # display(more_patient_stats_df_over)
+            
 
     else:
         print("There are no patients with components in the indicated region.")       
