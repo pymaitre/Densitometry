@@ -31,7 +31,7 @@ Installation and requirements
 
 Firstly, it is necessary to clone the directory: 
 ```python
-git clone https://github.com/TommasoGiovanniVolonteri/Densitometry
+git clone https://github.com/pymaitre/Densitometry
 ```
 
 To run the code it is necessary to have installed at least **Python 3.10**. 
