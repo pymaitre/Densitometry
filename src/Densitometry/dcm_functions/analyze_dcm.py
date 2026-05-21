@@ -85,7 +85,6 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str)->pd.DataFrame:
                     print(f"Error reading DICOM file {file}: {str(e)}")
                     
         
-        #Generate the dataset
         df = pd.DataFrame(data, columns=["PatientID", "PatientName", "PatientAge", "VoxelSpacingX", "VoxelSpacingY", "VoxelSpacingZ", "Path"])
         
     
