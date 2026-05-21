@@ -51,8 +51,6 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str)->pd.DataFrame:
                         file_path = os.path.join(root, file)
                         dcm = pydicom.dcmread(file_path, force=True)
                         modality = dcm["Modality"].value
-
-                        #Check if the modality is the same
                         if modality == str(imm_mod): 
 
                             #Extract name, ID and age
