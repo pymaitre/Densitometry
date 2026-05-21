@@ -168,10 +168,6 @@ def find_ct_info_input(directory:Path, directory_out:str, excel_name:str)->pd.Da
         #Generate the datase
         df = pd.DataFrame(data, columns=["PatientID", "PatientName", "PatientAge", "Modality", "Path", "n°_files"])
         df.sort_values(by=['PatientID'], inplace=True)
-        
-        
-        
-        #Save the dataset
         with pd.ExcelWriter(py_patient_file) as writer:
             df.to_excel(writer, index=False)
         
