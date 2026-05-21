@@ -72,7 +72,6 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str)->pd.DataFrame:
                             else:
                                 patient_age = 'Non_calcolato'
                             
-                            #Extract the Voxel spacing
                             voxel_spacing_x = dcm.PixelSpacing[0]
                             voxel_spacing_y = dcm.PixelSpacing[1]
                             voxel_spacing_z = dcm.SliceThickness    
