@@ -44,7 +44,6 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str)->pd.DataFrame:
 
         data = []
          
-        #Check on all the DICOM files
         for root, dirs, files in os.walk(directory):
             for file in files:
                 try:
