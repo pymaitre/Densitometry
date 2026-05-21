@@ -2,7 +2,7 @@
 
     directory_out : "C:\\Users\\volon\\Desktop\\test_out" #output directory
 
-    image_modality : "CT" #Image modality
+    image_modality : "CT"
 
     save_spacing_histo :  True  #False #
 
