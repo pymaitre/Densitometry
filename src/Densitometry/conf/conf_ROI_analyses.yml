@@ -1,13 +1,13 @@
-    directory_out : "C:\\Users\\user\\Desktop\\directory"
+    directory_out : "C:\\Users\\user\\Desktop\\directory_output"
 
-    specific_ROI_analyses : True #  'False'
+    specific_ROI_analyses : True
     
     specific_ROI_delimiter : [-200, 200, 0] # insert specific ROI delimiter: HU_min, HU_max, min_counts.
 
-    over_ROI_analyses : False #  ' True'
+    over_ROI_analyses : True 
     
-    over_ROI_delimiter : [400, 100] #insert over ROI delimiter: HU_min over whose analyse; min_counts for this region.
+    over_ROI_delimiter : [200, 10] #insert over ROI delimiter: HU_min over whose analyse; min_counts for this region.
     
-    rate_ROI_analyses : False #  ' True'
+    rate_ROI_analyses : True 
 
-    rate_ROI_delimiter : [400, 1]  #insert rate ROI delimiter: HU_min over whose analyse; rate_counts beetween inside and outside for this region.
+    rate_ROI_delimiter : [200,400,1]  #insert rate ROI delimiter: HU_min and HU_max; rate_counts beetween inside and outside for this region.

@@ -9,6 +9,7 @@ import os
 import re
 from Densitometry.total_ROI_functions import extract_histo as histo
 from pathlib import Path
+import numpy as np
 import pandas as pd
 
 
@@ -94,6 +95,10 @@ def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple
     more_patient_stats_df_over = pd.DataFrame()
     
     diff_files = Path(dir_files_fin).glob("*.xlsx")
+    
+    path_sp=directory_out/"Total_ROI"/"Histo_total_stats.xlsx"
+    histo_total_stats=pd.read_excel(path_sp)
+    histo_total_stats = histo_total_stats.set_index("PatientID")
 
     #Find the statistic features
     for diff_file in diff_files:
@@ -115,6 +120,14 @@ def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple
             pz_over.append(ID)
             print("")  
             
+            
+            sp_x=histo_total_stats.loc[ID,"VoxelSpacingX"]
+            sp_y=histo_total_stats.loc[ID,"VoxelSpacingY"]
+            sp_z=histo_total_stats.loc[ID,"VoxelSpacingZ"]
+            
+            sp=np.array([sp_x,sp_y,sp_z])
+            ROI_name=str(histo_total_stats.loc[ID,"ROI_name"])
+            
             #Store information
             dir_histo_over = Path(directory_out) / "Over_counts_regions" / f"Region_over_{HU_min}_{min_counts}" / f"Histograms"
             Path(dir_histo_over).mkdir(parents=True, exist_ok=True)
@@ -122,7 +135,7 @@ def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple
             dir_files_over = Path(directory_out) / "Over_counts_regions" / f"Region_over_{HU_min}_{min_counts}" / f"Files"
             Path(dir_files_over).mkdir(parents=True, exist_ok=True)
 
-            stats_df_over = histo.features_ROI(ID, HU_over, counts_over, dir_histo_over, dir_files_over, save_over)
+            stats_df_over = histo.features_ROI(ID, HU_over, counts_over,sp,ROI_name,dir_histo_over, dir_files_over, save_over)
             more_patient_stats_df_over = pd.concat([more_patient_stats_df_over, stats_df_over])
 
     if len(more_patient_stats_df_over!=0):

@@ -45,7 +45,7 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str,py_patient_file_
 
         data = []
          
-        #Check on all the DICOM files
+        
         for root, dirs, files in os.walk(directory):
             for file in files:
                 try:
@@ -54,7 +54,7 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str,py_patient_file_
                         dcm = pydicom.dcmread(file_path, force=True)
                         modality = dcm["Modality"].value
 
-                        #Check if the modality is the same
+                        
                         if modality == str(imm_mod): 
 
                             #Extract name, ID and age
@@ -74,7 +74,7 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str,py_patient_file_
                             else:
                                 patient_age = 'Non_calcolato'
                             
-                            #Extract the Voxel spacing
+                            
                             voxel_spacing_x = dcm.PixelSpacing[0]
                             voxel_spacing_y = dcm.PixelSpacing[1]
                             voxel_spacing_z = dcm.SliceThickness    
@@ -86,7 +86,7 @@ def find_ct_info(directory:Path, directory_out:str, imm_mod:str,py_patient_file_
                     print(f"Error reading DICOM file {file}: {str(e)}")
                     
         
-        #Generate the dataset
+        
         df = pd.DataFrame(data, columns=["PatientID", "PatientName", "PatientAge", "VoxelSpacingX", "VoxelSpacingY", "VoxelSpacingZ", "Path"])
         
     
@@ -175,7 +175,7 @@ def find_ct_info_input(directory:Path, directory_out:str, excel_name:str)->pd.Da
         
         
         
-        #Save the dataset
+        
         with pd.ExcelWriter(py_patient_file) as writer:
             df.to_excel(writer, index=False)
         

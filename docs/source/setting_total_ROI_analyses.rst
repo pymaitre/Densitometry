@@ -1,8 +1,9 @@
-Setting
-===========
+Setting: Total ROI analyses
+============================
 
 After having followed the instructions described in `installation_procedure`, it comes a brief description of
-how files should be organized and how to run the code used to extract the densitometric information.
+how files should be organized and how to run the code used to extract the densitometric information. 
+Differently from `setting_ROI_analyses`, it does not take into account specific ROI delimeters.
 
 File organization
 ---------------------
@@ -51,7 +52,7 @@ It contains the following parameters to be manually set:
 * **total_ROI_analyses**: perform total ROI analyses
 * **show_total_ROI_info**: show information of from total ROI analyses
 * **save_total_ROI_info**: save information from total ROI analyses
-* **py_patient_file**: name of the py_patient file 
+* **py_patient_file_name**: name of the py_patient file 
 * **flag_resampling**: True for resampling, False otherwise
 * **flag_new_spacing**: Flag that can take values: min_global, mean_global, max_global, frequency or manual (see below)
 * **new_spacing**: 3D array with the desired new spacing (considered when flag_new_spacing=="manual")
@@ -82,7 +83,7 @@ An example of configuration file is below reported:
 
     save_total_ROI_info :  True 
 
-    py_patient.xlsx: "py_patient.xlsx"
+    py_patient_file_name: "py_patient.xlsx"
 
     flag_resampling: True 
 

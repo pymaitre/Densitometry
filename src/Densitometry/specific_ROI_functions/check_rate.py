@@ -7,6 +7,7 @@ HU thresholds and above rate threshold beetween counts of the part outside and i
 import os
 import re
 from pathlib import Path
+import numpy as np
 from Densitometry.total_ROI_functions import extract_histo as histo
 import pandas as pd
 
@@ -97,11 +98,15 @@ def check_rate(dir_files_fin: str, directory_out: str, rate_over_ROI: tuple[int,
     print("")
 
 
-    HU_min, HU_max, rate = rate_over_ROI[0], rate_over_ROI[1]
+    HU_min, HU_max, rate = rate_over_ROI[0], rate_over_ROI[1],rate_over_ROI[2]
     pz_rate = []
     more_patient_stats_df_rate = pd.DataFrame()
     
     diff_files = Path(dir_files_fin).glob("*.xlsx")
+    
+    path_sp=directory_out/"Total_ROI"/"Histo_total_stats.xlsx"
+    histo_total_stats=pd.read_excel(path_sp)
+    histo_total_stats = histo_total_stats.set_index("PatientID")
 
     for diff_file in diff_files:
         name = Path(diff_file).name
@@ -123,19 +128,27 @@ def check_rate(dir_files_fin: str, directory_out: str, rate_over_ROI: tuple[int,
             pz_rate.append(ID)
             print("")  
             
+            sp_x=histo_total_stats.loc[ID,"VoxelSpacingX"]
+            sp_y=histo_total_stats.loc[ID,"VoxelSpacingY"]
+            sp_z=histo_total_stats.loc[ID,"VoxelSpacingZ"]
+            
+            sp=np.array([sp_x,sp_y,sp_z])
+            ROI_name=str(histo_total_stats.loc[ID,"ROI_name"])
+            
             dir_histo_rate = Path(directory_out) / "Over_rate_regions" / f"Region_over_{HU_min}_{HU_max}_{rate}" / f"Histograms"
             Path(dir_histo_rate).mkdir(parents=True, exist_ok=True)
         
             dir_files_rate = Path(directory_out) / "Over_rate_regions" / f"Region_over_{HU_min}_{HU_max}_{rate}" / f"Files"
             Path(dir_files_rate).mkdir(parents=True, exist_ok=True)
 
-            stats_df_rate = histo.features_ROI(ID, HU_rate, counts_rate, dir_histo_rate, dir_files_rate, save_rate)
+            stats_df_rate = histo.features_ROI(ID, HU_rate, counts_rate,sp,ROI_name,dir_histo_rate, dir_files_rate, save_rate)
             more_patient_stats_df_rate = pd.concat([more_patient_stats_df_rate, stats_df_rate])
 
     if len(more_patient_stats_df_rate!=0):
         print("")
         print("Patients with significative rate beetween inside and outside the region are: ")
         print(pz_rate)
+        
         
         if save_rate:      
             excel_file_rate = Path(directory_out) / "Over_rate_regions" / f"Region_over_{HU_min}_{HU_max}_{rate}" / f"Stats_over_{HU_min}_{HU_max}_{rate}.xlsx"

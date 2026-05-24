@@ -12,21 +12,32 @@ from scipy import stats
 import pandas as pd
 
 
-def features_ROI(ID:str, HU_ROI, counts_ROI, sp, ROI_name,
-                 dir_histo, dir_files, save=False):
+def features_ROI(ID:str, HU_ROI:pd.Series, counts_ROI:pd.Series, sp: np.array, ROI_name:str,
+                 dir_histo:Path, dir_files:Path, save=False)->pd.DataFrame:
     """
     Function that call histo and file functions
 
     :param ID: patient's ID.
+    :type ID: str
     :param HU_ROI: HU values of the histogram.
+    :type HU_ROI: pd.Series
     :param counts_ROI: HU relative counts.
+    :type counts_ROI: pd.Series
+    :param sp: voxel spacing
+    :type sp: np.array
+    :param ROI_name: name of the ROI
+    :type ROI_name: str
     :param dir_histo: saving directory for histograms.
+    :type dir_histo: Path
     :param dir_files: saving directory for excel files.
+    :type dir_files: Path
     :param save: if true, histograms, excels files and statistical information
                 for all patients are saved in dir_histo and dir_files respectively;
                 if false, histograms and statistical information are showed.
+    :type save: bool
 
-    :return stats_df: statistical features extracted for each patient.
+    :return: statistical features extracted for each patient.
+    :rtype: pd.DataFrame
     """
 
     #Size of the histogram
@@ -39,21 +50,26 @@ def features_ROI(ID:str, HU_ROI, counts_ROI, sp, ROI_name,
     return stats_df
 
 
-def make_histo(HU_ROI_no_nan, counts_ROI_no_nan, n_size, sp, ROI_name, save_path, name, save=False):
+def make_histo(HU_ROI_no_nan:pd.Series, counts_ROI_no_nan:pd.Series, n_size:int, sp:np.array, ROI_name:str, save_path:Path, name:str, save=False)->tuple[pd.Series,pd.Series,pd.DataFrame]:
     """
     This function has as input HU and counts of the ROI and returns a plot of the histogram.
 
     :param HU_ROI_no_nan: HU values of the histogram.
+    :type HU_ROI_no_nan: pd.Series
     :param counts_ROI_no_nan: HU relative counts.
+    :type counts_ROI_no_nan: pd.Series
     :param n_size: bin size for plotting histograms.
+    :type n_size: int
     :param save_path: saving directory.
+    :type save_path: Path
     :param name: name of the plot.
+    :type name: str
     :param save: if true, histogram is saved;
                 if false, histogram is showed.
+    :type save: bool
 
-    :return HU: HU values of the histogram for excel file.
-    :return count: HU relative counts for excel file.
-    :return stats_df: statistical features extracted for each patient.   
+    :return: HU values of the histogram for excel file, HU relative counts for excel file and statistical features extracted for each patient.   
+    :rtype: tuple[pd.Series,pd.Series,pd.DataFrame]
     """
     
     #Create histogram plot
@@ -100,17 +116,23 @@ def make_histo(HU_ROI_no_nan, counts_ROI_no_nan, n_size, sp, ROI_name, save_path
     return HU, count, stats_df
 
 
-def make_file(HU, count, save_path, name, save=False):
+def make_file(HU:pd.Series, count:pd.Series, save_path:Path, name:str, save=False)->pd.DataFrame:
     """
     This function has as input histogram values and create the relative dataframe.
 
     :param HU: HU values of the histogram for excel file.
+    :type HU: pd.Series
     :param count: HU relative counts for excel file.
+    :type count: pd.Series
     :param save_path: saving directory.
+    :type save_path: Path
     :param name: name of the file.
-    :param save: if true, excel file is saved.
+    :type name: str
+    :param save: if True, Excel file is saved.
+    :type save: bool
 
-    :return df: excel file with HU and relative counts.
+    :return: Excel file with HU and relative counts.
+    :rtype: pd.DataFrame
     
     """
     
@@ -128,12 +150,14 @@ def make_file(HU, count, save_path, name, save=False):
     return df
 
 
-def plot_stat(data):
+def plot_stat(data:np.array)->None:
     """
     This function permits to choose which features you want to 
     represent on the plot.
 
     :param data: array of all HU values, equal to each value for its counts.
+    
+    :return: None
     """
     
     #Plot the statistical features on the histogram 
@@ -152,15 +176,25 @@ def plot_stat(data):
     plt.legend()
 
 
-def calculate_and_save_statistics(histo_name, region, data, sp, ROI_name):
+def calculate_and_save_statistics(histo_name:str, region:str, data:np.array, sp: np.array, ROI_name:str)->pd.DataFrame:
     """
     This function permits to choose which features you want to 
     extract from the histogram.
 
     :param histo_name: patient you are working on.
+    :type histo_name: str
+    :param region: name of the region
+    :type region: str
     :param data: array of all HU values, equal to each value for its counts.
+    :type data: np.array
+    :param sp: voxel spacing
+    :type sp: np.array
+    :param ROI_name: name of the ROI
+    :type ROI_name: str
 
-    :return stats_df: statistical features extracted for each patient.       
+
+    :return: statistical features extracted for each patient.    
+    :rtype: pd.DataFrame   
     """
 
     
@@ -216,20 +250,30 @@ def calculate_and_save_statistics(histo_name, region, data, sp, ROI_name):
     return stats_df
     
 
-def compare_histo_res(HU_ROI_res, counts_ROI_res, HU_ROI, counts_ROI, save_path, ID, save=False): 
+def compare_histo_res(HU_ROI_res:pd.Series, counts_ROI_res:pd.Series, HU_ROI:pd.Series, counts_ROI:pd.Series, save_path:Path, ID:str, save=False)->None: 
     """
     This function plots the overlap between the histograms of original and resampled CT
     in semi-log scale.
 
     :param HU_ROI_res: HU values of the histogram referred to resampled ROI.
+    :type HU_ROI_res: pd.Series
     :param counts_ROI_res: HU relative counts referred to resampled ROI.
+    :type counts_ROI:res: pd.Series
     :param HU_ROI: HU values of the histogram referred to original ROI.
+    :type HU_ROI: pd.Series
     :param counts_ROI: HU relative counts referred to original ROI.
+    :type counts_ROI: pd.Series
     :param n_size: bin size for plotting histograms.
+    :type n_size: int
     :param save_path: saving directory.
+    :type save_path: Path
     :param ID: patient ID.
+    :type ID: str
     :param save: if true, histogram is saved;
                 if false, histogram is showed.
+    :type save: bool
+    
+    :return: None
     
     """
 
@@ -267,15 +311,22 @@ def compare_histo_res(HU_ROI_res, counts_ROI_res, HU_ROI, counts_ROI, save_path,
         # plt.close()
 
 
-def extract_hist(HU, counts, n_size, color, label):
+def extract_hist(HU:pd.Series, counts:pd.Series, n_size:int, color:str, label:str)->None:
     """
     This function establish the bin size and plots the histogram.
 
     :param HU_ROI: HU values of the histogram.
+    :type HU_ROI: pd.Series
     :param counts_ROI: HU relative counts.
+    :type counts_ROI: pd.Series
     :param n_size: bin size for plotting histograms.
+    :type n_size: int
     :param color: color of the histogram.
+    :type color: str
     :param label: name of the histogram.
+    :type label: str
+    
+    :return: None
     """
     
     bin_edges = np.arange(min(HU), max(HU) + 2*n_size, n_size)
