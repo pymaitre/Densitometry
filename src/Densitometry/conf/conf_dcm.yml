@@ -1,9 +1,11 @@
-    directory_dcm_in : '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\original_dataset\BAROTRAUMA\PNRR\POTENZA\DB_07062024\Potenza_pz336' #input directory
+    directory_dcm_in : "C:\\Users\\user\\Desktop\\input_directory" #input directory
     
-    directory_dcm_out: '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\dataset\BAROTRAUMA\PNRR\POTENZA\Prova' #output directory
+    directory_dcm_out: "C:\\Users\\user\\Desktop\\out_dcm_directory" #output directory
 
-    directory_out : 'F:\Belardo\BAROTRAUMA\Analyses\POTENZA\dcm_organization'
+    directory_out : 'C:\\Users\\user\\Desktop\\output_directory'
 
     image_modality : 'CT'
+
+    py_patient_file_name: "py_patient.xlsx"
     
-    divide_dcm : 'yes'  #'yes' # 
+    divide_dcm : 'yes' 

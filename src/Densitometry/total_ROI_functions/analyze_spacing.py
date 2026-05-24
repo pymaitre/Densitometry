@@ -1,9 +1,9 @@
 """
 Module for: 
-- reading database of headers DICOM; 
-- comparing voxel spacing between patients;
-- creating plot about the distribution of each coordinate; 
-- establishing a new voxel spacing equal to the most common values.
+reading database of headers DICOM; 
+comparing voxel spacing between patients;
+creating plot about the distribution of each coordinate; 
+establishing a new voxel spacing equal to the most common values.
 """
 
 import os
@@ -25,9 +25,9 @@ def read_spacing(df_py: pd.DataFrame, directory_out:Path, save_sp:bool)->tuple[f
     :param save_sp: if true, saves the histogram plots of each coordinate
                 of voxel spacing distribution;
                 if false, shows them.
-    :type save_sp:bool
+    :type save_sp: bool
 
-    :return: more present (x,y,z) voxel spacing
+    :return: more present (x,y,z) voxel spacing.
     :rtype: tuple[float,float,float]
 
     """
@@ -57,13 +57,13 @@ def histo_spacing(coordinata: pd.Series, directory_out: Path, name: str, n_size:
     :type name: str
     :param n_size: bin size of histogram.
     :type n_size: float
-    :param save_sp: if true, saves the histogram plots of each coordinate
+    :param save_sp: if True, saves the histogram plots of each coordinate
                 of voxel spacing distribution;
-                if false, shows them.
-    :type save_sp:bool
+                if False, shows them.
+    :type save_sp: bool
     
-    :return co_mas_in: more present coordinate.
-    :rtype co_mas_in: float
+    :return: more present coordinate.
+    :rtype: float
     """
   
     
@@ -102,14 +102,14 @@ def histo_spacing(coordinata: pd.Series, directory_out: Path, name: str, n_size:
 def find_global_scale(df_py: pd.DataFrame,flag_new_spacing:bool)->np.array:
     """
     Create the new voxel spacing given by min_x, min_y and min_z of the given dataset 
-    (to be found when flag_new_spacing=="min_global)
+    (to be found when flag_new_spacing=="min_global).
     
-    :param df_py: input dataframe
+    :param df_py: input dataframe.
     :type df_py: pd.DataFrame
-    :param flag_new_spacing: flag to choose the global spacing (min_global, mean_global and max_global)
+    :param flag_new_spacing: flag to choose the global spacing (min_global, mean_global and max_global).
     :type flag_new_spacing: bool
     
-    :return: voxel spacing given by min_x, min_y and min_z (or mean or max)
+    :return: voxel spacing given by min_x, min_y and min_z (or mean or max).
     :rtype: np.array
     
     """

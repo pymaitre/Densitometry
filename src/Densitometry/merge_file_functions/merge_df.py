@@ -1,7 +1,6 @@
 """
 Module for: 
-- reading databases; 
-- modifying them in case of merging or dropping rows. 
+reading databases and modifying them in case of merging or dropping rows. 
 """
 
 import os
@@ -334,9 +333,9 @@ def save_merge(df:pd.DataFrame, dropped_in_df1:pd.DataFrame, dropped_in_df2:pd.D
 
     :param df: database you want to save.
     :type df: pd.DataFrame
-    :param dropped_in_df1: dataset with patients only in df1
+    :param dropped_in_df1: dataset with patients only in df1.
     :type dropped_in_df1: pd.DataFrame
-    :param dropped_in_df2: dataset with patients only in df2
+    :param dropped_in_df2: dataset with patients only in df2.
     :type dropped_in_df2: pd.DataFrame
     :param directory: directory of the general analyses.
     :type directory: Path
@@ -458,7 +457,9 @@ def search_col(df:pd.DataFrame, show:bool)->str:
     This function permits to match a specific column in a database. 
 
     :param df: database of which you want to find column by name.
+    :type df: pd.DataFrame
     :param show: if true, the column is showed.
+    :type show: bool
 
     :return: column found.
     :rtype: str    
@@ -498,7 +499,9 @@ def search_value(df:pd.DataFrame, column_found:list)->str:
     This function permits to match a specific value in a database. 
 
     :param df: database of which you want to find value by name.
+    :type df: pd.DataFrame
     :param column_found: column of which you want to find a value.
+    :type column_found: list
 
     :return: value found. 
     :rtype: str 

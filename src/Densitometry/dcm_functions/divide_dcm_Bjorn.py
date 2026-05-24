@@ -1,7 +1,6 @@
 """
 Module for: 
-- reading dcm header; 
-- dividing images (CT, RTst, RTPlan) into subdirectories of ID's one;
+reading dcm header and dividing images (CT, RTst, RTPlan) into subdirectories of ID's one;
 """
 
 import os
@@ -14,18 +13,17 @@ import numpy as np
 from datetime import datetime
 
 
-def divide_dcm(directory_in:Path, directory_out:Path, divide=False, mode=False)->None:
+def divide_dcm(directory_in:Path, directory_out:Path, divide: bool=False, mode: bool=False)->None:
     """
     Move DICOM files from directory_in with unsorted files to sorted files in directory_out.
     
-    :param directory_in: folder with unsorted DICOM files
+    :param directory_in: folder with unsorted DICOM files.
     :type directory_in: Path
-    :param directory_out: folder with sorted DICOM files
+    :param directory_out: folder with sorted DICOM files.
     :type directory_out: Path
-    :param divide: flag to divide DICOM files (default=False) 
-    :param divide: Bool
-    :param mode: set False uses prog_count while mode=True uses ct_sorted
-    :param mode: Bool
+    :param divide: flag to divide DICOM files (default=False). 
+    :param mode: set False uses prog_count while mode=True uses ct_sorted.
+
     
     :return: None
     """
@@ -117,20 +115,20 @@ def prog_count(counter:np.array, ID_dir:Path, RS_dir:Path, Altro_dir:Path, modal
     """
     Count each type of file using a 2D counter
     
-    :param counter: 2D array that counts CT (or MR) files and RTSTRUCT (or RTDOSE or RTPLAN or RAW)
+    :param counter: 2D array that counts CT (or MR) files and RTSTRUCT (or RTDOSE or RTPLAN or RAW).
     :type counter: np.array
-    :param ID_dir: input ID directory
+    :param ID_dir: input ID directory.
     :type ID_dir: Path
-    :param RS_dir: input RTSTRUCT directory
+    :param RS_dir: input RTSTRUCT directory.
     :type RS_dir: Path
-    :param Altro_dir: input directory with other files
+    :param Altro_dir: input directory with other files.
     :type Altro_dir: Path
-    :param modality: name of the modality
+    :param modality: name of the modality.
     :type modality: str
-    :param file_path: path of the file
+    :param file_path: path of the file.
     :type file_path: Path
     
-    :return: array with counts
+    :return: array with counts.
     :rtype: np.array
     
     """

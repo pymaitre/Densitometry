@@ -12,7 +12,8 @@ Index of documentation
    :caption: Contents:
 
    installation_procedure
-   setting
+   setting_total_ROI_analyses
+   setting_ROI_analyses
    Densitometry
    
 

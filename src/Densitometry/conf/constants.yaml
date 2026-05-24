@@ -1,4 +1,4 @@
-spaarc_path: C:\Users\palazzo.gabriele\Downloads\SPAARC
+spaarc_path: C:\Users\user\spaarc_folder
 #study_directory: C:\Users\...
 observers: ["AA", "BB", "CC"]
 voxel_size: 0.1

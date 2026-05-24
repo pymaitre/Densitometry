@@ -22,7 +22,7 @@ From the terminal run:
 
 .. code-block:: bash
 
-    git clone https://github.com/TommasoGiovanniVolonteri/Densitometry
+    git clone https://github.com/pymaitre/Densitometry
 
     cd Densitometry
 
