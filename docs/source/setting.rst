@@ -46,11 +46,12 @@ It contains the following parameters to be manually set:
 * **directory_dcm_out**: input institute folder
 * **directory_out**: output folder where information are stored
 * **image_modality**: modality of the image (e.g. "CT")
-* **save_spacing_histo**:   
-* **save_ROI_info**: 
-* **total_ROI_analyses**: 
-* **show_total_ROI_info**: 
-* **save_total_ROI_info**:  
+* **save_spacing_histo**: save spacing histogram  
+* **save_ROI_info**: save ROI information
+* **total_ROI_analyses**: perform total ROI analyses
+* **show_total_ROI_info**: show information of from total ROI analyses
+* **save_total_ROI_info**: save information from total ROI analyses
+* **py_patient_file**: name of the py_patient file 
 * **flag_resampling**: True for resampling, False otherwise
 * **flag_new_spacing**: Flag that can take values: min_global, mean_global, max_global, frequency or manual (see below)
 * **new_spacing**: 3D array with the desired new spacing (considered when flag_new_spacing=="manual")
@@ -80,6 +81,8 @@ An example of configuration file is below reported:
     show_total_ROI_info : False  
 
     save_total_ROI_info :  True 
+
+    py_patient.xlsx: "py_patient.xlsx"
 
     flag_resampling: True 
 

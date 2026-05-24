@@ -12,7 +12,7 @@ from scipy import stats
 import pandas as pd
 
 
-def features_ROI(ID, HU_ROI, counts_ROI, sp, ROI_name,
+def features_ROI(ID:str, HU_ROI, counts_ROI, sp, ROI_name,
                  dir_histo, dir_files, save=False):
     """
     Function that call histo and file functions

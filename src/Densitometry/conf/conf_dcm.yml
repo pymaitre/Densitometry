@@ -5,5 +5,7 @@
     directory_out : 'C:\\Users\\user\\Desktop\\output_directory'
 
     image_modality : 'CT'
+
+    py_patient_file_name: "py_patient.xlsx"
     
     divide_dcm : 'yes' 

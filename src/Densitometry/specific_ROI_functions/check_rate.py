@@ -1,11 +1,7 @@
 """
-Module for: 
-- reading excel files referred to patients entire region histograms;
-- looking for HU and relatives counts;
-- evaluating statistic features referred to a specific 
-  region of the histogram below minimum and above maximum 
-  HU thresholds and above rate threshold beetween counts of
-  the part outside and inside this region of HU.
+Module for: reading excel files referred to patients entire region histograms, looking for HU and relatives counts, 
+evaluating statistic features referred to a specific region of the histogram below minimum and above maximum,
+HU thresholds and above rate threshold beetween counts of the part outside and inside this region of HU.
 """
 
 import os
@@ -87,7 +83,7 @@ def check_rate(dir_files_fin: str, directory_out: str, rate_over_ROI: tuple[int,
     :type dire_files_fin: str
     :param directory_out: the directory of analyses.
     :type directory_out: str
-    :param rate_over_ROI: tuple containing min_HU, max_HU and rate threshold for the ROI considered
+    :param rate_over_ROI: tuple containing min_HU, max_HU and rate threshold for the ROI considered.
     :type rate_over_ROI: tuple[int,int,float]
     
     :return: None

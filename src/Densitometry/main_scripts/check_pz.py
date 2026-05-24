@@ -31,8 +31,9 @@ def find_id_dir(directory:Path)->list:
 
 def main():
     
-    directory_dcm_out = r"\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\dataset\segmentazione\breast_Fodor22_from2017\no_boost\ANONYMIZED_Dx\ANONYMIZED_Breast_Monica_Dx"
-    directory_out = r"\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\Belardo\Breast\Analyses\breast_Fodor22_from2017\no_boost\ANONYMIZED_Dx\ANONYMIZED_Breast_Monica_Dx"
+    directory_dcm_out = r"path_dcm_out"
+    directory_out = r"path_directory_out"
+    
     py_patient_file = Path(directory_out) / "py_patient_file.xlsx"
     df_py = pd.read_excel(py_patient_file)
 

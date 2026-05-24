@@ -1,10 +1,8 @@
 """
 Module for: 
-- reading excel files referred to patients entire region histograms;
-- looking for HU and relatives counts;
-- evaluating statistic features referred to a specific 
-  region of the histogram beetween minimum and maximum 
-  HU and above minimum counts thresholds.
+reading excel files referred to patients entire region histograms, 
+looking for HU and relatives counts, evaluating statistic features referred à
+to a specific region of the histogram beetween minimum and maximum HU and above minimum counts thresholds.
 """
 
 import os
@@ -71,17 +69,14 @@ def histo_just(dir_files_fin: str, directory_out: str, delimiter: tuple[int,int,
     - establishing thresholds;
     - reading excel files referred to entire region histograms;
     - looking for HU and relatives counts;
-    - evalueting statistic features referred to a specific 
-      region of the histogram beetween minimum and maximum 
-      HU and above minimum counts thresholds;
-    - considering patients that do not have this significative
-      region of the histogram.
+    - evaluating statistic features referred to a specific region of the histogram beetween minimum and maximum HU and above minimum counts thresholds;
+    - considering patients that do not have this significative region of the histogram.
 
     :param dir_files_fin: directory of all patients df with HU and counts.
     :type dir_files_fin: str
     :param directory_out: the directory of analyses.
     :type directory_out: str
-    :param delimiter: tuple with min_HU, max_HU and min_counts
+    :param delimiter: tuple with min_HU, max_HU and min_counts.
     :type delimiter: tuple[int,int,int]
     
     :return: None

@@ -1,9 +1,8 @@
 """
 Module for: 
-- reading excel files referred to patients entire region histograms;
-- looking for HU and relatives counts;
-- evaluating statistic features referred to a specific 
-  region of the histogram above minimum HU and counts thresholds.
+reading excel files referred to patients entire region histograms, looking for HU and relatives counts, evaluating statistic features 
+referred to a specific region of the histogram above minimum HU and counts thresholds.
+
 """
 
 import os
@@ -76,7 +75,8 @@ def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple
     :type dir_files_fin: str
     :param directory_out: the directory of analyses.
     :type directory_out: str
-    :param delimiter_over_ROI: tuple with min HU and min counts of threshold for the ROI
+    :param delimiter_over_ROI: tuple with min HU and min counts of threshold for the ROI.
+    :type delimiter_over_ROI: tuple[int,int]
 
     :return: None
     """

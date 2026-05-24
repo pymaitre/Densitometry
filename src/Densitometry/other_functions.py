@@ -17,7 +17,7 @@ def rtv_configuration_file(name_conf, path_conf=None, save=True, pathout=''):
         config_path = Path(path_conf)
     else:
         
-        config_path = Path(r"C:\Users\belardo.alfonso\Desktop\GitHub\Densitometry_Alfo\src\Densitometry\conf\conf_dcm.yml")
+        config_path = Path(r"input_path")
     
     # READING THE CONFIGURATION FILE
     with open(config_path) as file:

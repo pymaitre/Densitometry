@@ -1,4 +1,4 @@
-"""Module for conversion from dicom to nifti."""
+"""Module for conversion from DICOM to NIFTI."""
 
 from typing import Union, Dict, List, Tuple
 from pathlib import Path
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class RTStructure:
     """
-    Nifti RT Structure.
+    NIFTI RT Structure.
 
     :name: Name of the RT Structure (str)
     :mask: 3D mask array of the RT Structure (sitk.Image
@@ -43,10 +43,10 @@ def read_dicom_image(image_path: Union[str, Path]) -> sitk.Image:
     """
     Wrapper function for platipy's read_dicom_image.
 
-    :param image_path: Path to the DICOM series to read (str|Path)
+    :param image_path: Path to the DICOM series to read.
     :type image_path: Union[str, Path]
     
-    :return: The 3D image as a SimpleITK Image (sitk.Image)
+    :return: The 3D image as a SimpleITK Image.
     :rtype: sitk.Image
     """
     return rtstruct_to_nifti.read_dicom_image(image_path)
@@ -60,12 +60,15 @@ def check_if_valid_structure(
     Check if the structure point sequence is valid.
     If the structure is invalid, print more information and return false.
 
-    :param struct_index: ROI Number of the RT Structure (int|pydcm.valuerep.IS)
+    :param struct_index: ROI Number of the RT Structure.
+    :type struct_index: Union[int, pydcm.valuerep.IS]
     :param struct_point_sequence: dictionary containing the sequence of points of the RT Structure.
         - key: string representing ROI Number
         - value: pydcm.dataset.Dataset containing RT Structure data (including slice polygons)
-        (Dict[str, pydcm.dataset.Dataset])
-    :return: true if the structure point sequence is valid (bool)
+    :type struct_point_sequence: Dict[str, pydcm.dataset.Dataset]
+    
+    :return: True if the structure point sequence is valid
+    :rtype: bool
     """
     if struct_index not in struct_point_sequence:
         logger.debug("No ROIContourSequence found for this structure, skipping.")
@@ -93,15 +96,16 @@ def convert_single_structure(  # pylint: disable=too-many-locals
     """
     Convert a DICOM RT Structure to NIFTI.
 
-    :param reference_image: 3D image associated with the structure (sitk.Image)
-    :param struct_point_sequence: dictionary containing the sequence of points of the RT Structure.
-        - key: string representing ROI Number
-        - value: pydcm.dataset.Dataset containing RT Structure data (including slice polygons)
-        (Dict[str, pydcm.dataset.Dataset])
+    :param reference_image: 3D image associated with the structure.
+    :type reference_image: sitk.Image
+    :param struct_point_sequence: dictionary containing the sequence of points of the RT Structure. key: string representing ROI Number. value: pydcm.dataset.Dataset containing RT Structure data (including slice polygons).
+    :type struct_point_sequence: Dict[str, pydcm.dataset.Dataset]
     :param struct_ds: single element of the Structure Set ROI Sequence containing ROI information,
-        including ROI Number and ROI Name (pydcm.dataset.Dataset)
-    :return: object containing structure name and structure mask. (RTStructure)
-        If the contour is not valid, return an empy RTStructure (None, None)
+        including ROI Number and ROI Name.
+    :type struct_ds: pydcm.dataset.Dataset
+    
+    :return: object containing structure name and structure mask. If the contour is not valid, return an empy RTStructure (None, None)
+    :rtype: RTStructure
     """
     image_blank = np.zeros(reference_image.GetSize()[::-1], dtype=np.uint8)
 
@@ -172,19 +176,26 @@ def read_dicom_rtstruct(  # pylint: disable=too-many-locals
     regex: bool = False,
 ) -> List[RTStructure]:
     """
-    Read DICOM ST Structure Set file and convert it into a list of RTStructure (nifti) objects.
+    Read DICOM ST Structure Set file and convert it into a list of RTStructure (NIFTI) objects.
 
-    :param rtst_path: full path of the RT Structure Set (Path)
-    :param reference_image: 3D image associated with the structure set (sitk.Image)
-    :param structure_names: structure name or list of structure names to convert. (str|List[str])
+    :param rtst_path: full path of the RT Structure Set.
+    :type rtst_path: Path
+    :param reference_image: 3D image associated with the structure set.
+    :type reference_image: sitk.Image
+    :param structure_names: structure name or list of structure names to convert.
+    :type structure_names: Union[str, List[str]]
         Other structures will not be converted.
         If set to None, all structures found will be converted.
     :param spacing_override: The spacing to override. Defaults to None.
-        (Union[Tuple[float], List[float]])
-    :param parallel: read RT Structures in parallel (bool)
+    :type spacing_override: Union[Tuple[float], List[float]]
+    :param parallel: read RT Structures in parallel.
+    :type parallel: bool
     :param regex: if set to true, structure names are searched as regular expression pattern,
-        otherwise only exact matches are returned. (bool)
-    :return: list of matching RTStructure (nifti) objects (List[RTStructure]).
+        otherwise only exact matches are returned.
+    :type regex: bool
+    
+    :return: list of matching RTStructure (nifti) objects.
+    :rtype: List[RTStructure]
     """
     if rtst_path.is_dir():
         rtst_path = list(rtst_path.iterdir())[0]

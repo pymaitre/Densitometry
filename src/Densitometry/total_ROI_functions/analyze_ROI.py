@@ -1,9 +1,9 @@
 """
 Module for: 
-- reading and showing CT converting it into an array;
-- reading all the ROIs from the relative RTst;
-- creating a database with all ROIs for patients;
-- creating a database with counts of ROIs found.
+reading and showing CT converting it into an array, 
+reading all the ROIs from the relative RTst,
+creating a database with all ROIs for patients,
+creating a database with counts of ROIs found.
 """
 
 import os
@@ -25,9 +25,9 @@ def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:st
     :type df_py: pd.DataFrame
     :param directory_out: the directory of analyses.
     :type directory_out: Path
-    :param ID_problems: list of problems
+    :param ID_problems: list of problems.
     :type ID_problems: list
-    :param rt_kind: type of RT
+    :param rt_kind: type of RT.
     :type rt_kind: str
 
     :return: database of ROI for each patient and database of ROI's counts.

@@ -19,11 +19,11 @@ def get_roi_names(rtstruct_path:Path)->list:
     """
     Generate a list with names of the ROI
     
-    :param rtstruct_path: Path to RTSTRUCT file
+    :param rtstruct_path: Path to RTSTRUCT file.
     :type rtstruct_path: Path
     
-    return roi_names: list with names of the ROI
-    :rtype roi_names: list
+    :return: list with names of the ROI.
+    :rtype: list
     """
 
     #RTSTRUCT
@@ -45,7 +45,8 @@ def is_roi_empty(rtst_file:Path, roi_name:str)->bool:
     :param roi_name: name of the ROI
     :type roi_name: str
     
-    return True if empty, False otherwise
+    :return: True if empty, False otherwise
+    :rtype: bool
     
     """
 
@@ -80,18 +81,16 @@ def find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] |
     This function checks the correspondence in ROI names and returns a tuple with the name of the ROI and the path 
     to RTSTRUCT file.
     
-    :param ct_path: Path to CT 
+    :param ct_path: Path to CT.
     :type ct_path: Path
-    :param rt_kind: type of RT
+    :param rt_kind: type of RT.
     :type rt_kind: str
-    :param list_roi: list of ROIs
+    :param list_roi: list of ROIs.
     :type list_roi: list
     
-    return ROI_name, path_rt_st: name of the ROI and path to RTSTRUCT
-    :rtype ROI_name, path_rt_st: str, Path
-    
-    Otherwise None
-    
+    :return: name of the ROI and path to RTSTRUCT (otherwise None)
+    :rtype: tuple[str, Path]
+
     """
     
     try:
@@ -129,38 +128,36 @@ def find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] |
 
 def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFrame, ID_problems:list,
                  new_sp:np.array, rt_kind:str, list_roi:list, directory_out:Path,
-                 show_info_all:bool, save_info_all:bool,resampler):
+                 show_info_all:bool, save_info_all:bool,resampler)->tuple[pd.DataFrame,list]:
     """
     This function is used to obtain the statistical features extracted or append the ID in a list (if there is a problem). 
     This function is implemented at patient-level and used for the parallelization.
     
-    :param pz: patient number in list
+    :param pz: patient number in list.
     :type pz: int
-    :param dir_histo_fin: directory to save information
+    :param dir_histo_fin: directory to save information.
     :type dir_histo_fin: Path
-    :param dir_files_fin: directory to save information
+    :param dir_files_fin: directory to save information.
     :type dir_files_fin: Path
-    :param df_py: input DataFrame
+    :param df_py: input DataFrame.
     :type df_py: pd.DataFrame
-    :param ID_problems: list of IDs with problem
+    :param ID_problems: list of IDs with problem.
     :type ID_problems: list
-    :param new_sp: aray with new spatial configuration
+    :param new_sp: aray with new spatial configuration.
     :type new_sp: np.array
-    :param rt_kind: type of RT
+    :param rt_kind: type of RT.
     :type rt_kind: str
-    :param list_roi: list of ROIs
+    :param list_roi: list of ROIs.
     :type list_roi: list
-    :param directory_out: where to save all the information
+    :param directory_out: where to save all the information.
     :type directory_out: Path
-    :param show_info_all: flag to show information
+    :param show_info_all: flag to show information.
     :type show_info_all: bool
-    :param save_info_all: flag to save information
+    :param save_info_all: flag to save information.
     :type save_info_all: bool
     
-    return stats_df: DataFrame with statistical information
-    :rtype stats_df: pd.DataFrame
-    return ID and problem of the patient
-    :rtype list
+    :return: DataFrame with statistical information and a list with ID and problem of the patient
+    :rtype: tuple[pd.DataFrame, list]
     
     """
     #ID patient
@@ -267,11 +264,11 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
                     excel file with HU and counts;
                     if false, histograms are plotted.
     :type save_info_all: bool
-    :param n_jobs: number of jobs for parallelization 
+    :param n_jobs: number of jobs for parallelization.
     :type n_jobs: int
 
-    :return dir_files_fin: directory of all patients df with HU and counts.
-    :rtype dir_files_fin: Path
+    :return: directory of all patients df with HU and counts.
+    :rtype: Path
     """
 
     print("The showing variable is set on: ", show_info_all)
@@ -336,38 +333,36 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
 
 
 def no_res_parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFrame, ID_problems:list,
-                    rt_kind:str, list_roi:list, directory_out:Path, show_info_all:bool, save_info_all:bool):
+                    rt_kind:str, list_roi:list, directory_out:Path, show_info_all:bool, save_info_all:bool)->tuple[pd.DataFrame,list]:
     """
     This function is used to obtain the statistical features extracted or append the ID in a list (if there is a problem). 
     This function is implemented at patient-level and used for the parallelization.
     
-    :param pz: patient number in list
+    :param pz: patient number in list.
     :type pz: int
-    :param dir_histo_fin: directory to save information
+    :param dir_histo_fin: directory to save information.
     :type dir_histo_fin: Path
-    :param dir_files_fin: directory to save information
+    :param dir_files_fin: directory to save information.
     :type dir_files_fin: Path
-    :param df_py: input DataFrame
+    :param df_py: input DataFrame.
     :type df_py: pd.DataFrame
-    :param ID_problems: list of IDs with problem
+    :param ID_problems: list of IDs with problem.
     :type ID_problems: list
-    :param new_sp: aray with new spatial configuration
+    :param new_sp: aray with new spatial configuration.
     :type new_sp: np.array
-    :param rt_kind: type of RT
+    :param rt_kind: type of RT.
     :type rt_kind: str
-    :param list_roi: list of ROIs
+    :param list_roi: list of ROIs.
     :type list_roi: list
-    :param directory_out: where to save all the information
+    :param directory_out: where to save all the information.
     :type directory_out: Path
-    :param show_info_all: flag to show information
+    :param show_info_all: flag to show information.
     :type show_info_all: bool
-    :param save_info_all: flag to save information
+    :param save_info_all: flag to save information.
     :type save_info_all: bool
     
-    return stats_df: DataFrame with statistical information
-    :rtype stats_df: pd.DataFrame
-    return ID and problem of the patient
-    :rtype list
+    :return: DataFrame with statistical information and ID and problem of the patient
+    :rtype: tuple[pd.DataFrame,list]
     
     """
     #ID patient
@@ -440,8 +435,8 @@ def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, l
                     if false, histograms are plotted.
     :type save_info_all: bool
 
-    :return dir_files_fin: directory of all patients df with HU and counts.
-    :rtype dir_files_fin: Path
+    :return: directory of all patients df with HU and counts.
+    :rtype: Path
     """
 
     print("The showing variable is set on: ", show_info_all)
