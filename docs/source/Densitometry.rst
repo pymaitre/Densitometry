@@ -118,6 +118,7 @@ Other functions
 ====================================================
 
 Densitometry.other_functions module
+-----------------------------------------------
 
 .. automodule:: Densitometry.other_functions
     :members:
