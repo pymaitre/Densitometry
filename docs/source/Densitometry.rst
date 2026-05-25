@@ -113,3 +113,13 @@ Densitometry.total_ROI_functions.total module
     :members:
     :show-inheritance:
     :undoc-members:
+
+Other functions
+====================================================
+
+Densitometry.other_functions module
+----------------------------------------------------
+.. automodule:: Densitometry.total_ROI_functions.total
+    :members:
+    :show-inheritance:
+    :undoc-members:

@@ -52,7 +52,7 @@ It contains the following parameters to be manually set:
 * **total_ROI_analyses**: perform total ROI analyses
 * **show_total_ROI_info**: show information of from total ROI analyses
 * **save_total_ROI_info**: save information from total ROI analyses
-* **py_patient_file_name**: name of the py_patient file 
+* **py_patient_file_path**: Path to the file with ID_patient and CT path
 * **flag_resampling**: True for resampling, False otherwise
 * **flag_new_spacing**: Flag that can take values: min_global, mean_global, max_global, frequency or manual (see below)
 * **new_spacing**: 3D array with the desired new spacing (considered when flag_new_spacing=="manual")
@@ -83,7 +83,7 @@ An example of configuration file is below reported:
 
     save_total_ROI_info :  True 
 
-    py_patient_file_name: "py_patient.xlsx"
+    py_patient_file_path: "C:\\User\\user\\folder\\py_patient.xlsx"
 
     flag_resampling: True 
 

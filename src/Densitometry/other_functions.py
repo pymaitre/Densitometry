@@ -3,14 +3,21 @@ import yaml
 from pathlib import Path
 
 
-def rtv_configuration_file(name_conf, path_conf=None, save=True, pathout=''):
+def rtv_configuration_file(name_conf:str, path_conf=None, save=True, pathout='')->dict:
     """
     It reads the configuration file from a .yml file and it gives it as output as a dictionary.
-    :param: name_conf: name of configuration file.
-    :param: path_conf: full path of the configuration file.
-    :param: save: boolean value to save the configuration inside the results folder.
-    :param: pathout: where to save a copy of configuration file.
-    :return: config_parameters = dictionary with parameters config.
+    :param name_conf: name of configuration file.
+    :type name_conf: str
+    :param path_conf: full path of the configuration file.
+    :type path_conf: Path
+    :param save: boolean value to save the configuration inside the results folder.
+    :type save: bool
+    :param pathout: where to save a copy of configuration file.
+    :type pathout: str
+    
+    
+    :return: dictionary with parameters config.
+    :rtype: dict
     """
     
     if path_conf is not None:

@@ -1,6 +1,6 @@
-    directory_dcm_out : "C:\\Users\\volon\\Desktop\\leicester" #input directory
+    directory_dcm_out : "C:\\Users\\user\\Desktop\\input_folder" #input directory
 
-    directory_out : "C:\\Users\\volon\\Desktop\\output" #output directory
+    directory_out : "C:\\Users\\user\\Desktop\\output" #output directory
 
     image_modality : "CT" 
 
@@ -14,7 +14,7 @@
 
     save_total_ROI_info :  True #False  #
 
-    py_patient_file_name: "py_patient.xlsx"
+    py_patient_path: "C:\\User\\user\\folder\\py_patient.xlsx"
 
     flag_resampling: True #Flag for the resampling (True: resample, False: dot not resample)
 

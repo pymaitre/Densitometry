@@ -18,7 +18,7 @@ def main():
     Path(directory_out).mkdir(parents=True, exist_ok=True)
     
     image_modality = conf['image_modality']
-    py_patient_file_name=str(conf["py_patient_file_name"])
+    py_patient_path=Path(conf["py_patient_path"])
     
        
     if "y" in conf['divide_dcm'].lower():
@@ -29,7 +29,7 @@ def main():
     else:
         print("Probably the files dcm organized are in: ", directory_dcm_out, "\n")
 
-    df_py = analyze_dcm.find_ct_info(directory_dcm_out, directory_out, image_modality,py_patient_file_name=py_patient_file_name)
+    df_py = analyze_dcm.find_ct_info(directory_dcm_out, directory_out, image_modality,py_patient_path=py_patient_path)
     print("")        
 
 
