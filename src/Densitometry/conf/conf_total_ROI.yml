@@ -1,6 +1,6 @@
-    directory_dcm_out : "C:\\Users\\volon\\Desktop\\leicester" #input directory
+    directory_dcm_out : "C:\\Users\\user\\Desktop\\input_folder" #input directory
 
-    directory_out : "C:\\Users\\volon\\Desktop\\output" #output directory
+    directory_out : "C:\\Users\\user\\Desktop\\output_folder" #output directory
 
     image_modality : "CT" 
 
