@@ -13,14 +13,13 @@ Modules
 -------------
 
 The current folder has two subfolders: **src** and **tutorials**. 
-The folder **src** contains other two folders: **Densitometry** and **test**. The former represents the main core of the code, while the latter stores some codes that can be used for testing the code. On the other hand **tutorials** contains some additional Jupyter notebooks.
+The folder **src** contains other a folder **Densitometry**, used for the extraction of densitometric data. On the other hand **tutorials** contains some additional Jupyter notebooks used for tutorials.
 
 Focusing on **Densitometry**, the following subfolders can be found: 
 
 1. **conf**: collects the configuration files (in YAML format);
 2. **dcm_functions**: used to read DICOM headers and to create a database with header information;
 3. **main_scripts**: collects the main scripts;
-4. **merge_file_functions**: used to read databases and to modify them in case of merging or dropping rows;
 5. **specific_ROI_functions**: used for evaluating statistic features referred to a specific region;
 6. **total_ROI_functions**: used to extract the desired dosimetric data.
 

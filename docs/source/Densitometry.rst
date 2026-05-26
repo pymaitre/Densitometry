@@ -10,28 +10,6 @@ Densitometry.dcm_functions.analyze_dcm module
     :undoc-members:
 
 
-Densitometry.dcm_functions.divide_dcm_Bjorn module
---------------------------------------------------
-
-.. automodule:: Densitometry.dcm_functions.divide_dcm_Bjorn
-    :members:
-    :show-inheritance:
-    :undoc-members:
-
-
-
-Densitometry.merge_file_functions
-====================================
-
-Densitometry.merge_file_functions.merge_df module
--------------------------------------------------
-
-.. automodule:: Densitometry.merge_file_functions.merge_df
-    :members:
-    :show-inheritance:
-    :undoc-members:
-
-
 Densitometry.specific_ROI_functions
 =======================================
 
@@ -119,7 +97,7 @@ Other functions
 
 Densitometry.other_functions module
 ----------------------------------------------------
-.. automodule:: Densitometry.total_ROI_functions.total
+.. automodule:: Densitometry.other_functions
     :members:
     :show-inheritance:
     :undoc-members:
