@@ -98,7 +98,10 @@ def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple
     
     path_sp=directory_out/"Total_ROI"/"Histo_total_stats.xlsx"
     histo_total_stats=pd.read_excel(path_sp)
+
+    histo_total_stats["PatientID"] = histo_total_stats["PatientID"].astype(str)
     histo_total_stats = histo_total_stats.set_index("PatientID")
+
 
     #Find the statistic features
     for diff_file in diff_files:
@@ -117,6 +120,7 @@ def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple
         if len(counts_over) != 0:       
             
             print("You caught a patient who has components in the indicated region.")
+            
             pz_over.append(ID)
             print("")  
             
@@ -125,6 +129,8 @@ def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple
             sp_y=histo_total_stats.loc[ID,"VoxelSpacingY"]
             sp_z=histo_total_stats.loc[ID,"VoxelSpacingZ"]
             
+            
+
             sp=np.array([sp_x,sp_y,sp_z])
             ROI_name=str(histo_total_stats.loc[ID,"ROI_name"])
             

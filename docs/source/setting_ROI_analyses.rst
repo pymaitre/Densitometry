@@ -86,9 +86,14 @@ When the code stops running, all the computed densitometric data are stored in t
 
 Output
 ---------------------
-For each analysis (specific, over or rate), an associated folder is generated in **directory_out**. 
+Three different analyses can be performed:
+* specific analysis: extraction of infomation, considering the range [HU_min, HU_max] with counts greater than min_counts.
+* over analysis: extraction of infomation, considering HU greater than HU_min with at least min_counts.
+* rate analysis: extraction of information, considering the range [HU_min, HU_max] and rate_counts beetween inside and outside for this region.
+
+At the end of the extraction, a proper folder is generated in **directory_out** (with the same structure for each analysis).
 The resulting directory stores information obtained at the end of each run, such as plots of the histograms and some statistics.  
-More precisely, an example of results from the specific analysis is:
+An example of results from the specific analysis is below reported:
 
 .. code-block:: text
 
