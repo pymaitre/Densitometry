@@ -1,4 +1,5 @@
 from pathlib import Path
+from Densitometry.other_functions import rtv_configuration_file
 import pandas as pd
 import os
 import glob
@@ -30,11 +31,13 @@ def find_id_dir(directory:Path)->list:
 
 
 def main():
+
+    config = rtv_configuration_file("conf_total_ROI", save=False)
     
-    directory_dcm_out = r"path_dcm_out"
-    directory_out = r"path_directory_out"
+    directory_dcm_out = config["directory_dcm_out"]
+    directory_out = config["path_directory_out"]
     
-    py_patient_file = Path(directory_out) / "py_patient_file.xlsx"
+    py_patient_file = config["py_patient_path"]
     df_py = pd.read_excel(py_patient_file)
 
     id_dirs = find_id_dir(directory_dcm_out)
