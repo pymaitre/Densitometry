@@ -30,7 +30,7 @@ def main(conf):
     directory_out = Path(conf['directory_out'])
     Path(directory_out).mkdir(parents=True, exist_ok=True)
     
-    py_patient_file=str(conf["py_patient_file"])
+    py_patient_file=str(conf["py_patient_path"])
 
     image_modality = conf['image_modality']
     df_py = info_dcm.find_ct_info(directory_dcm_out, directory_out, image_modality,py_patient_file=py_patient_file)
