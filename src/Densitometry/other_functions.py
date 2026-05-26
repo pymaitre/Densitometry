@@ -26,7 +26,7 @@ def rtv_configuration_file(name_conf:str, path_conf:Path=None, save:bool=True, p
         config_path = Path(path_conf)
     else:
         
-        config_path = Path(r"input_path")
+        config_path = Path.cwd()/"src"/ "Densitometry"/"conf" / f"{name_conf}.yml"
     
     # READING THE CONFIGURATION FILE
     with open(config_path) as file:
