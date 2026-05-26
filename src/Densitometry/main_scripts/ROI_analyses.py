@@ -10,9 +10,6 @@ from Densitometry.specific_ROI_functions import check_rate as rate
 
 
 def main(conf):
-    
-    #Read configuration file
-    #conf = rtv_configuration_file("conf_ROI_analyses", save=False)
 
     directory_out = Path(conf['directory_out'])
     Path(directory_out).mkdir(parents=True, exist_ok=True)  
