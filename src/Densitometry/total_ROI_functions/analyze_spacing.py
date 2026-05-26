@@ -99,15 +99,14 @@ def histo_spacing(coordinata: pd.Series, directory_out: Path, name: str, n_size:
     return co_mas_in
 
 
-def find_global_scale(df_py: pd.DataFrame,flag_new_spacing:bool)->np.array:
+def find_global_scale(df_py: pd.DataFrame,new_spacing_approach:str)->np.array:
     """
-    Create the new voxel spacing given by min_x, min_y and min_z of the given dataset 
-    (to be found when flag_new_spacing=="min_global).
+    Create the new voxel spacing using one of the following criteria: (min_x, min_y and min_z), (mean_x,mean_y,mean_z) or (max_x,max_y,max_z) of the given dataset.
     
     :param df_py: input dataframe.
     :type df_py: pd.DataFrame
-    :param flag_new_spacing: flag to choose the global spacing (min_global, mean_global and max_global).
-    :type flag_new_spacing: bool
+    :param new_spacing_approach: flag to choose the global spacing (min_global, mean_global and max_global).
+    :type new_spacing_approach: str
     
     :return: voxel spacing given by min_x, min_y and min_z (or mean or max).
     :rtype: np.array
@@ -115,33 +114,44 @@ def find_global_scale(df_py: pd.DataFrame,flag_new_spacing:bool)->np.array:
     """
     
     #Find min global scaling
-    if flag_new_spacing=="min_global":
+    if new_spacing_approach=="min_global":
         
         print("I am extracting the global minimum spacing")
 
-        min_x=df_py["VoxelSpacingX"].min()
-        min_y=df_py["VoxelSpacingY"].min()
-        min_z=df_py["VoxelSpacingZ"].min()
+        new_x=df_py["VoxelSpacingX"].min()
+        new_y=df_py["VoxelSpacingY"].min()
+        new_z=df_py["VoxelSpacingZ"].min()
+
+        new_spacing=np.array([new_x,new_y,new_z])
+
+        return new_spacing
         
     #Find mean global scaling
-    if flag_new_spacing=="mean_global":
+    elif new_spacing_approach=="mean_global":
         
         print("I am extracting the global mean spacing")
 
-        min_x=df_py["VoxelSpacingX"].mean()
-        min_y=df_py["VoxelSpacingY"].mean()
-        min_z=df_py["VoxelSpacingZ"].mean()
+        new_x=df_py["VoxelSpacingX"].mean()
+        new_y=df_py["VoxelSpacingY"].mean()
+        new_z=df_py["VoxelSpacingZ"].mean()
+
+        new_spacing=np.array([new_x,new_y,new_z])
+
+        return new_spacing
     
     #Find max global scaling
-    if flag_new_spacing=="max_global":
+    elif new_spacing_approach=="max_global":
         
         print("I am extracting the global maximum spacing")
 
-        min_x=df_py["VoxelSpacingX"].max()
-        min_y=df_py["VoxelSpacingY"].max()
-        min_z=df_py["VoxelSpacingZ"].max()
+        new_x=df_py["VoxelSpacingX"].max()
+        new_y=df_py["VoxelSpacingY"].max()
+        new_z=df_py["VoxelSpacingZ"].max()
+        
+        new_spacing=np.array([new_x,new_y,new_z])
     
-    new_spacing=np.array([min_x,min_y,min_z])
-    
-    return new_spacing
+        return new_spacing
+        
+    else:
+        raise ValueError(f"Invalid new spacing approach: {new_spacing_approach}")
     
