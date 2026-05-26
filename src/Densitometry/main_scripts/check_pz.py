@@ -17,6 +17,8 @@ def find_id_dir(directory:Path)->list:
         :rtype: list
         
         """
+
+        directory=str(directory)
         
         # Use glob to find all items in the directory
         folders = [f for f in glob.glob(directory + "/*") if os.path.isdir(f)]
@@ -34,10 +36,10 @@ def main():
 
     config = rtv_configuration_file("conf_total_ROI", save=False)
     
-    directory_dcm_out = config["directory_dcm_out"]
-    directory_out = config["path_directory_out"]
+    directory_dcm_out = Path(config["directory_dcm_out"])
+    directory_out = Path(config["path_directory_out"])
     
-    py_patient_file = config["py_patient_path"]
+    py_patient_file = Path(config["py_patient_path"])
     df_py = pd.read_excel(py_patient_file)
 
     id_dirs = find_id_dir(directory_dcm_out)
