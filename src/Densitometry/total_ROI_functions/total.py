@@ -143,7 +143,7 @@ def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFr
     :type df_py: pd.DataFrame
     :param ID_problems: list of IDs with problem.
     :type ID_problems: list
-    :param new_sp: aray with new spatial configuration.
+    :param new_sp: array with new spatial configuration.
     :type new_sp: np.array
     :param rt_kind: type of RT.
     :type rt_kind: str
