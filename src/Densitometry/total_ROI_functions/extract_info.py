@@ -287,7 +287,6 @@ def resample(image: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) 
         if s==0: 
             print("The image has one dimension equal to zero")
 
-    #Resample the image
     new_image=rsm.Image.resample(image,new_spacing,resampler,0)
     
     
