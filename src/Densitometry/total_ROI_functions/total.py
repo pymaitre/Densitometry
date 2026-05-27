@@ -126,40 +126,34 @@ def find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] |
         print('ROI not founded with error: ', e)
         
 
-def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFrame, ID_problems:list,
-                 new_sp:np.array, rt_kind:str, list_roi:list, directory_out:Path,
-                 show_info_all:bool, save_info_all:bool,resampler)->tuple[pd.DataFrame,list]:
+def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,list]:
     """
     This function is used to obtain the statistical features extracted or append the ID in a list (if there is a problem). 
     This function is implemented at patient-level and used for the parallelization.
     
     :param pz: patient number in list.
     :type pz: int
-    :param dir_histo_fin: directory to save information.
-    :type dir_histo_fin: Path
-    :param dir_files_fin: directory to save information.
-    :type dir_files_fin: Path
-    :param df_py: input DataFrame.
-    :type df_py: pd.DataFrame
-    :param ID_problems: list of IDs with problem.
-    :type ID_problems: list
-    :param new_sp: array with new spatial configuration.
-    :type new_sp: np.array
-    :param rt_kind: type of RT.
-    :type rt_kind: str
-    :param list_roi: list of ROIs.
-    :type list_roi: list
-    :param directory_out: where to save all the information.
-    :type directory_out: Path
-    :param show_info_all: flag to show information.
-    :type show_info_all: bool
-    :param save_info_all: flag to save information.
-    :type save_info_all: bool
-    
+    :param input_parallel_dictionary: input dictionary for the parallel function.
+    :type input_parallel_dictionary: dict
+
     :return: DataFrame with statistical information and a list with ID and problem of the patient
     :rtype: tuple[pd.DataFrame, list]
     
     """
+    #Extract information from dictionary
+    
+    dir_histo_fin=input_parallel_dictionary["directory_histo_fin"]
+    dir_files_fin=input_parallel_dictionary["directory_files_fin"]
+    df_py=input_parallel_dictionary["dataset"]
+    ID_problems=input_parallel_dictionary["ID_problems"]
+    new_sp=input_parallel_dictionary["new_sp"]
+    rt_kind=input_parallel_dictionary["rt_kind"]
+    list_roi=input_parallel_dictionary["list_roi"]
+    directory_out=input_parallel_dictionary["directory_out"]
+    show_info_all=input_parallel_dictionary["show_info_all"]
+    save_info_all=input_parallel_dictionary["save_info_all"]
+    resampler=input_parallel_dictionary["resampler"]
+  
     #ID patient
     ID = df_py.loc[pz,"PatientID"]
     
@@ -280,13 +274,26 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
 
     more_patient_stats_df_total = pd.DataFrame()
     pz_problems = []
-    
 
+    #Create the input dictionary for the parallel function
+    input_parallel_dictionary={
+        "directory_histo_fin": dir_histo_fin,
+        "directory_files_fin": dir_files_fin,
+        "dataset": df_py,
+        "ID_problems": ID_problems,
+        "new_sp": new_sp,
+        "rt_kind": rt_kind,
+        "list_roi": list_roi,
+        "directory_out": directory_out,
+        "show_info_all": show_info_all,
+        "save_info_all": save_info_all,
+        "resampler": resampler
+        }
+    
     #Parallel function
     results = Parallel(n_jobs=N_jobs,timeout=None)(
         delayed(parallel_fun)(
-            pz, dir_histo_fin, dir_files_fin, df_py, ID_problems,
-            new_sp, rt_kind, list_roi, directory_out, show_info_all, save_info_all,resampler
+            pz, input_parallel_dictionary
         )
         for pz in range(len(df_py))
     )
@@ -330,39 +337,33 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
     return dir_files_fin
 
 
-def no_res_parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFrame, ID_problems:list,
-                    rt_kind:str, list_roi:list, directory_out:Path, show_info_all:bool, save_info_all:bool)->tuple[pd.DataFrame,list]:
+def no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.DataFrame,list]:
     """
     This function is used to obtain the statistical features extracted or append the ID in a list (if there is a problem). 
     This function is implemented at patient-level and used for the parallelization.
     
     :param pz: patient number in list.
     :type pz: int
-    :param dir_histo_fin: directory to save information.
-    :type dir_histo_fin: Path
-    :param dir_files_fin: directory to save information.
-    :type dir_files_fin: Path
-    :param df_py: input DataFrame.
-    :type df_py: pd.DataFrame
-    :param ID_problems: list of IDs with problem.
-    :type ID_problems: list
-    :param new_sp: aray with new spatial configuration.
-    :type new_sp: np.array
-    :param rt_kind: type of RT.
-    :type rt_kind: str
-    :param list_roi: list of ROIs.
-    :type list_roi: list
-    :param directory_out: where to save all the information.
-    :type directory_out: Path
-    :param show_info_all: flag to show information.
-    :type show_info_all: bool
-    :param save_info_all: flag to save information.
-    :type save_info_all: bool
+    :param input_dictionary_parallel: input dictionary for the parallel function.
+    :type input_dictionary_parallel: dict
     
     :return: DataFrame with statistical information and ID and problem of the patient
     :rtype: tuple[pd.DataFrame,list]
     
     """
+
+    #Extract information from the dictionary
+                      
+    dir_histo_fin=input_dictionary_parallel["directory_histo_fin"]
+    dir_files_fin=input_dictionary_parallel["directory_files_fin"]
+    df_py=input_dictionary_parallel["dataset"]
+    ID_problems=input_dictionary_parallel["ID_problems"]
+    rt_kind=input_dictionary_parallel["rt_kind"]
+    list_roi=input_dictionary_parallel["list_roi"]
+    directory_out=input_dictionary_parallel["directory_out"]
+    show_info_all=input_dictionary_parallel["show_info_all"]
+    save_info_all=input_dictionary_parallel["save_info_all"]
+                      
     #ID patient
     ID = df_py.loc[pz,"PatientID"]
     
@@ -449,14 +450,28 @@ def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, l
     more_patient_stats_df_total = pd.DataFrame()
     pz_problems = []
 
+    #Create the input dictionary for the parallel function
+    input_parallel_dictionary={
+        "directory_histo_fin": dir_histo_fin,
+        "directory_files_fin": dir_files_fin,
+        "dataset": df_py,
+        "ID_problems": ID_problems,
+        "rt_kind": rt_kind,
+        "list_roi": list_roi,
+        "directory_out": directory_out,
+        "show_info_all": show_info_all,
+        "save_info_all": save_info_all,
+    }
+
     
     #Parallel function
     results = Parallel(n_jobs=N_jobs,timeout=None)(
         delayed(no_res_parallel_fun)(
-            pz, dir_histo_fin, dir_files_fin, df_py, ID_problems, rt_kind, list_roi, directory_out, show_info_all, save_info_all
+            pz, input_parallel_dictionary
         )
         for pz in range(len(df_py))
     )
+    
     
     #Store results
     stats_list = [r[0] for r in results if r[0] is not None]
