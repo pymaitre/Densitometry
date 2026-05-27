@@ -142,16 +142,16 @@ def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,lis
     """
     #Extract information from dictionary
     
-    dir_histo_fin=input_parallel_dictionary["directory_histo_fin"]
-    dir_files_fin=input_parallel_dictionary["directory_files_fin"]
-    df_py=input_parallel_dictionary["dataset"]
-    ID_problems=input_parallel_dictionary["ID_problems"]
-    new_sp=input_parallel_dictionary["new_sp"]
-    rt_kind=input_parallel_dictionary["rt_kind"]
-    list_roi=input_parallel_dictionary["list_roi"]
-    directory_out=input_parallel_dictionary["directory_out"]
-    show_info_all=input_parallel_dictionary["show_info_all"]
-    save_info_all=input_parallel_dictionary["save_info_all"]
+    dir_histo_fin=Path(input_parallel_dictionary["directory_histo_fin"])
+    dir_files_fin=Path(input_parallel_dictionary["directory_files_fin"])
+    df_py=pd.DataFrame(input_parallel_dictionary["dataset"])
+    ID_problems=list(input_parallel_dictionary["ID_problems"])
+    new_sp=np.array(input_parallel_dictionary["new_sp"])
+    rt_kind=str(input_parallel_dictionary["rt_kind"])
+    list_roi=list(input_parallel_dictionary["list_roi"])
+    directory_out=Path(input_parallel_dictionary["directory_out"])
+    show_info_all=bool(input_parallel_dictionary["show_info_all"])
+    save_info_all=bool(input_parallel_dictionary["save_info_all"])
     resampler=input_parallel_dictionary["resampler"]
   
     #ID patient
@@ -354,15 +354,15 @@ def no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.DataFr
 
     #Extract information from the dictionary
                       
-    dir_histo_fin=input_dictionary_parallel["directory_histo_fin"]
-    dir_files_fin=input_dictionary_parallel["directory_files_fin"]
-    df_py=input_dictionary_parallel["dataset"]
-    ID_problems=input_dictionary_parallel["ID_problems"]
-    rt_kind=input_dictionary_parallel["rt_kind"]
-    list_roi=input_dictionary_parallel["list_roi"]
-    directory_out=input_dictionary_parallel["directory_out"]
-    show_info_all=input_dictionary_parallel["show_info_all"]
-    save_info_all=input_dictionary_parallel["save_info_all"]
+    dir_histo_fin=Path(input_dictionary_parallel["directory_histo_fin"])
+    dir_files_fin=Path(input_dictionary_parallel["directory_files_fin"])
+    df_py=pd.DataFrame(input_dictionary_parallel["dataset"])
+    ID_problems=list(input_dictionary_parallel["ID_problems"])
+    rt_kind=str(input_dictionary_parallel["rt_kind"])
+    list_roi=list(input_dictionary_parallel["list_roi"])
+    directory_out=Path(input_dictionary_parallel["directory_out"])
+    show_info_all=bool(input_dictionary_parallel["show_info_all"])
+    save_info_all=bool(input_dictionary_parallel["save_info_all"])
                       
     #ID patient
     ID = df_py.loc[pz,"PatientID"]
