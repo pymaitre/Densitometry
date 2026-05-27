@@ -173,9 +173,7 @@ def parallel_fun(pz:int, dir_histo_fin:Path, dir_files_fin:Path, df_py:pd.DataFr
             old_sp = np.array([df_py.loc[pz,"VoxelSpacingX"], df_py.loc[pz,"VoxelSpacingY"], df_py.loc[pz,"VoxelSpacingZ"]])
 
 
-            if (old_sp[0]==new_sp[0] and 
-                old_sp[1]==new_sp[1] and 
-                old_sp[2]==new_sp[2]):
+            if np.all(old_sp == new_sp):
                 
                 print("")    
                 print("PZ", ID , " ok")
