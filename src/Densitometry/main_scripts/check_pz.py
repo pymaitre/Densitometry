@@ -1,12 +1,45 @@
 from pathlib import Path
+from Densitometry.other_functions import rtv_configuration_file
 import pandas as pd
 import os
 import glob
 
+
+def find_id_dir(directory:Path)->list:
+    
+        """
+        Find all ID directories
+        
+        :param directory: input folder
+        :type directory: Path
+        
+        :return: list of ID directories
+        :rtype: list
+        
+        """
+
+        directory=str(directory)
+        
+        # Use glob to find all items in the directory
+        folders = [f for f in glob.glob(directory + "/*") if os.path.isdir(f)]
+
+        #Print names of the folders
+        id_dirs = []
+        for folder in folders:
+            id_dirs.append(os.path.basename(folder))
+
+        return id_dirs
+
+
+
 def main():
-    directory_dcm_out = r"\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\dataset\segmentazione\breast_Fodor22_from2017\no_boost\ANONYMIZED_Dx\ANONYMIZED_Breast_Monica_Dx"
-    directory_out = r"\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\Belardo\Breast\Analyses\breast_Fodor22_from2017\no_boost\ANONYMIZED_Dx\ANONYMIZED_Breast_Monica_Dx"
-    py_patient_file = Path(directory_out) / "py_patient_file.xlsx"
+
+    config = rtv_configuration_file("conf_total_ROI", save=False)
+    
+    directory_dcm_out = Path(config["directory_dcm_out"])
+    directory_out = Path(config["directory_out"])
+    
+    py_patient_file = Path(config["py_patient_path"])
     df_py = pd.read_excel(py_patient_file)
 
     id_dirs = find_id_dir(directory_dcm_out)
@@ -19,20 +52,6 @@ def main():
     differenza = [nome for nome in id_dirs if nome not in list_pz]
 
     print(differenza)
-
-
-def find_id_dir(directory):
-        
-        # Usa glob per trovare tutto il contenuto della directory
-        folders = [f for f in glob.glob(directory + "/*") if os.path.isdir(f)]
-
-        # Stampa i nomi delle cartelle
-        id_dirs = []
-        for folder in folders:
-            id_dirs.append(os.path.basename(folder))
-            # break
-
-        return id_dirs
 
 
 if __name__ == "__main__":

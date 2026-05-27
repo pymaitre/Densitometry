@@ -1,9 +1,0 @@
-    directory_dcm_in : '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\original_dataset\BAROTRAUMA\PNRR\POTENZA\DB_07062024\Potenza_pz336' #input directory
-    
-    directory_dcm_out: '\\IHSR.dom\OSRFileServices\Ric.FisicaSanitaria\AAAshared\dataset\BAROTRAUMA\PNRR\POTENZA\Prova' #output directory
-
-    directory_out : 'F:\Belardo\BAROTRAUMA\Analyses\POTENZA\dcm_organization'
-
-    image_modality : 'CT'
-    
-    divide_dcm : 'yes'  #'yes' # 

@@ -1,7 +1,0 @@
-spaarc_path: C:\Users\palazzo.gabriele\Downloads\SPAARC
-#study_directory: C:\Users\...
-observers: ["AA", "BB", "CC"]
-voxel_size: 0.1
-bin_method: "FBN"
-bin_value: 64
-#features: ["morph", "stats", "ih"]

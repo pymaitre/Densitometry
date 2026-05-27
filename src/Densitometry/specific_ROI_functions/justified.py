@@ -1,10 +1,8 @@
 """
 Module for: 
-- reading excel files referred to patients entire region histograms;
-- looking for HU and relatives counts;
-- evalueting statistic features referred to a specific 
-  region of the histogram beetween minimum and maximum 
-  HU and above minimum counts thresholds.
+reading excel files referred to patients entire region histograms, 
+looking for HU and relatives counts, evaluating statistic features referred à
+to a specific region of the histogram beetween minimum and maximum HU and above minimum counts thresholds.
 """
 
 import os
@@ -15,13 +13,13 @@ import pandas as pd
 import numpy as np
 
 
-def just_variable():
+def just_variable()->tuple[int,int,int]:
     """
     Function for inserting input HU and counts thresholds.
 
-    :return HU_min: minimum HU threshold.
-    :return HU_max: maximum HU threshold.
-    :return min_counts: minimum counts threshold.
+    :return: minimum HU threshold, maximum HU threshold and minimum counts threshold.
+    :rtype: tuple[int,int,int]
+
     """
 
     
@@ -33,24 +31,29 @@ def just_variable():
     return HU_min, HU_max, min_counts
 
 
-def justified(HU, counts, HU_min, HU_max, min_counts):
+def justified(HU: pd.Series, counts: pd.Series, HU_min:int , HU_max: int, min_counts:int)->tuple[pd.Series, pd.Series]:
     """
     Function for evalueting HU and counts above thresholds.
 
     :param HU: HU from excel file, referred to entire region histogram.
+    :type HU: pd.Series
     :param counts: counts from excel file, referred to entire region histogram.
+    :type counts: pd.Series
     :param HU_min: minimum HU threshold.
+    :type HU_min: int
     :param HU_max: maximum HU threshold.
+    :type HU_max: int
     :param min_counts: minimum counts threshold.
+    :type min_counts: int
 
-    :return HU_just: HU beetween thresholds.
-    :return counts_just: counts above threshold.    
+    :return: HU beetween thresholds and counts above threshold. 
+    :rtype: tuple[pd.Series, pd.Series]   
     """
     
     coppie = {'HU': HU, 'Counts': counts}
     df = pd.DataFrame(coppie)
-    # display(df)
-
+    
+    #Above or under thresholds
     above_threshold = df[(df["Counts"] > min_counts) & (HU_min < df["HU"]) & \
                             (df["HU"]< HU_max)]
     
@@ -60,31 +63,32 @@ def justified(HU, counts, HU_min, HU_max, min_counts):
     return HU_just, counts_just
 
 
-def histo_just(dir_files_fin, directory_out, delimiter):
+def histo_just(dir_files_fin: str, directory_out: str, delimiter: tuple[int,int,int])->None:
     """
     Here almost functions are called for all patients. Especially:
     - establishing thresholds;
     - reading excel files referred to entire region histograms;
     - looking for HU and relatives counts;
-    - evalueting statistic features referred to a specific 
-      region of the histogram beetween minimum and maximum 
-      HU and above minimum counts thresholds;
-    - considering patients that do not have this significative
-      region of the histogram.
+    - evaluating statistic features referred to a specific region of the histogram beetween minimum and maximum HU and above minimum counts thresholds;
+    - considering patients that do not have this significative region of the histogram.
 
     :param dir_files_fin: directory of all patients df with HU and counts.
+    :type dir_files_fin: str
     :param directory_out: the directory of analyses.
-    :param save_just: if true save all histograms and relatives 
-                    excel file with HU and counts;
-                    if false, histograms are plotted.
+    :type directory_out: str
+    :param delimiter: tuple with min_HU, max_HU and min_counts.
+    :type delimiter: tuple[int,int,int]
+    
+    :return: None
     """
 
+    #if True save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
     save_just=True
     
     print("The saving variable is on: ", save_just)
     print("")
     
-    # HU_min, HU_max, min_counts = just_variable()
+
     HU_min, HU_max, min_counts = delimiter[0], delimiter[1], delimiter[2]
 
     total_ROI_analysis = Path(directory_out) / "Total_ROI" / "Histo_total_stats.xlsx"
@@ -100,7 +104,7 @@ def histo_just(dir_files_fin, directory_out, delimiter):
 
     for diff_file in diff_files:
         name = Path(diff_file).name
-        # print(name)
+        
         ID = re.sub(".xlsx", "", name)
         sp_total_ROI = np.array([df_total_ROI.loc[ID,"VoxelSpacingX"], df_total_ROI.loc[ID,"VoxelSpacingY"], df_total_ROI.loc[ID,"VoxelSpacingZ"]])
         name_total_ROI = str(df_total_ROI.loc[ID,"ROI_name"])
@@ -110,8 +114,10 @@ def histo_just(dir_files_fin, directory_out, delimiter):
         HU_ROI = df["HU"]
         counts_ROI = df["Counts"]
 
+        #Justified HU and counts
         HU_just, counts_just = justified(HU_ROI, counts_ROI, HU_min, HU_max, min_counts)
 
+        #Store information 
         if len(counts_just) != 0:       
             
             dir_histo_just = Path(directory_out) / "Specific_Regions" / f"Region_{HU_min}_{HU_max}_{min_counts}" / f"Histograms"
@@ -138,7 +144,7 @@ def histo_just(dir_files_fin, directory_out, delimiter):
         else:
             print("")
             print("I print the database with the densitometric features of the histograms of the region of interest.")
-            # display(more_patient_stats_df_justified)
+            
 
     if len(pz_no_just)!=0:
         print("I have problems with patients: ")
