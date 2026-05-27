@@ -165,7 +165,7 @@ def read_and_show_ct(ct_path:Path, show_CT_ROI:bool, slice:int)->Tuple[rsm.Image
     ct=rsm.Image.read(ct_path)
     
     #Get the CT array
-    ct_arr = ct.__array__()
+    ct_arr = ct.numpy()
     print("The CT has a shape: ", ct_arr.shape)
     
     #Remove comments if you want to see the slice
@@ -210,7 +210,7 @@ def read_and_show_RTst(rt_0:rsm.RTStructureSet, ROI_founded:str)->np.array:
     rt = roi_obj
     
     #Convert in array  
-    rt_arr = rt.__array__()
+    rt_arr = rt.numpy()
     print("The RTst has a shape: ", rt_arr.shape, " and contains: ", np.unique(rt_arr, return_counts=True)[1][1], " 1")
 
     #Get the mask
@@ -291,7 +291,7 @@ def resample(image: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) 
     
     
     #array from new_image
-    new_array_image = new_image.__array__()
+    new_array_image = new_image.numpy()
     
     
     return new_image,new_array_image
