@@ -132,7 +132,8 @@ def ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, show_C
     CT, CT_arr = read_and_show_ct(ct_path, show_CT_ROI, slice)
     
     #Resampling
-    CT_res, CT_res_arr = resample(CT, new_sp[0], new_sp[1], new_sp[2],resampler)
+    CT_res = resample(CT, new_sp[0], new_sp[1], new_sp[2],resampler)
+    CT_res_arr=CT_res.numpy()
 
     #Get RTStructure Set
     rt_res=rsm.RTStructureSet.read(filename=rt_path,structure_names=ROI_founded,reference_image=CT_res)
@@ -260,7 +261,7 @@ def obtain_ROI(mask:np.array, ct_arr:np.array, show_CT_ROI:bool, slice:int)->Tup
 
     return HU_ROI_no_nan, counts_ROI_no_nan
 
-def resample(image: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) -> Tuple[rsm.Image, np.array]:
+def resample(image: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) -> rsm.Image:
     """
     Resample image (increase pixel density) in order to increase computation accuracy.
 
@@ -274,8 +275,8 @@ def resample(image: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) 
     :type new_z: float
 
 
-    :return resampled image and array of the resampled image.
-    :rtype: Tuple[rsm.Image, np.array]
+    :return: resampled image and array of the resampled image.
+    :rtype: rsm.Image
     """   
     
     #Fill new_spacing
@@ -289,9 +290,4 @@ def resample(image: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) 
 
     new_image=rsm.Image.resample(image,new_spacing,resampler,0)
     
-    
-    #array from new_image
-    new_array_image = new_image.numpy()
-    
-    
-    return new_image,new_array_image
+    return new_image
