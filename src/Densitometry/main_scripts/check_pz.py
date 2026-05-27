@@ -37,7 +37,7 @@ def main():
     config = rtv_configuration_file("conf_total_ROI", save=False)
     
     directory_dcm_out = Path(config["directory_dcm_out"])
-    directory_out = Path(config["path_directory_out"])
+    directory_out = Path(config["directory_out"])
     
     py_patient_file = Path(config["py_patient_path"])
     df_py = pd.read_excel(py_patient_file)
