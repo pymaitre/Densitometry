@@ -75,7 +75,7 @@ An example of configuration file is below reported:
 
 Run the code
 ---------------------
-At last, you can run the code. Be sure resmip_env is active (if not, activate it), move to the folder 
+At last, you can run the code. Be sure .venv is active (if not, activate it), move to the folder 
 **src** and then run from the terminal: 
 
 .. code-block:: bash

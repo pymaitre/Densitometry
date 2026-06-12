@@ -43,12 +43,12 @@ Next, you have to run from the terminal:
 
 .. code-block:: bash
 
-    python -m venv resmip_env
+    python -m venv .venv
 
-where resmip_env will be the virtual environment used during all the workflow.
+where .venv will be the virtual environment used during all the workflow.
 
 
-Be sure that after having created the environment, resmip_env is active (if not, activate it)
+Be sure that after having created the environment, .venv is active (if not, activate it)
 
 
 .. _Installation of Poetry:

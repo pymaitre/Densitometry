@@ -97,11 +97,11 @@ def find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] |
 
         path_rt_structures = [path_rt_st for path_rt_st in list(Path(ct_path).parents[2].glob(f"**/*{rt_kind}*")) if path_rt_st.is_dir() == False]
         
-        nomi_con_importanza = {}
+        names_with_importance = {}
         for i in range(0, len(list_roi)):
-            nomi_con_importanza[list_roi[i]] = len(list_roi)-i
+            names_with_importance[list_roi[i]] = len(list_roi)-i
         print("I'm searching contours with this order: ")
-        print(nomi_con_importanza)
+        print(names_with_importance)
         
         for path_rt_st in path_rt_structures:
             print("I found the RTst:")
@@ -111,7 +111,7 @@ def find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] |
             ROI_names = get_roi_names(path_rt_st)
             
             #Check the same name
-            for nome in nomi_con_importanza:
+            for nome in names_with_importance:
 
                 for ROI_name in ROI_names:
 

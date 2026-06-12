@@ -201,7 +201,7 @@ def read_and_show_RTst(rt_0:rsm.RTStructureSet, ROI_founded:str)->np.array:
     #Get the desired RTStructures
     for name_ROI in rt_0.keys():
         if ROI_founded==name_ROI:
-            print("Prendo la ROI con nome: ", name_ROI, "coincidente con ", ROI_founded)
+            print("Consider the ROI: ", name_ROI, "coinciding with: ", ROI_founded)
             roi_obj = rt_0[name_ROI]
             break
         else:

@@ -71,7 +71,7 @@ def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:st
                     if rtstruct_path.is_dir():
                         continue
                     else:
-                        print("La RTst si trova in: ", rtstruct_path)
+                        print("RTst path is: ", rtstruct_path)
                         print("")   
                 
                         contour=[]

@@ -49,9 +49,9 @@ def main():
     for pz in df_py.loc[:, "PatientID"]:
         list_pz.append(str(pz))
             
-    differenza = [nome for nome in id_dirs if nome not in list_pz]
+    difference = [nome for nome in id_dirs if nome not in list_pz]
 
-    print(differenza)
+    print(difference)
 
 
 if __name__ == "__main__":
