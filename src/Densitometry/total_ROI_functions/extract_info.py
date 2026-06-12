@@ -44,8 +44,8 @@ def save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, rt:rsm
         dir_RTst = Path(directory_out) / "dataset" / "labelsTr"
         Path(dir_RTst).mkdir(parents=True, exist_ok=True)
         
-        CT_nifti_path = dir_nifti / f'prova_colangio_{ID}_0000.nii.gz'
-        RTst_nifti_path = dir_RTst / f'prova_colangio_{ID}.nii.gz'
+        CT_nifti_path = dir_nifti / f'test_{ID}_0000.nii.gz'
+        RTst_nifti_path = dir_RTst / f'test_{ID}.nii.gz'
         
         try:
             sitk.WriteImage(CT, str(CT_nifti_path))
@@ -201,7 +201,7 @@ def read_and_show_RTst(rt_0:rsm.RTStructureSet, ROI_founded:str)->np.array:
     #Get the desired RTStructures
     for name_ROI in rt_0.keys():
         if ROI_founded==name_ROI:
-            print("Consider the ROI: ", name_ROI, "coinciding with: ", ROI_founded)
+            print("Consider the ROI: ", name_ROI, ", coinciding with: ", ROI_founded)
             roi_obj = rt_0[name_ROI]
             break
         else:
