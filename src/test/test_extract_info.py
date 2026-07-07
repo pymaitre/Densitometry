@@ -16,10 +16,19 @@ import SimpleITK as sitk
 import matplotlib.pyplot as plt
 import resmip as rsm
 import matplotlib
+import pytest
 matplotlib.use("Agg")
 
+REFERENCE_directory_out=Path(Path(__file__).parent/"output_test")
+REFERENCE_path_CT=Path(__file__).parent.parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT"
+REFERENCE_CT=rsm.Image.read(REFERENCE_path_CT)
+REFERENCE_path_RT=Path(__file__).parent.parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"Rtst"/"DCM_RS_00060.dcm"
+REFERENCE_RT=rsm.RTStructureSet.read(filename=REFERENCE_path_RT,structure_names="GTV-1",reference_image=REFERENCE_CT)
+REFERENCE_mask = np.where(REFERENCE_RT["GTV-1"].numpy() == 0, np.nan, REFERENCE_RT["GTV-1"].numpy()).astype(float)
 
-def save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, rt:rsm.RTStructureSet, ID:str)->None:
+
+@pytest.mark.parametrize("save_info_all,directory_out,CT,rt,ID",[(True,REFERENCE_directory_out,REFERENCE_CT,REFERENCE_RT,"1")],)
+def test_save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, rt:rsm.RTStructureSet, ID:str)->None:
     """
     Save an image in NIFTI format
     
@@ -58,8 +67,10 @@ def save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, rt:rsm
             print("")
         except Exception as e:
             print("problem: ", e)
-
-def ROI_ok(ct_path:Path, rt_path:Path, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool, directory_out:Path, ID:str, slice:int)->Tuple[np.array,np.array]:
+            
+            
+@pytest.mark.parametrize("ct_path,rt_path,ROI_founded,show_CT_ROI,save_info_all,directory_out,ID,slice",[(REFERENCE_path_CT,REFERENCE_path_RT,"GTV-1",True,False,REFERENCE_directory_out,"1",40)],)
+def test_ROI_ok(ct_path:Path, rt_path:Path, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool, directory_out:Path, ID:str, slice:int)->Tuple[np.array,np.array]:
     """
     Function for obtaining ROIs and its distribution of HU.
 
@@ -85,21 +96,21 @@ def ROI_ok(ct_path:Path, rt_path:Path, ROI_founded:str, show_CT_ROI:bool, save_i
     """
     
     #Read CT and CT_arr
-    CT, CT_arr = read_and_show_ct(ct_path, show_CT_ROI, slice)
+    CT, CT_arr = test_read_and_show_ct(ct_path, show_CT_ROI, slice)
     
     #Get RT Structure Set
     rt=rsm.RTStructureSet.read(filename=rt_path,structure_names=ROI_founded,reference_image=CT)
     
     #Mask
-    mask = read_and_show_RTst(rt, ROI_founded)
+    mask = test_read_and_show_RTst(rt, ROI_founded)
     
     #Get HU and counts for each ROI
-    HU_ROI, counts_ROI = obtain_ROI(mask, CT_arr, show_CT_ROI, slice)
+    HU_ROI, counts_ROI = test_obtain_ROI(mask, CT_arr, show_CT_ROI, slice)
     
     return HU_ROI, counts_ROI
 
-
-def ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool,
+@pytest.mark.parametrize("ct_path,rt_path,new_sp,ROI_founded,show_CT_ROI,save_info_all,directory_out,ID,resampler,slice",[(REFERENCE_path_CT,REFERENCE_path_RT,[1,1,3],"GTV-1",True,False,REFERENCE_directory_out,"1",sitk.sitkNearestNeighbor,40)],)
+def test_ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool,
             directory_out:Path, ID:str, resampler,slice:int)->Tuple[np.array,np.array]:
     """
     Function for obtaining ROIs and its distribution of HU
@@ -129,25 +140,25 @@ def ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, show_C
     """
     
     #CT and CT_arr
-    CT, CT_arr = read_and_show_ct(ct_path, show_CT_ROI, slice)
+    CT, CT_arr = test_read_and_show_ct(ct_path, show_CT_ROI, slice)
     
     #Resampling
-    CT_res = resample(CT, new_sp[0], new_sp[1], new_sp[2],resampler)
+    CT_res = test_resample(CT, new_sp[0], new_sp[1], new_sp[2],resampler)
     CT_res_arr=CT_res.numpy()
 
     #Get RTStructure Set
     rt_res=rsm.RTStructureSet.read(filename=rt_path,structure_names=ROI_founded,reference_image=CT_res)
     
     #Get the mask
-    mask_res = read_and_show_RTst(rt_res, ROI_founded)    
+    mask_res = test_read_and_show_RTst(rt_res, ROI_founded)    
     
     #Get HU and counts for ROI
-    HU_ROI_res, counts_ROI_res = obtain_ROI(mask_res, CT_res_arr, show_CT_ROI, slice)
+    HU_ROI_res, counts_ROI_res = test_obtain_ROI(mask_res, CT_res_arr, show_CT_ROI, slice)
 
     return HU_ROI_res, counts_ROI_res
  
-
-def read_and_show_ct(ct_path:Path, show_CT_ROI:bool, slice:int)->Tuple[rsm.Image,np.array]:
+@pytest.mark.parametrize("ct_path,show_CT_ROI,slice",[(REFERENCE_path_CT,True,40)],)
+def test_read_and_show_ct(ct_path:Path, show_CT_ROI:bool, slice:int)->Tuple[rsm.Image,np.array]:
     """
     Take CT from ct_path and show the slice you want.
 
@@ -178,8 +189,8 @@ def read_and_show_ct(ct_path:Path, show_CT_ROI:bool, slice:int)->Tuple[rsm.Image
 
     return ct, ct_arr
 
-
-def read_and_show_RTst(rt_0:rsm.RTStructureSet, ROI_founded:str)->np.array:
+@pytest.mark.parametrize("rt_0,ROI_founded",[(REFERENCE_RT,"GTV-1")],)
+def test_read_and_show_RTst(rt_0:rsm.RTStructureSet, ROI_founded:str)->np.array:
     """
     This function relates to and shows the specific ROI founded for the CT.
     Because of significative value for 0 HU in CT, ROI of 0 and 1 is 
@@ -223,8 +234,8 @@ def read_and_show_RTst(rt_0:rsm.RTStructureSet, ROI_founded:str)->np.array:
     return mask
     
 
-
-def obtain_ROI(mask:np.array, ct_arr:np.array, show_CT_ROI:bool, slice:int)->Tuple[np.array,np.array]:
+@pytest.mark.parametrize("mask,ct_arr,show_CT_ROI,slice",[(REFERENCE_mask,REFERENCE_CT.numpy(),True,40)],)
+def test_obtain_ROI(mask:np.array, ct_arr:np.array, show_CT_ROI:bool, slice:int)->Tuple[np.array,np.array]:
     """
     Here the real visualization of the ROI is given thanks to
     the product between the array of the CT and mask. 
@@ -263,7 +274,8 @@ def obtain_ROI(mask:np.array, ct_arr:np.array, show_CT_ROI:bool, slice:int)->Tup
 
     return HU_ROI_no_nan, counts_ROI_no_nan
 
-def resample(image: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) -> rsm.Image:
+@pytest.mark.parametrize("image,new_x,new_y,new_z,resampler",[(REFERENCE_CT,1,1,3,sitk.sitkNearestNeighbor)],)
+def test_resample(image: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) -> rsm.Image:
     """
     Resample image (increase pixel density) in order to increase computation accuracy.
 

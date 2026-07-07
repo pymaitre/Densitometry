@@ -6,16 +6,53 @@ import os
 from pathlib import Path
 from Densitometry.total_ROI_functions import extract_info as info
 from Densitometry.total_ROI_functions import extract_histo as histo
+import SimpleITK as sitk
 import pandas as pd
 import pydicom
 from joblib import Parallel, delayed
 import numpy as np
+import pytest
 import gc
 import matplotlib
-matplotlib.use("Agg")
-  
 
-def get_roi_names(rtstruct_path:Path)->list:
+matplotlib.use("Agg")
+
+
+REFERENCE_RTSTRUCT_path=Path(Path(__file__).parent.parent.parent / "tutorials" / "tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"RTst"/"DCM_RS_00060.dcm")
+REFERENCE_CT_path=Path(Path(__file__).parent.parent.parent / "tutorials" / "tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT")
+REFERENCE_dataset=pd.read_excel(Path(Path(__file__).parent/"output_test"/"py_patient.xlsx"))
+REFERENCE_directory_out=Path(Path(__file__).parent/"output_test")
+REFERENCE_ID=1
+
+REFERENCE_dic_parallel_res={
+        "directory_histo_fin": Path(REFERENCE_directory_out) / "Total_ROI" / "Histograms_ok",
+        "directory_files_fin": Path(REFERENCE_directory_out) / "Total_ROI" / "Files_ok",
+        "dataset": REFERENCE_dataset,
+        "ID_problems": [],
+        "new_sp": np.array([1,1,3]),
+        "rt_kind": "DCM_RS",
+        "list_roi": ["GTV-1"],
+        "directory_out": REFERENCE_directory_out,
+        "show_info_all": False,
+        "save_info_all": False,
+        "resampler": sitk.sitkNearestNeighbor}
+
+REFERENCE_dic_parallel_no_res={
+        "directory_histo_fin": Path(REFERENCE_directory_out) / "Total_ROI" / "Histograms_ok",
+        "directory_files_fin": Path(REFERENCE_directory_out) / "Total_ROI" / "Files_ok",
+        "dataset": REFERENCE_dataset,
+        "ID_problems": [],
+        "rt_kind": "DCM_RS",
+        "list_roi": ["GTV-1"],
+        "directory_out": REFERENCE_directory_out,
+        "show_info_all": False,
+        "save_info_all": False,
+}
+
+
+  
+@pytest.mark.parametrize("rtstruct_path",[REFERENCE_RTSTRUCT_path])
+def test_get_roi_names(rtstruct_path:Path)->list:
     """
     Generate a list with names of the ROI
     
@@ -34,10 +71,10 @@ def get_roi_names(rtstruct_path:Path)->list:
     for roi in rtstruct.StructureSetROISequence:
         roi_names.append(roi.ROIName)
 
-    roi_names.sort()
     return roi_names
 
-def is_roi_empty(rtst_file:Path, roi_name:str)->bool:
+@pytest.mark.parametrize("rtst_file,roi_name",[(REFERENCE_RTSTRUCT_path,"GTV-1",)],)
+def test_is_roi_empty(rtst_file:Path, roi_name:str)->bool:
     """
     Check whether the ROI is empty
     
@@ -50,7 +87,7 @@ def is_roi_empty(rtst_file:Path, roi_name:str)->bool:
     :rtype: bool
     
     """
-
+    roi_number=None
     ds = pydicom.dcmread(rtst_file)
     for roi in ds.StructureSetROISequence:
         if roi_name == roi.ROIName:
@@ -61,7 +98,7 @@ def is_roi_empty(rtst_file:Path, roi_name:str)->bool:
     if 'ROIContourSequence' in ds:
         for roi_contour in ds.ROIContourSequence:
             # Search for Contour Sequence
-            if str(roi_number) == str(roi_contour.ReferencedROINumber):
+            if str(roi_number) == str(roi_contour.ReferencedROINumber) and (roi_number is not None):
                 if 'ContourSequence' in roi_contour:
                     for contour in roi_contour.ContourSequence:
                         # Check if Contour Data is empty
@@ -77,7 +114,8 @@ def is_roi_empty(rtst_file:Path, roi_name:str)->bool:
     
     return True  # ROI is empty
     
-def find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] | None:
+@pytest.mark.parametrize("ct_path,rt_kind,ID,list_roi",[(REFERENCE_CT_path,"DCM_RS",REFERENCE_ID,["GTV-1"],)],)
+def test_find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] | None:
     """
     This function checks the correspondence in ROI names and returns a tuple with the name of the ROI and the path 
     to RTSTRUCT file.
@@ -109,7 +147,7 @@ def find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] |
             print(path_rt_st)
 
             #List of ROI names
-            ROI_names = get_roi_names(path_rt_st)
+            ROI_names = test_get_roi_names(path_rt_st)
             
             #Check the same name
             for nome in names_with_importance:
@@ -118,7 +156,7 @@ def find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] |
 
                     if nome in ROI_name:
                         print(f'ROI name {ROI_name} matched with name {nome}.')
-                        if is_roi_empty(path_rt_st, ROI_name):
+                        if test_is_roi_empty(path_rt_st, ROI_name):
                             continue
                         else:
                             return ROI_name, path_rt_st
@@ -127,7 +165,9 @@ def find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] |
         print('ROI not founded with error: ', e)
         
 
-def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,list]:
+
+@pytest.mark.parametrize("pz,input_parallel_dictionary",[(0,REFERENCE_dic_parallel_res,)],)
+def test_parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,list]:
     """
     This function is used to obtain the statistical features extracted or append the ID in a list (if there is a problem). 
     This function is implemented at patient-level and used for the parallelization.
@@ -155,6 +195,7 @@ def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,lis
     save_info_all=bool(input_parallel_dictionary["save_info_all"])
     resampler=input_parallel_dictionary["resampler"]
     
+    
     #Check if pz is acceptable
     if not pz<len(df_py):
         raise ValueError(f"{pz} index not valid")
@@ -166,7 +207,7 @@ def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,lis
 
         try:
             ct_path = df_py.loc[pz, "Path"]
-            ROI_founded, ROI_path = find_rt_st(ct_path, rt_kind, ID, list_roi)
+            ROI_founded, ROI_path = test_find_rt_st(ct_path, rt_kind, ID, list_roi)
             
             #Old spacing
             old_sp = np.array([df_py.loc[pz,"VoxelSpacingX"], df_py.loc[pz,"VoxelSpacingY"], df_py.loc[pz,"VoxelSpacingZ"]])
@@ -234,7 +275,9 @@ def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,lis
         return None,[ID, "You knew there was an error"]
    
 
-def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, rt_kind:str, list_roi:list, 
+
+@pytest.mark.parametrize("df_py,ID_problems,new_sp,rt_kind,list_roi,directory_out,show_info_all,save_info_all,N_jobs,resampler",[(REFERENCE_dataset,[],[1,1,3],"DCM_RS",["GTV-1"],REFERENCE_directory_out,True,True,2,sitk.sitkNearestNeighbor)],)
+def test_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, rt_kind:str, list_roi:list, 
                          directory_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int,resampler)->Path:
     """
     Here almost functions are called for all patients. Especially:
@@ -297,7 +340,7 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
     
     #Parallel function
     results = Parallel(n_jobs=N_jobs,timeout=None)(
-        delayed(parallel_fun)(
+        delayed(test_parallel_fun)(
             pz, input_parallel_dictionary
         )
         for pz in range(len(df_py))
@@ -342,7 +385,8 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
     return dir_files_fin
 
 
-def no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.DataFrame,list]:
+@pytest.mark.parametrize("pz,input_dictionary_parallel",[(0,REFERENCE_dic_parallel_no_res,)],)
+def test_no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.DataFrame,list]:
     """
     This function is used to obtain the statistical features extracted or append the ID in a list (if there is a problem). 
     This function is implemented at patient-level and used for the parallelization.
@@ -381,7 +425,7 @@ def no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.DataFr
 
         try:
             ct_path = df_py.loc[pz, "Path"]
-            ROI_founded, ROI_path = find_rt_st(ct_path, rt_kind, ID, list_roi)
+            ROI_founded, ROI_path = test_find_rt_st(ct_path, rt_kind, ID, list_roi)
             
             #Old spacing
             old_sp = np.array([df_py.loc[pz,"VoxelSpacingX"], df_py.loc[pz,"VoxelSpacingY"], df_py.loc[pz,"VoxelSpacingZ"]])
@@ -415,8 +459,8 @@ def no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.DataFr
         return None,[ID, "You knew there was an error"]
 
    
-
-def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, list_roi:list, 
+@pytest.mark.parametrize("df_py,ID_problems,rt_kind,list_roi,directory_out,show_info_all,save_info_all,N_jobs",[(REFERENCE_dataset,[],"DCM_RS",["GTV-1"],REFERENCE_directory_out,True,False,2)],)
+def test_no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, list_roi:list, 
                          directory_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int)->Path:
     """
     Here almost functions are called for all patients. Especially:
@@ -476,7 +520,7 @@ def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, l
     
     #Parallel function
     results = Parallel(n_jobs=N_jobs,timeout=None)(
-        delayed(no_res_parallel_fun)(
+        delayed(test_no_res_parallel_fun)(
             pz, input_parallel_dictionary
         )
         for pz in range(len(df_py))

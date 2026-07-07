@@ -7,6 +7,7 @@ creating a database with counts of ROIs found.
 """
 
 import os
+import pytest
 from pathlib import Path
 from Densitometry.total_ROI_functions import extract_info as info
 import matplotlib.pyplot as plt
@@ -14,7 +15,9 @@ import pandas as pd
 import pydicom
 
 
-def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:str)->tuple[pd.DataFrame,pd.DataFrame]:
+
+@pytest.mark.parametrize("ID_problems, rt_kind",[([],"DCM_RS",)],)
+def test_all_ROI(reference_py_patient_file_dataset:pd.DataFrame, ID_problems:list, reference_dir_out:Path, rt_kind:str)->tuple[pd.DataFrame,pd.DataFrame]:
     """
     Read all ROIs from RTst linked to CT (in directory named by ID).
     This function create a dataframe where each row has PatientID
@@ -36,14 +39,13 @@ def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:st
     
     #Extract information from the dataset
     try:
-        
-        df_ROI = pd.read_excel(Path(directory_out) / "ROI_tot_pz.xlsx")
+        df_ROI = pd.read_excel(Path(reference_dir_out) / "ROI_tot_pz.xlsx")
         print("")
         print("I read the dataframe with all the ROIs of each patient")
         print("")    
 
 
-        df_counts = pd.read_excel(Path(directory_out) / "counts_ROI.xlsx")
+        df_counts = pd.read_excel(Path(reference_dir_out) / "counts_ROI.xlsx")
         print("")
         print("I read the dataframe with the ROI counts for each patient")
         print("")  
@@ -56,13 +58,12 @@ def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:st
         slice=0
         df_ROI = pd.DataFrame()
     
-        for pz in range(0, len(df_py)):
-            
+        for pz in range(0, len(reference_py_patient_file_dataset)):
 
-            ID =  df_py.loc[pz,"PatientID"]
+            ID =  reference_py_patient_file_dataset.loc[pz,"PatientID"]
             if str(ID) not in ID_problems:
                 
-                ct_path = df_py.loc[pz, "Path"]
+                ct_path = reference_py_patient_file_dataset.loc[pz, "Path"]
                 
                 # CT, CT_arr = info.read_and_show_ct(ct_path, show_CT_ROI, slice)    
                 # rt_folder = (Path(ct_path).parent / "RTst")
@@ -94,7 +95,7 @@ def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:st
                                 
         
         #Store information
-        with pd.ExcelWriter(Path(directory_out) / "ROI_tot_pz.xlsx") as writer:
+        with pd.ExcelWriter(Path(reference_dir_out) / "ROI_tot_pz.xlsx") as writer:
             df_ROI.to_excel(writer, index=True)
         print("")
         print("Saved the dataframe with all the ROIs of each patient")
@@ -103,9 +104,9 @@ def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:st
         series = pd.Series(df_ROI.values.flatten(), name='Counts').dropna()
         unique_values_counts = series.value_counts()
         
-        with pd.ExcelWriter(Path(directory_out) / "counts_ROI.xlsx") as writer:
+        with pd.ExcelWriter(Path(reference_dir_out) / "counts_ROI.xlsx") as writer:
             unique_values_counts.to_excel(writer, index=True)
-        df_counts = pd.read_excel(Path(directory_out) / "counts_ROI.xlsx")
+        df_counts = pd.read_excel(Path(reference_dir_out) / "counts_ROI.xlsx")
         print("")
         print("Saved the dataframe with the ROI counts of each patient")
         print("")    

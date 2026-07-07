@@ -10,9 +10,12 @@ import os
 from pathlib import Path
 import pandas as pd
 import numpy as np
+import pytest
 import matplotlib.pyplot as plt
 
-def read_spacing(df_py: pd.DataFrame, directory_out:Path, save_sp:bool)->tuple[float,float,float]:
+
+@pytest.mark.parametrize("save_sp",[(True)],)
+def test_read_spacing(reference_py_patient_file_dataset:pd.DataFrame, reference_dir_out:Path,save_sp: bool)->tuple[float,float,float]:
     """
     Function that calls the database of header dicom where are stored
     all the voxel spacing values of each patient. It establishes the
@@ -38,13 +41,14 @@ def read_spacing(df_py: pd.DataFrame, directory_out:Path, save_sp:bool)->tuple[f
     bin_size_sp = 0.01
     
     #Extract new_coords
-    new_x = histo_spacing(df_py["VoxelSpacingX"], directory_out, "X", bin_size_sp, save_sp)
-    new_y = histo_spacing(df_py["VoxelSpacingY"], directory_out, "Y", bin_size_sp, save_sp)
-    new_z = histo_spacing(df_py["VoxelSpacingZ"], directory_out, "Z", bin_size_sp, save_sp)
+    new_x = test_histo_spacing(reference_py_patient_file_dataset["VoxelSpacingX"], reference_dir_out, "X", bin_size_sp, save_sp)
+    new_y = test_histo_spacing(reference_py_patient_file_dataset["VoxelSpacingY"], reference_dir_out, "Y", bin_size_sp, save_sp)
+    new_z = test_histo_spacing(reference_py_patient_file_dataset["VoxelSpacingZ"], reference_dir_out, "Z", bin_size_sp, save_sp)
 
     return new_x, new_y, new_z
     
-def histo_spacing(coordinate: pd.Series, directory_out: Path, name: str, n_size: float, save_sp: bool)->float:
+@pytest.mark.parametrize("name, n_size, save_sp",[("X", 0.01, True,)],)
+def test_histo_spacing(reference_voxelspacingx: pd.Series, reference_dir_out: Path, name: str, n_size: float, save_sp: bool)->float:
     """
     Here are showed or saved the distributions of coordinate
     of the voxel spacing.
@@ -67,24 +71,24 @@ def histo_spacing(coordinate: pd.Series, directory_out: Path, name: str, n_size:
     """
   
     
-    unique_values_in, unique_counts_in = np.unique(coordinate, return_counts=True)
+    unique_values_in, unique_counts_in = np.unique(reference_voxelspacingx, return_counts=True)
     max_index_in = np.argmax(unique_counts_in)
     co_mas_in = unique_values_in[max_index_in]
     count_mas_in = unique_counts_in[max_index_in]
     
     if save_sp:
-        save_path = directory_out / "Voxel_Analyses"
+        save_path = reference_dir_out / "Voxel_Analyses"
         Path(save_path).mkdir(parents=True, exist_ok=True)
         
         #Range of the coordinate
-        min_co = min(coordinate)
-        max_co = max(coordinate)
-        print("The number of ", name, " is: ", len(coordinate), "with min: ", min(coordinate), " and max: ", max(coordinate))
+        min_co = min(reference_voxelspacingx)
+        max_co = max(reference_voxelspacingx)
+        print("The number of ", name, " is: ", len(reference_voxelspacingx), "with min: ", min(reference_voxelspacingx), " and max: ", max(reference_voxelspacingx))
         print("The ", name, " more present is: ", co_mas_in, " and has: ", count_mas_in, "counts")
 
         #Edge
         bin_edges = np.arange(min_co, max_co + 2*n_size, n_size)
-        count, co, _ = plt.hist(coordinate, bins=bin_edges, \
+        count, co, _ = plt.hist(reference_voxelspacingx, bins=bin_edges, \
                                 align='left', color="black", edgecolor="black")
         plt.xlabel('Value of coordinate')
         plt.ylabel('Counts')
@@ -98,8 +102,9 @@ def histo_spacing(coordinate: pd.Series, directory_out: Path, name: str, n_size:
     
     return co_mas_in
 
-
-def find_global_scale(df_py: pd.DataFrame,new_spacing_approach:str)->np.array:
+    
+@pytest.mark.parametrize("new_spacing_approach",["min_global"],)
+def test_find_global_scale(reference_py_patient_file_dataset: pd.DataFrame,new_spacing_approach:str)->np.array:
     """
     Create the new voxel spacing using one of the following criteria: (min_x, min_y and min_z), (mean_x,mean_y,mean_z) or (max_x,max_y,max_z) of the given dataset.
     
@@ -118,9 +123,9 @@ def find_global_scale(df_py: pd.DataFrame,new_spacing_approach:str)->np.array:
         
         print("I am extracting the global minimum spacing")
 
-        new_x=df_py["VoxelSpacingX"].min()
-        new_y=df_py["VoxelSpacingY"].min()
-        new_z=df_py["VoxelSpacingZ"].min()
+        new_x=reference_py_patient_file_dataset["VoxelSpacingX"].min()
+        new_y=reference_py_patient_file_dataset["VoxelSpacingY"].min()
+        new_z=reference_py_patient_file_dataset["VoxelSpacingZ"].min()
 
         new_spacing=np.array([new_x,new_y,new_z])
 
@@ -131,9 +136,9 @@ def find_global_scale(df_py: pd.DataFrame,new_spacing_approach:str)->np.array:
         
         print("I am extracting the global mean spacing")
 
-        new_x=df_py["VoxelSpacingX"].mean()
-        new_y=df_py["VoxelSpacingY"].mean()
-        new_z=df_py["VoxelSpacingZ"].mean()
+        new_x=reference_py_patient_file_dataset["VoxelSpacingX"].mean()
+        new_y=reference_py_patient_file_dataset["VoxelSpacingY"].mean()
+        new_z=reference_py_patient_file_dataset["VoxelSpacingZ"].mean()
 
         new_spacing=np.array([new_x,new_y,new_z])
 
@@ -144,9 +149,9 @@ def find_global_scale(df_py: pd.DataFrame,new_spacing_approach:str)->np.array:
         
         print("I am extracting the global maximum spacing")
 
-        new_x=df_py["VoxelSpacingX"].max()
-        new_y=df_py["VoxelSpacingY"].max()
-        new_z=df_py["VoxelSpacingZ"].max()
+        new_x=reference_py_patient_file_dataset["VoxelSpacingX"].max()
+        new_y=reference_py_patient_file_dataset["VoxelSpacingY"].max()
+        new_z=reference_py_patient_file_dataset["VoxelSpacingZ"].max()
         
         new_spacing=np.array([new_x,new_y,new_z])
     

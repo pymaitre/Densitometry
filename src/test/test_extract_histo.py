@@ -9,10 +9,19 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
+import pytest
 import pandas as pd
+import pytest
 
+REFERENCE_file_ok=pd.read_excel(Path(__file__).parent/"output_test"/"Total_ROI"/"Files_ok"/"1.xlsx")
+REFERENCE_directory_out=Path(Path(__file__).parent/"output_test")
+REFERENCE_dir_histo=Path(REFERENCE_directory_out) / "Total_ROI" / "Histograms_ok"
+REFERENCE_dir_files=Path(REFERENCE_directory_out) / "Total_ROI" / "Files_ok"
+REFERENCE_files_nores=pd.read_excel(Path(REFERENCE_directory_out) / "Total_ROI" / "To_be_resampled"/"Files"/"1.xlsx")
+REFERENCE_compare_dir=Path(REFERENCE_directory_out) / "Total_ROI" / "To_be_resampled"/"Compare_histo"
 
-def features_ROI(ID:str, HU_ROI:pd.Series, counts_ROI:pd.Series, sp: np.array, ROI_name:str,
+@pytest.mark.parametrize("ID,HU_ROI,counts_ROI,sp,ROI_name,dir_histo,dir_files",[("1",REFERENCE_file_ok["HU"],REFERENCE_file_ok["Counts"],[1,1,3],"GTV-1",REFERENCE_dir_histo,REFERENCE_dir_files)],)
+def test_features_ROI(ID:str, HU_ROI:pd.Series, counts_ROI:pd.Series, sp: np.array, ROI_name:str,
                  dir_histo:Path, dir_files:Path, save=False)->pd.DataFrame:
     """
     Function that call histo and file functions
@@ -44,13 +53,13 @@ def features_ROI(ID:str, HU_ROI:pd.Series, counts_ROI:pd.Series, sp: np.array, R
     n_size=1
     
     #Create histogram
-    HU_histo, counts_histo, stats_df = make_histo(HU_ROI, counts_ROI, n_size, sp, ROI_name, dir_histo, f"{ID}", save)    
-    diff_file = make_file(HU_histo, counts_histo, dir_files, f"{ID}", save)
+    HU_histo, counts_histo, stats_df = test_make_histo(HU_ROI, counts_ROI, n_size, sp, ROI_name, dir_histo, f"{ID}", save)    
+    diff_file = test_make_file(HU_histo, counts_histo, dir_files, f"{ID}", save)
 
     return stats_df
 
-
-def make_histo(HU_ROI_no_nan:pd.Series, counts_ROI_no_nan:pd.Series, n_size:int, sp:np.array, ROI_name:str, save_path:Path, name:str, save=False)->tuple[pd.Series,pd.Series,pd.DataFrame]:
+@pytest.mark.parametrize("HU_ROI_no_nan,counts_ROI_no_nan,n_size,sp,ROI_name,save_path,name",[(REFERENCE_file_ok["HU"],REFERENCE_file_ok["Counts"],1,[1,1,3],"GTV-1",REFERENCE_dir_histo,"1")],)
+def test_make_histo(HU_ROI_no_nan:pd.Series, counts_ROI_no_nan:pd.Series, n_size:int, sp:np.array, ROI_name:str, save_path:Path, name:str, save=False)->tuple[pd.Series,pd.Series,pd.DataFrame]:
     """
     This function has as input HU and counts of the ROI and returns a plot of the histogram.
 
@@ -86,14 +95,14 @@ def make_histo(HU_ROI_no_nan:pd.Series, counts_ROI_no_nan:pd.Series, n_size:int,
     plt.title(f'{name}', wrap=True, fontsize=15)
     
     weighted_values = np.repeat(HU_ROI_no_nan, counts_ROI_no_nan)
-    plot_stat(weighted_values)
+    test_plot_stat(weighted_values)
 
     patient_ID = re.sub("Histo_CT_", "", name)
     patient_ID = re.sub(".xlsx", "", patient_ID)
     patient_ID = re.sub("_Justified", "", patient_ID)
 
     region = save_path.parent.name
-    stats_df = calculate_and_save_statistics(patient_ID, region, weighted_values, sp, ROI_name)
+    stats_df = test_calculate_and_save_statistics(patient_ID, region, weighted_values, sp, ROI_name)
     
     if save is True:
         print("")
@@ -115,8 +124,8 @@ def make_histo(HU_ROI_no_nan:pd.Series, counts_ROI_no_nan:pd.Series, n_size:int,
 
     return HU, count, stats_df
 
-
-def make_file(HU:pd.Series, count:pd.Series, save_path:Path, name:str, save=False)->pd.DataFrame:
+@pytest.mark.parametrize("HU,count,save_path,name",[(REFERENCE_file_ok["HU"],REFERENCE_file_ok["Counts"],REFERENCE_dir_files,"1")],)
+def test_make_file(HU:pd.Series, count:pd.Series, save_path:Path, name:str, save=False)->pd.DataFrame:
     """
     This function has as input histogram values and create the relative dataframe.
 
@@ -149,8 +158,8 @@ def make_file(HU:pd.Series, count:pd.Series, save_path:Path, name:str, save=Fals
 
     return df
 
-
-def plot_stat(data:np.array)->None:
+@pytest.mark.parametrize("data",[(np.repeat(REFERENCE_file_ok["HU"],REFERENCE_file_ok["Counts"]))],)
+def test_plot_stat(data:np.array)->None:
     """
     This function permits to choose which features you want to 
     represent on the plot.
@@ -175,8 +184,8 @@ def plot_stat(data:np.array)->None:
 
     plt.legend()
 
-
-def calculate_and_save_statistics(histo_name:str, region:str, data:np.array, sp: np.array, ROI_name:str)->pd.DataFrame:
+@pytest.mark.parametrize("histo_name,region,data,sp,ROI_name",[("1","GTV-1",np.repeat(REFERENCE_file_ok["HU"],REFERENCE_file_ok["Counts"]),[1,1,3],"GTV-1")],)
+def test_calculate_and_save_statistics(histo_name:str, region:str, data:np.array, sp: np.array, ROI_name:str)->pd.DataFrame:
     """
     This function permits to choose which features you want to 
     extract from the histogram.
@@ -252,7 +261,8 @@ def calculate_and_save_statistics(histo_name:str, region:str, data:np.array, sp:
     return stats_df
     
 
-def compare_histo_res(HU_ROI_res:pd.Series, counts_ROI_res:pd.Series, HU_ROI:pd.Series, counts_ROI:pd.Series, save_path:Path, ID:str, save=False)->None: 
+@pytest.mark.parametrize("HU_ROI_res,counts_ROI_res,HU_ROI,counts_ROI,save_path,ID",[(REFERENCE_file_ok["HU"],REFERENCE_file_ok["Counts"],REFERENCE_files_nores["HU"],REFERENCE_files_nores["Counts"],REFERENCE_compare_dir,"1")],)
+def test_compare_histo_res(HU_ROI_res:pd.Series, counts_ROI_res:pd.Series, HU_ROI:pd.Series, counts_ROI:pd.Series, save_path:Path, ID:str, save=False)->None: 
     """
     This function plots the overlap between the histograms of original and resampled CT
     in semi-log scale.
@@ -284,8 +294,8 @@ def compare_histo_res(HU_ROI_res:pd.Series, counts_ROI_res:pd.Series, HU_ROI:pd.
     
     fig, ax = plt.subplots(figsize=(8,6))
 
-    extract_hist(HU_ROI_res, counts_ROI_res, n_size, 'b', 'Histo_CT_res')
-    extract_hist(HU_ROI, counts_ROI, n_size, 'k', 'Histo_CT')
+    test_extract_hist(HU_ROI_res, counts_ROI_res, n_size, 'b', 'Histo_CT_res')
+    test_extract_hist(HU_ROI, counts_ROI, n_size, 'k', 'Histo_CT')
 
     plt.xlabel('Hounsfield Unit (HU) values')
     plt.ylabel('Log Counts')
@@ -312,8 +322,8 @@ def compare_histo_res(HU_ROI_res:pd.Series, counts_ROI_res:pd.Series, HU_ROI:pd.
     #     plt.show()
         # plt.close()
 
-
-def extract_hist(HU:pd.Series, counts:pd.Series, n_size:int, color:str, label:str)->None:
+@pytest.mark.parametrize("HU,counts,n_size,color,label",[(REFERENCE_file_ok["HU"],REFERENCE_file_ok["Counts"],1,"b","Histo_CT_res")],)
+def test_extract_hist(HU:pd.Series, counts:pd.Series, n_size:int, color:str, label:str)->None:
     """
     This function establish the bin size and plots the histogram.
 
