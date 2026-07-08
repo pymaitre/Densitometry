@@ -14,7 +14,7 @@ import pytest
 import matplotlib.pyplot as plt
 
 
-@pytest.mark.parametrize("save_sp",[(True)],)
+@pytest.mark.parametrize("save_sp",[True],)
 def test_read_spacing(reference_py_patient_file_dataset:pd.DataFrame, reference_dir_out:Path,save_sp: bool)->tuple[float,float,float]:
     """
     Function that calls the database of header dicom where are stored

@@ -14,45 +14,10 @@ import numpy as np
 import pytest
 import gc
 import matplotlib
-
 matplotlib.use("Agg")
 
 
-REFERENCE_RTSTRUCT_path=Path(Path(__file__).parent.parent.parent / "tutorials" / "tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"RTst"/"DCM_RS_00060.dcm")
-REFERENCE_CT_path=Path(Path(__file__).parent.parent.parent / "tutorials" / "tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT")
-REFERENCE_dataset=pd.read_excel(Path(Path(__file__).parent/"output_test"/"py_patient.xlsx"))
-REFERENCE_directory_out=Path(Path(__file__).parent/"output_test")
-REFERENCE_ID=1
-
-REFERENCE_dic_parallel_res={
-        "directory_histo_fin": Path(REFERENCE_directory_out) / "Total_ROI" / "Histograms_ok",
-        "directory_files_fin": Path(REFERENCE_directory_out) / "Total_ROI" / "Files_ok",
-        "dataset": REFERENCE_dataset,
-        "ID_problems": [],
-        "new_sp": np.array([1,1,3]),
-        "rt_kind": "DCM_RS",
-        "list_roi": ["GTV-1"],
-        "directory_out": REFERENCE_directory_out,
-        "show_info_all": False,
-        "save_info_all": False,
-        "resampler": sitk.sitkNearestNeighbor}
-
-REFERENCE_dic_parallel_no_res={
-        "directory_histo_fin": Path(REFERENCE_directory_out) / "Total_ROI" / "Histograms_ok",
-        "directory_files_fin": Path(REFERENCE_directory_out) / "Total_ROI" / "Files_ok",
-        "dataset": REFERENCE_dataset,
-        "ID_problems": [],
-        "rt_kind": "DCM_RS",
-        "list_roi": ["GTV-1"],
-        "directory_out": REFERENCE_directory_out,
-        "show_info_all": False,
-        "save_info_all": False,
-}
-
-
-  
-@pytest.mark.parametrize("rtstruct_path",[REFERENCE_RTSTRUCT_path])
-def test_get_roi_names(rtstruct_path:Path)->list:
+def test_get_roi_names(reference_RT_path:Path)->list:
     """
     Generate a list with names of the ROI
     
@@ -64,7 +29,7 @@ def test_get_roi_names(rtstruct_path:Path)->list:
     """
 
     #RTSTRUCT
-    rtstruct = pydicom.dcmread(rtstruct_path)
+    rtstruct = pydicom.dcmread(reference_RT_path)
 
     #ROI names
     roi_names = []
@@ -73,8 +38,8 @@ def test_get_roi_names(rtstruct_path:Path)->list:
 
     return roi_names
 
-@pytest.mark.parametrize("rtst_file,roi_name",[(REFERENCE_RTSTRUCT_path,"GTV-1",)],)
-def test_is_roi_empty(rtst_file:Path, roi_name:str)->bool:
+@pytest.mark.parametrize("roi_name",["GTV-1"],)
+def test_is_roi_empty(reference_RT_path:Path, roi_name:str)->bool:
     """
     Check whether the ROI is empty
     
@@ -88,7 +53,7 @@ def test_is_roi_empty(rtst_file:Path, roi_name:str)->bool:
     
     """
     roi_number=None
-    ds = pydicom.dcmread(rtst_file)
+    ds = pydicom.dcmread(reference_RT_path)
     for roi in ds.StructureSetROISequence:
         if roi_name == roi.ROIName:
             roi_number = roi.ROINumber
@@ -114,8 +79,8 @@ def test_is_roi_empty(rtst_file:Path, roi_name:str)->bool:
     
     return True  # ROI is empty
     
-@pytest.mark.parametrize("ct_path,rt_kind,ID,list_roi",[(REFERENCE_CT_path,"DCM_RS",REFERENCE_ID,["GTV-1"],)],)
-def test_find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] | None:
+@pytest.mark.parametrize("rt_kind,ID,list_roi",[("DCM_RS","1",["GTV-1"],)],)
+def test_find_rt_st(reference_CT:Path, rt_kind:str, ID:str, list_roi:list)->tuple[str, Path] | None:
     """
     This function checks the correspondence in ROI names and returns a tuple with the name of the ROI and the path 
     to RTSTRUCT file.
@@ -134,7 +99,7 @@ def test_find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Pa
     
     try:
 
-        path_rt_structures = [path_rt_st for path_rt_st in list(Path(ct_path).parents[2].glob(f"**/*{rt_kind}*")) if path_rt_st.is_dir() == False]
+        path_rt_structures = [path_rt_st for path_rt_st in list(Path(reference_CT).parents[2].glob(f"**/*{rt_kind}*")) if path_rt_st.is_dir() == False]
         
         names_with_importance = {}
         for i in range(0, len(list_roi)):
@@ -166,8 +131,8 @@ def test_find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Pa
         
 
 
-@pytest.mark.parametrize("pz,input_parallel_dictionary",[(0,REFERENCE_dic_parallel_res,)],)
-def test_parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,list]:
+@pytest.mark.parametrize("pz",[0],)
+def test_parallel_fun(pz:int, reference_dict_resampling:dict)->tuple[pd.DataFrame,list]:
     """
     This function is used to obtain the statistical features extracted or append the ID in a list (if there is a problem). 
     This function is implemented at patient-level and used for the parallelization.
@@ -183,17 +148,17 @@ def test_parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFram
     """
     #Extract information from dictionary
     
-    dir_histo_fin=Path(input_parallel_dictionary["directory_histo_fin"])
-    dir_files_fin=Path(input_parallel_dictionary["directory_files_fin"])
-    df_py=pd.DataFrame(input_parallel_dictionary["dataset"])
-    ID_problems=list(input_parallel_dictionary["ID_problems"])
-    new_sp=np.array(input_parallel_dictionary["new_sp"])
-    rt_kind=str(input_parallel_dictionary["rt_kind"])
-    list_roi=list(input_parallel_dictionary["list_roi"])
-    directory_out=Path(input_parallel_dictionary["directory_out"])
-    show_info_all=bool(input_parallel_dictionary["show_info_all"])
-    save_info_all=bool(input_parallel_dictionary["save_info_all"])
-    resampler=input_parallel_dictionary["resampler"]
+    dir_histo_fin=Path(reference_dict_resampling["directory_histo_fin"])
+    dir_files_fin=Path(reference_dict_resampling["directory_files_fin"])
+    df_py=pd.DataFrame(reference_dict_resampling["dataset"])
+    ID_problems=list(reference_dict_resampling["ID_problems"])
+    new_sp=np.array(reference_dict_resampling["new_sp"])
+    rt_kind=str(reference_dict_resampling["rt_kind"])
+    list_roi=list(reference_dict_resampling["list_roi"])
+    directory_out=Path(reference_dict_resampling["directory_out"])
+    show_info_all=bool(reference_dict_resampling["show_info_all"])
+    save_info_all=bool(reference_dict_resampling["save_info_all"])
+    resampler=reference_dict_resampling["resampler"]
     
     
     #Check if pz is acceptable
@@ -276,9 +241,9 @@ def test_parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFram
    
 
 
-@pytest.mark.parametrize("df_py,ID_problems,new_sp,rt_kind,list_roi,directory_out,show_info_all,save_info_all,N_jobs,resampler",[(REFERENCE_dataset,[],[1,1,3],"DCM_RS",["GTV-1"],REFERENCE_directory_out,True,True,2,sitk.sitkNearestNeighbor)],)
-def test_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, rt_kind:str, list_roi:list, 
-                         directory_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int,resampler)->Path:
+@pytest.mark.parametrize("ID_problems,new_sp,rt_kind,list_roi,show_info_all,save_info_all,N_jobs,resampler",[([],[1,1,3],"DCM_RS",["GTV-1"],True,True,2,sitk.sitkNearestNeighbor)],)
+def test_res_and_create_histo(reference_py_patient_file_dataset:pd.DataFrame, ID_problems:list, new_sp:np.array, rt_kind:str, list_roi:list, 
+                         reference_dir_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int,resampler)->Path:
     """
     Here almost functions are called for all patients. Especially:
     - CT and RTst are possibly showed; 
@@ -314,10 +279,10 @@ def test_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.ar
     print("The showing variable is set on: ", show_info_all)
     print("The saving variable is set on: ", save_info_all)  
     
-    dir_histo_fin = Path(directory_out) / "Total_ROI" / "Histograms_ok"
+    dir_histo_fin = Path(reference_dir_out) / "Total_ROI" / "Histograms_ok"
     Path(dir_histo_fin).mkdir(parents=True, exist_ok=True)
 
-    dir_files_fin = Path(directory_out) / "Total_ROI" / "Files_ok"
+    dir_files_fin = Path(reference_dir_out) / "Total_ROI" / "Files_ok"
     Path(dir_files_fin).mkdir(parents=True, exist_ok=True)
 
     more_patient_stats_df_total = pd.DataFrame()
@@ -327,12 +292,12 @@ def test_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.ar
     input_parallel_dictionary={
         "directory_histo_fin": dir_histo_fin,
         "directory_files_fin": dir_files_fin,
-        "dataset": df_py,
+        "dataset": reference_py_patient_file_dataset,
         "ID_problems": ID_problems,
         "new_sp": new_sp,
         "rt_kind": rt_kind,
         "list_roi": list_roi,
-        "directory_out": directory_out,
+        "directory_out": reference_dir_out,
         "show_info_all": show_info_all,
         "save_info_all": save_info_all,
         "resampler": resampler
@@ -343,7 +308,7 @@ def test_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.ar
         delayed(test_parallel_fun)(
             pz, input_parallel_dictionary
         )
-        for pz in range(len(df_py))
+        for pz in range(len(reference_py_patient_file_dataset))
     )
     
     #Store results
@@ -363,7 +328,7 @@ def test_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.ar
     if len(more_patient_stats_df_total!=0):
         
         #Save information
-        excel_file_tot = Path(directory_out) / "Total_ROI" / "Histo_total_stats.xlsx"
+        excel_file_tot = Path(reference_dir_out) / "Total_ROI" / "Histo_total_stats.xlsx"
         more_patient_stats_df_total.to_excel(excel_file_tot, index=False)
         print(f"All ROI's densitometric features are in {excel_file_tot}")
     
@@ -374,7 +339,7 @@ def test_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.ar
 
     #If you have problems with patients
     if len(ID_problems)!=0:
-        excel_ID_problems = Path(directory_out) / "ID_with_problems.xlsx"
+        excel_ID_problems = Path(reference_dir_out) / "ID_with_problems.xlsx"
         print("I have problems with patients: ")
         print(ID_problems)
         df_problems = pd.DataFrame(pz_problems, columns=['ID', 'Errore'])
@@ -385,8 +350,8 @@ def test_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.ar
     return dir_files_fin
 
 
-@pytest.mark.parametrize("pz,input_dictionary_parallel",[(0,REFERENCE_dic_parallel_no_res,)],)
-def test_no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.DataFrame,list]:
+@pytest.mark.parametrize("pz",[0],)
+def test_no_res_parallel_fun(pz:int, reference_dict_no_res:dict)->tuple[pd.DataFrame,list]:
     """
     This function is used to obtain the statistical features extracted or append the ID in a list (if there is a problem). 
     This function is implemented at patient-level and used for the parallelization.
@@ -403,15 +368,15 @@ def test_no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.D
 
     #Extract information from the dictionary
                       
-    dir_histo_fin=Path(input_dictionary_parallel["directory_histo_fin"])
-    dir_files_fin=Path(input_dictionary_parallel["directory_files_fin"])
-    df_py=pd.DataFrame(input_dictionary_parallel["dataset"])
-    ID_problems=list(input_dictionary_parallel["ID_problems"])
-    rt_kind=str(input_dictionary_parallel["rt_kind"])
-    list_roi=list(input_dictionary_parallel["list_roi"])
-    directory_out=Path(input_dictionary_parallel["directory_out"])
-    show_info_all=bool(input_dictionary_parallel["show_info_all"])
-    save_info_all=bool(input_dictionary_parallel["save_info_all"])
+    dir_histo_fin=Path(reference_dict_no_res["directory_histo_fin"])
+    dir_files_fin=Path(reference_dict_no_res["directory_files_fin"])
+    df_py=pd.DataFrame(reference_dict_no_res["dataset"])
+    ID_problems=list(reference_dict_no_res["ID_problems"])
+    rt_kind=str(reference_dict_no_res["rt_kind"])
+    list_roi=list(reference_dict_no_res["list_roi"])
+    directory_out=Path(reference_dict_no_res["directory_out"])
+    show_info_all=bool(reference_dict_no_res["show_info_all"])
+    save_info_all=bool(reference_dict_no_res["save_info_all"])
     
         
     #Check if pz is acceptable
@@ -459,9 +424,9 @@ def test_no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.D
         return None,[ID, "You knew there was an error"]
 
    
-@pytest.mark.parametrize("df_py,ID_problems,rt_kind,list_roi,directory_out,show_info_all,save_info_all,N_jobs",[(REFERENCE_dataset,[],"DCM_RS",["GTV-1"],REFERENCE_directory_out,True,False,2)],)
-def test_no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, list_roi:list, 
-                         directory_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int)->Path:
+@pytest.mark.parametrize("ID_problems,rt_kind,list_roi,show_info_all,save_info_all,N_jobs",[([],"DCM_RS",["GTV-1"],True,False,2)],)
+def test_no_res_and_create_histo(reference_py_patient_file_dataset:pd.DataFrame, ID_problems:list, rt_kind:str, list_roi:list, 
+                         reference_dir_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int)->Path:
     """
     Here almost functions are called for all patients. Especially:
     - CT and RTst are possibly showed; 
@@ -495,10 +460,10 @@ def test_no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:s
     print("The showing variable is set on: ", show_info_all)
     print("The saving variable is set on: ", save_info_all)  
     
-    dir_histo_fin = Path(directory_out) / "Total_ROI" / "Histograms_ok"
+    dir_histo_fin = Path(reference_dir_out) / "Total_ROI" / "Histograms_ok"
     Path(dir_histo_fin).mkdir(parents=True, exist_ok=True)
 
-    dir_files_fin = Path(directory_out) / "Total_ROI" / "Files_ok"
+    dir_files_fin = Path(reference_dir_out) / "Total_ROI" / "Files_ok"
     Path(dir_files_fin).mkdir(parents=True, exist_ok=True)
 
     more_patient_stats_df_total = pd.DataFrame()
@@ -508,11 +473,11 @@ def test_no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:s
     input_parallel_dictionary={
         "directory_histo_fin": dir_histo_fin,
         "directory_files_fin": dir_files_fin,
-        "dataset": df_py,
+        "dataset": reference_py_patient_file_dataset,
         "ID_problems": ID_problems,
         "rt_kind": rt_kind,
         "list_roi": list_roi,
-        "directory_out": directory_out,
+        "directory_out": reference_dir_out,
         "show_info_all": show_info_all,
         "save_info_all": save_info_all,
     }
@@ -523,7 +488,7 @@ def test_no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:s
         delayed(test_no_res_parallel_fun)(
             pz, input_parallel_dictionary
         )
-        for pz in range(len(df_py))
+        for pz in range(len(reference_py_patient_file_dataset))
     )
     
     
@@ -542,7 +507,7 @@ def test_no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:s
     
     if len(more_patient_stats_df_total!=0):
         # if save_all:
-        excel_file_tot = Path(directory_out) / "Total_ROI" / "Histo_total_stats.xlsx"
+        excel_file_tot = Path(reference_dir_out) / "Total_ROI" / "Histo_total_stats.xlsx"
         more_patient_stats_df_total.to_excel(excel_file_tot, index=False)
         print(f"All ROI's densitometric features are in {excel_file_tot}")
     
@@ -553,7 +518,7 @@ def test_no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:s
 
     #If you have problems with Patients
     if len(ID_problems)!=0:
-        excel_ID_problems = Path(directory_out) / "ID_with_problems.xlsx"
+        excel_ID_problems = Path(reference_dir_out) / "ID_with_problems.xlsx"
         print("I have problems with patients: ")
         print(ID_problems)
         df_problems = pd.DataFrame(pz_problems, columns=['ID', 'Errore'])

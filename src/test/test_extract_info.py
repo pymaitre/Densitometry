@@ -19,16 +19,9 @@ import matplotlib
 import pytest
 matplotlib.use("Agg")
 
-REFERENCE_directory_out=Path(Path(__file__).parent/"output_test")
-REFERENCE_path_CT=Path(__file__).parent.parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT"
-REFERENCE_CT=rsm.Image.read(REFERENCE_path_CT)
-REFERENCE_path_RT=Path(__file__).parent.parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"Rtst"/"DCM_RS_00060.dcm"
-REFERENCE_RT=rsm.RTStructureSet.read(filename=REFERENCE_path_RT,structure_names="GTV-1",reference_image=REFERENCE_CT)
-REFERENCE_mask = np.where(REFERENCE_RT["GTV-1"].numpy() == 0, np.nan, REFERENCE_RT["GTV-1"].numpy()).astype(float)
 
-
-@pytest.mark.parametrize("save_info_all,directory_out,CT,rt,ID",[(True,REFERENCE_directory_out,REFERENCE_CT,REFERENCE_RT,"1")],)
-def test_save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, rt:rsm.RTStructureSet, ID:str)->None:
+@pytest.mark.parametrize("save_info_all,ID",[(True,"1")],)
+def test_save_info_nifti(save_info_all:bool, reference_dir_out:Path, reference_CT:rsm.Image, reference_RT:rsm.RTStructureSet, ID:str)->None:
     """
     Save an image in NIFTI format
     
@@ -47,20 +40,20 @@ def test_save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, r
     
     """
     if save_info_all:
-        dir_nifti = Path(directory_out) / "dataset" / "imagesTr"
+        dir_nifti = Path(reference_dir_out) / "dataset" / "imagesTr"
         Path(dir_nifti).mkdir(parents=True, exist_ok=True)
     
-        dir_RTst = Path(directory_out) / "dataset" / "labelsTr"
+        dir_RTst = Path(reference_dir_out) / "dataset" / "labelsTr"
         Path(dir_RTst).mkdir(parents=True, exist_ok=True)
         
         CT_nifti_path = dir_nifti / f'test_{ID}_0000.nii.gz'
         RTst_nifti_path = dir_RTst / f'test_{ID}.nii.gz'
         
         try:
-            sitk.WriteImage(CT, str(CT_nifti_path))
+            sitk.WriteImage(reference_CT, str(CT_nifti_path))
             print("CT_saved in:")
             print(CT_nifti_path)
-            sitk.WriteImage(rt, str(RTst_nifti_path))
+            sitk.WriteImage(reference_RT, str(RTst_nifti_path))
 
             print("RTst_saved in: ")
             print(RTst_nifti_path)
@@ -69,8 +62,8 @@ def test_save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, r
             print("problem: ", e)
             
             
-@pytest.mark.parametrize("ct_path,rt_path,ROI_founded,show_CT_ROI,save_info_all,directory_out,ID,slice",[(REFERENCE_path_CT,REFERENCE_path_RT,"GTV-1",True,False,REFERENCE_directory_out,"1",40)],)
-def test_ROI_ok(ct_path:Path, rt_path:Path, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool, directory_out:Path, ID:str, slice:int)->Tuple[np.array,np.array]:
+@pytest.mark.parametrize("ROI_founded,show_CT_ROI,save_info_all,ID,slice",[("GTV-1",True,False,"1",0)],)
+def test_ROI_ok(reference_CT_path:Path, reference_RT_path:Path, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool, reference_dir_out:Path, ID:str, slice:int)->Tuple[np.array,np.array]:
     """
     Function for obtaining ROIs and its distribution of HU.
 
@@ -96,10 +89,10 @@ def test_ROI_ok(ct_path:Path, rt_path:Path, ROI_founded:str, show_CT_ROI:bool, s
     """
     
     #Read CT and CT_arr
-    CT, CT_arr = test_read_and_show_ct(ct_path, show_CT_ROI, slice)
+    CT, CT_arr = test_read_and_show_ct(reference_CT_path, show_CT_ROI, slice)
     
     #Get RT Structure Set
-    rt=rsm.RTStructureSet.read(filename=rt_path,structure_names=ROI_founded,reference_image=CT)
+    rt=rsm.RTStructureSet.read(filename=reference_RT_path,structure_names=ROI_founded,reference_image=CT)
     
     #Mask
     mask = test_read_and_show_RTst(rt, ROI_founded)
@@ -109,9 +102,9 @@ def test_ROI_ok(ct_path:Path, rt_path:Path, ROI_founded:str, show_CT_ROI:bool, s
     
     return HU_ROI, counts_ROI
 
-@pytest.mark.parametrize("ct_path,rt_path,new_sp,ROI_founded,show_CT_ROI,save_info_all,directory_out,ID,resampler,slice",[(REFERENCE_path_CT,REFERENCE_path_RT,[1,1,3],"GTV-1",True,False,REFERENCE_directory_out,"1",sitk.sitkNearestNeighbor,40)],)
-def test_ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool,
-            directory_out:Path, ID:str, resampler,slice:int)->Tuple[np.array,np.array]:
+@pytest.mark.parametrize("new_sp,ROI_founded,show_CT_ROI,save_info_all,ID,resampler,slice",[([1,1,3],"GTV-1",True,False,"1",sitk.sitkNearestNeighbor,0)],)
+def test_ROI_res(reference_CT_path:Path, reference_RT_path:Path, new_sp:np.array, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool,
+            reference_dir_out:Path, ID:str, resampler,slice:int)->Tuple[np.array,np.array]:
     """
     Function for obtaining ROIs and its distribution of HU
     in patients with different voxel spacing.
@@ -140,14 +133,14 @@ def test_ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, s
     """
     
     #CT and CT_arr
-    CT, CT_arr = test_read_and_show_ct(ct_path, show_CT_ROI, slice)
+    CT, CT_arr = test_read_and_show_ct(reference_CT_path, show_CT_ROI, slice)
     
     #Resampling
     CT_res = test_resample(CT, new_sp[0], new_sp[1], new_sp[2],resampler)
     CT_res_arr=CT_res.numpy()
 
     #Get RTStructure Set
-    rt_res=rsm.RTStructureSet.read(filename=rt_path,structure_names=ROI_founded,reference_image=CT_res)
+    rt_res=rsm.RTStructureSet.read(filename=reference_RT_path,structure_names=ROI_founded,reference_image=CT_res)
     
     #Get the mask
     mask_res = test_read_and_show_RTst(rt_res, ROI_founded)    
@@ -157,8 +150,8 @@ def test_ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, s
 
     return HU_ROI_res, counts_ROI_res
  
-@pytest.mark.parametrize("ct_path,show_CT_ROI,slice",[(REFERENCE_path_CT,True,40)],)
-def test_read_and_show_ct(ct_path:Path, show_CT_ROI:bool, slice:int)->Tuple[rsm.Image,np.array]:
+@pytest.mark.parametrize("show_CT_ROI,slice",[(True,0)],)
+def test_read_and_show_ct(reference_CT_path:Path, show_CT_ROI:bool, slice:int)->Tuple[rsm.Image,np.array]:
     """
     Take CT from ct_path and show the slice you want.
 
@@ -174,7 +167,7 @@ def test_read_and_show_ct(ct_path:Path, show_CT_ROI:bool, slice:int)->Tuple[rsm.
     """
     
     #Read image
-    ct=rsm.Image.read(ct_path)
+    ct=rsm.Image.read(reference_CT_path)
     
     #Get the CT array
     ct_arr = ct.numpy()
@@ -189,8 +182,8 @@ def test_read_and_show_ct(ct_path:Path, show_CT_ROI:bool, slice:int)->Tuple[rsm.
 
     return ct, ct_arr
 
-@pytest.mark.parametrize("rt_0,ROI_founded",[(REFERENCE_RT,"GTV-1")],)
-def test_read_and_show_RTst(rt_0:rsm.RTStructureSet, ROI_founded:str)->np.array:
+@pytest.mark.parametrize("ROI_founded",[("GTV-1")],)
+def test_read_and_show_RTst(reference_RT:rsm.RTStructureSet, ROI_founded:str)->np.array:
     """
     This function relates to and shows the specific ROI founded for the CT.
     Because of significative value for 0 HU in CT, ROI of 0 and 1 is 
@@ -205,16 +198,16 @@ def test_read_and_show_RTst(rt_0:rsm.RTStructureSet, ROI_founded:str)->np.array:
     :rtype: np.array
     """
     #Check the different ROIs
-    print(f"ROI: {rt_0.keys()}")
+    print(f"ROI: {reference_RT.keys()}")
     
     roi_obj = None
     
     
     #Get the desired RTStructures
-    for name_ROI in rt_0.keys():
+    for name_ROI in reference_RT.keys():
         if ROI_founded==name_ROI:
             print("Consider the ROI: ", name_ROI, ", coinciding with: ", ROI_founded)
-            roi_obj = rt_0[name_ROI]
+            roi_obj = reference_RT[name_ROI]
             
             break
         else:
@@ -234,8 +227,8 @@ def test_read_and_show_RTst(rt_0:rsm.RTStructureSet, ROI_founded:str)->np.array:
     return mask
     
 
-@pytest.mark.parametrize("mask,ct_arr,show_CT_ROI,slice",[(REFERENCE_mask,REFERENCE_CT.numpy(),True,40)],)
-def test_obtain_ROI(mask:np.array, ct_arr:np.array, show_CT_ROI:bool, slice:int)->Tuple[np.array,np.array]:
+@pytest.mark.parametrize("show_CT_ROI,slice",[(True,0)],)
+def test_obtain_ROI(reference_mask:np.array, reference_CT_arr:np.array, show_CT_ROI:bool, slice:int)->Tuple[np.array,np.array]:
     """
     Here the real visualization of the ROI is given thanks to
     the product between the array of the CT and mask. 
@@ -256,7 +249,7 @@ def test_obtain_ROI(mask:np.array, ct_arr:np.array, show_CT_ROI:bool, slice:int)
     """
     
     #Compute ct, HU, HU not NaN and counts not NaN for the desired ROI
-    ct_ROI = mask * ct_arr
+    ct_ROI = reference_mask * reference_CT_arr
     HU_ROI, counts_ROI = np.unique(ct_ROI, return_counts=True)
     HU_ROI_no_nan=HU_ROI[np.where(~np.isnan(HU_ROI))[0]]
     counts_ROI_no_nan=counts_ROI[np.where(~np.isnan(HU_ROI))[0]]
@@ -274,8 +267,8 @@ def test_obtain_ROI(mask:np.array, ct_arr:np.array, show_CT_ROI:bool, slice:int)
 
     return HU_ROI_no_nan, counts_ROI_no_nan
 
-@pytest.mark.parametrize("image,new_x,new_y,new_z,resampler",[(REFERENCE_CT,1,1,3,sitk.sitkNearestNeighbor)],)
-def test_resample(image: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) -> rsm.Image:
+@pytest.mark.parametrize("new_x,new_y,new_z,resampler",[(1,1,3,sitk.sitkNearestNeighbor)],)
+def test_resample(reference_CT: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) -> rsm.Image:
     """
     Resample image (increase pixel density) in order to increase computation accuracy.
 
@@ -297,11 +290,11 @@ def test_resample(image: rsm.Image, new_x:float, new_y:float, new_z:float,resamp
     new_spacing=np.array([new_x,new_y,new_z])
     
     #Check if all the dimensions are greater than 0
-    orig_size=image.size
+    orig_size=reference_CT.size
     for s in orig_size: 
         if s==0: 
             print("The image has one dimension equal to zero")
 
-    new_image=rsm.Image.resample(image,new_spacing,resampler,0)
+    new_image=rsm.Image.resample(reference_CT,new_spacing,resampler,0)
     
     return new_image
