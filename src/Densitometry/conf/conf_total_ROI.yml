@@ -1,6 +1,6 @@
     directory_dcm_out : "C:\\Users\\user\\Desktop\\input_folder" #input directory
 
-    directory_out : "C:\\Users\\user\\Desktop\\output" #output directory
+    directory_out : "C:\\Users\\user\\Desktop\\output_folder" #output directory
 
     image_modality : "CT" 
 
@@ -14,7 +14,7 @@
 
     save_total_ROI_info :  True #False  #
 
-    py_patient_path: "C:\\User\\user\\folder\\py_patient.xlsx"
+    py_patient_path: "C:\\User\\user\\Desktop\\output_folder\\py_patient.xlsx"
 
     flag_resampling: True #Flag for the resampling (True: resample, False: dot not resample)
 
@@ -30,7 +30,7 @@
 
     ID_problems : [] #List of IDs with known problems
 
-    rt_kind : 'MV_RQ' #Type of RT 
+    rt_kind : 'RT_type' #Type of RT 
 
-    list_roi : ['Heart'] #List of ROIs to be analysed
+    roi_name : ['Heart'] #name of the ROI to be analyzed
    

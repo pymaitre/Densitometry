@@ -10,6 +10,8 @@ import numpy as np
 import pandas as pd
 import SimpleITK as sitk
 from pathlib import Path
+import argparse
+import yaml
 
 
 
@@ -181,4 +183,21 @@ def reference_dict_no_res()->dict:
 }
     return dic
 
+@pytest.fixture
+def reference_conf_ROI_analyses():
+    """conf file used for test_ROI_analyses"""
+    
 
+    config_path= Path(__file__).parents[1]/"test"/ "test_conf" / "test_conf_ROI_analyses.yml"
+       
+    return yaml.safe_load(config_path.read_text())
+
+
+@pytest.fixture
+def reference_conf_total_ROI_analyses():
+    """conf file used for test_ROI_analyses"""
+    
+
+    config_path= Path(__file__).parents[1]/"test"/ "test_conf" / "test_conf_total_ROI.yml"
+       
+    return yaml.safe_load(config_path.read_text())

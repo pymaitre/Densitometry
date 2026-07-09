@@ -29,13 +29,13 @@ each Patient (**Patient_i**) folder has to be organized as follows:
             |___CT_1
                 |___CT
                 |___RTDOSE
-                |___RTst
+                |___RTSTRUCT
 
 where:
 
 * **CT folder** (the one inside CT_1) stores the CT DICOM files;
 * **RTDOSE folder** contains the RTDOSE and RTPlan files;
-* **RTst folder** contains the RTStruct and MV files.
+* **RTSTRUCT folder** contains the RTStruct and MV files.
 
              
 Configuration file

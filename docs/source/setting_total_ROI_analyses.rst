@@ -8,11 +8,11 @@ Differently from `setting_ROI_analyses`, it does not take into account specific 
 File organization
 ---------------------
 In order to use the code, patient files should be organized in a proper way.
-Consider an institute folder (**Institute**) which contains patient-associated folders, as described below:
+Consider an institute folder (**input_folder**) which contains patient-associated folders, as described below:
 
 .. code-block:: text
 
-    Institute
+    input_folder
        |___Patient_1
        |___Patient_2
        .
@@ -44,7 +44,7 @@ Configuration file
 After having organized the files as described above, it is necessary to describe the YAML configuration file *conf_total_ROI.yml* (in **conf** subfolder).
 It contains the following parameters to be manually set:
 
-* **directory_dcm_out**: input institute folder
+* **directory_dcm_out**: input folder
 * **directory_out**: output folder where information are stored
 * **image_modality**: modality of the image (e.g. "CT")
 * **save_spacing_histo**: save spacing histogram  
@@ -60,16 +60,16 @@ It contains the following parameters to be manually set:
 * **N_jobs**: number of jobs for parallel execution (considered only when flag_parallel==True, if flag_parallel==False N_jobs is set equal to 1 automatically)
 * **resampler**: resampler used during CT resampling (e.g. sitkBSpline, sitkLinear)
 * **ID_problems**: list of patient IDs with known problems
-* **rt_kind**: type of RT file (e.g. "MV-RQ")
-* **list_roi**: list of ROIs 
+* **rt_kind**: type of RTSTRUCT file (e.g. name of the file)
+* **roi_name**: name of the ROI to be analyzed 
 
 An example of configuration file is below reported:
 
 .. code-block:: text
 
-    directory_dcm_out : "C:\\Users\\user_1\\Desktop\\Institute"
+    directory_dcm_out : "C:\\Users\\user\\Desktop\\input_folder"
 
-    directory_out : "C:\\Users\\user_1\\Desktop\\output_folder"
+    directory_out : "C:\\Users\\user\\Desktop\\output_folder"
 
     image_modality : "CT"
 
@@ -79,11 +79,11 @@ An example of configuration file is below reported:
     
     total_ROI_analyses :  True 
 
-    show_total_ROI_info : False  
+    show_total_ROI_info : True  
 
     save_total_ROI_info :  True 
 
-    py_patient_file_path: "C:\\User\\user\\folder\\py_patient.xlsx"
+    py_patient_file_path: "C:\\User\\user\\output_folder\\py_patient.xlsx"
 
     flag_resampling: True 
 
@@ -97,11 +97,11 @@ An example of configuration file is below reported:
 
     resampler: sitkBSpline
 
-    ID_problems : [ID_1,ID_2]
+    ID_problems : []
 
-    rt_kind : 'MV_RQ'
+    rt_kind : 'RT_type'
 
-    list_roi : ['Heart']   
+    roi_name : ['Heart']   
 
 
 Choice of flag_new_spacing

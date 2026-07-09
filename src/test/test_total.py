@@ -241,7 +241,7 @@ def test_parallel_fun(pz:int, reference_dict_resampling:dict)->tuple[pd.DataFram
    
 
 
-@pytest.mark.parametrize("ID_problems,new_sp,rt_kind,list_roi,show_info_all,save_info_all,N_jobs,resampler",[([],[1,1,3],"DCM_RS",["GTV-1"],True,True,2,sitk.sitkNearestNeighbor)],)
+@pytest.mark.parametrize("ID_problems,new_sp,rt_kind,list_roi,show_info_all,save_info_all,N_jobs,resampler",[([],[1,1,3],"DCM_RS",["GTV-1"],True,True,2,sitk.sitkBSpline)],)
 def test_res_and_create_histo(reference_py_patient_file_dataset:pd.DataFrame, ID_problems:list, new_sp:np.array, rt_kind:str, list_roi:list, 
                          reference_dir_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int,resampler)->Path:
     """

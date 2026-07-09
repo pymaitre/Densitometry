@@ -36,10 +36,26 @@ def main():
 
     config = rtv_configuration_file("conf_total_ROI", save=False)
     
-    directory_dcm_out = Path(config["directory_dcm_out"])
-    directory_out = Path(config["directory_out"])
     
+    #Check if Paths are missing
+    if config["directory_dcm_out"]==None: 
+        raise ValueError("Missing directory_dcm_out")
+    elif config["directory_out"]==None: 
+        raise ValueError("Missing directory_out")
+    elif config["py_patient_path"]==None:
+        raise ValueError("Missing py_patient_path")
+        
+
+    directory_dcm_out = Path(config["directory_dcm_out"])
     py_patient_file = Path(config["py_patient_path"])
+    
+    #Check if the Paths are valid
+    if not directory_dcm_out.exists():
+        raise ValueError("Not valid directory_dcm_out")
+    elif not py_patient_file.exists():
+        raise ValueError("Not valid py_patient_file")
+    
+    
     df_py = pd.read_excel(py_patient_file)
 
     id_dirs = find_id_dir(directory_dcm_out)

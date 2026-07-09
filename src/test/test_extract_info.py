@@ -102,7 +102,7 @@ def test_ROI_ok(reference_CT_path:Path, reference_RT_path:Path, ROI_founded:str,
     
     return HU_ROI, counts_ROI
 
-@pytest.mark.parametrize("new_sp,ROI_founded,show_CT_ROI,save_info_all,ID,resampler,slice",[([1,1,3],"GTV-1",True,False,"1",sitk.sitkNearestNeighbor,0)],)
+@pytest.mark.parametrize("new_sp,ROI_founded,show_CT_ROI,save_info_all,ID,resampler,slice",[([1,1,3],"GTV-1",True,False,"1",sitk.sitkBSpline,0)],)
 def test_ROI_res(reference_CT_path:Path, reference_RT_path:Path, new_sp:np.array, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool,
             reference_dir_out:Path, ID:str, resampler,slice:int)->Tuple[np.array,np.array]:
     """
@@ -267,7 +267,7 @@ def test_obtain_ROI(reference_mask:np.array, reference_CT_arr:np.array, show_CT_
 
     return HU_ROI_no_nan, counts_ROI_no_nan
 
-@pytest.mark.parametrize("new_x,new_y,new_z,resampler",[(1,1,3,sitk.sitkNearestNeighbor)],)
+@pytest.mark.parametrize("new_x,new_y,new_z,resampler",[(1,1,3,sitk.sitkBSpline)],)
 def test_resample(reference_CT: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) -> rsm.Image:
     """
     Resample image (increase pixel density) in order to increase computation accuracy.
