@@ -1,4 +1,5 @@
 """
+
 Module for: 
 reading excel files referred to patients entire region histograms, looking for HU and relatives counts, evaluating statistic features 
 referred to a specific region of the histogram above minimum HU and counts thresholds.
@@ -144,7 +145,7 @@ def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple
             stats_df_over = histo.features_ROI(ID, HU_over, counts_over,sp,ROI_name,dir_histo_over, dir_files_over, save_over)
             more_patient_stats_df_over = pd.concat([more_patient_stats_df_over, stats_df_over])
 
-    if len(more_patient_stats_df_over!=0):
+    if len(more_patient_stats_df_over)!=0:
         print("Patients with significative counts over threshold are: ")
         print(pz_over)
         

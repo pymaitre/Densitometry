@@ -1,8 +1,10 @@
 """
+
 Module for: 
 reading excel files referred to patients entire region histograms, 
 looking for HU and relatives counts, evaluating statistic features referred à
 to a specific region of the histogram beetween minimum and maximum HU and above minimum counts thresholds.
+
 """
 
 import os
@@ -134,7 +136,7 @@ def histo_just(dir_files_fin: str, directory_out: str, delimiter: tuple[int,int,
             pz_no_just.append(ID)
             print("")
 
-    if len(more_patient_stats_df_justified!=0):
+    if len(more_patient_stats_df_justified)!=0:
         if save_just:      
             excel_file_just = (Path(directory_out) / "Specific_Regions" / 
                                f"Region_{HU_min}_{HU_max}_{min_counts}" / f"Stats_specific_{HU_min}_{HU_max}_{min_counts}.xlsx")

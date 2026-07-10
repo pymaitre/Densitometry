@@ -1,11 +1,12 @@
 """
-Module for reading dcm images and obtaining densitometry histograms.
+
+Testing total module
+
 """
 
 import os
 from pathlib import Path
-from Densitometry.total_ROI_functions import extract_info as info
-from Densitometry.total_ROI_functions import extract_histo as histo
+from Densitometry.total_ROI_functions.total import get_roi_names,is_roi_empty,find_rt_st,parallel_fun,res_and_create_histo,no_res_parallel_fun,no_res_and_create_histo
 import SimpleITK as sitk
 import pandas as pd
 import pydicom
@@ -17,513 +18,204 @@ import matplotlib
 matplotlib.use("Agg")
 
 
-def test_get_roi_names(reference_RT_path:Path)->list:
-    """
-    Generate a list with names of the ROI
+def test_get_roi_names(reference_RT_path:Path):
     
-    :param rtstruct_path: Path to RTSTRUCT file.
-    :type rtstruct_path: Path
+    """ Test if get_roi_names runs correctly. """
     
-    :return: list with names of the ROI.
-    :rtype: list
-    """
+    roi_names=get_roi_names(reference_RT_path)
 
-    #RTSTRUCT
-    rtstruct = pydicom.dcmread(reference_RT_path)
+    assert isinstance(roi_names,list)
+    assert not len(roi_names)==0
 
-    #ROI names
-    roi_names = []
-    for roi in rtstruct.StructureSetROISequence:
-        roi_names.append(roi.ROIName)
-
-    return roi_names
-
-@pytest.mark.parametrize("roi_name",["GTV-1"],)
-def test_is_roi_empty(reference_RT_path:Path, roi_name:str)->bool:
-    """
-    Check whether the ROI is empty
+@pytest.mark.parametrize("roi_name",["GTV-1"])
+def test_is_roi_empty(reference_RT_path:Path, roi_name:str):
     
-    :param rtst_file: path to RTSTRUCT file
-    :type rtst_file: Path
-    :param roi_name: name of the ROI
-    :type roi_name: str
+    """ Test if is_roi_empty checks correctly the ROI. """
     
-    :return: True if empty, False otherwise
-    :rtype: bool
+    flag=is_roi_empty(reference_RT_path,roi_name)
+
+    assert isinstance(flag,bool)
     
-    """
-    roi_number=None
-    ds = pydicom.dcmread(reference_RT_path)
-    for roi in ds.StructureSetROISequence:
-        if roi_name == roi.ROIName:
-            roi_number = roi.ROINumber
-            break
+
+def test_is_roi_empty_not_valid_roi(reference_RT_path:Path):
     
-    # Search for ROI Contour Sequence
-    if 'ROIContourSequence' in ds:
-        for roi_contour in ds.ROIContourSequence:
-            # Search for Contour Sequence
-            if str(roi_number) == str(roi_contour.ReferencedROINumber) and (roi_number is not None):
-                if 'ContourSequence' in roi_contour:
-                    for contour in roi_contour.ContourSequence:
-                        # Check if Contour Data is empty
-                        if 'ContourData' in contour and len(contour.ContourData) > 0:
-                            return False  # ROI not empty
-                else:
-                    print(f'ContourSequence not in ROIContourSequence: probably {roi_name} is empty.')
-                    break
-            else:
-                # print(roi_contour.ReferencedROINumber)
-                # print(roi_contour.ContourSequence)
-                continue
+    """ Test if is_roi_empty raises error if missing ROI is required. """
     
-    return True  # ROI is empty
+    roi_name="Heart"
     
-@pytest.mark.parametrize("rt_kind,ID,list_roi",[("DCM_RS","1",["GTV-1"],)],)
-def test_find_rt_st(reference_CT:Path, rt_kind:str, ID:str, list_roi:list)->tuple[str, Path] | None:
-    """
-    This function checks the correspondence in ROI names and returns a tuple with the name of the ROI and the path 
-    to RTSTRUCT file.
+    with pytest.raises(ValueError, match="not found"):
+        flag=is_roi_empty(reference_RT_path,roi_name)
+
+
+
     
-    :param ct_path: Path to CT.
-    :type ct_path: Path
-    :param rt_kind: type of RT.
-    :type rt_kind: str
-    :param list_roi: list of ROIs.
-    :type list_roi: list
+@pytest.mark.parametrize("rt_kind,ID,list_roi",[("DCM_RS","1",["GTV-1"]),("DCM_RS","1",["Heart"])])
+def test_find_rt_st(reference_CT:Path, rt_kind:str, ID:str, list_roi:list):
     
-    :return: name of the ROI and path to RTSTRUCT (otherwise None)
-    :rtype: tuple[str, Path]
+    """ Test if find_rt_st works correctly. """
 
-    """
+    result =find_rt_st(reference_CT,rt_kind,ID,list_roi)
     
-    try:
-
-        path_rt_structures = [path_rt_st for path_rt_st in list(Path(reference_CT).parents[2].glob(f"**/*{rt_kind}*")) if path_rt_st.is_dir() == False]
-        
-        names_with_importance = {}
-        for i in range(0, len(list_roi)):
-            names_with_importance[list_roi[i]] = len(list_roi)-i
-        print("I'm searching contours with this order: ")
-        print(names_with_importance)
-        
-        for path_rt_st in path_rt_structures:
-            print("I found the RTst:")
-            print(path_rt_st)
-
-            #List of ROI names
-            ROI_names = test_get_roi_names(path_rt_st)
-            
-            #Check the same name
-            for nome in names_with_importance:
-
-                for ROI_name in ROI_names:
-
-                    if nome in ROI_name:
-                        print(f'ROI name {ROI_name} matched with name {nome}.')
-                        if test_is_roi_empty(path_rt_st, ROI_name):
-                            continue
-                        else:
-                            return ROI_name, path_rt_st
-       
-    except Exception as e:
-        print('ROI not founded with error: ', e)
-        
-
-
-@pytest.mark.parametrize("pz",[0],)
-def test_parallel_fun(pz:int, reference_dict_resampling:dict)->tuple[pd.DataFrame,list]:
-    """
-    This function is used to obtain the statistical features extracted or append the ID in a list (if there is a problem). 
-    This function is implemented at patient-level and used for the parallelization.
-    
-    :param pz: patient number in list.
-    :type pz: int
-    :param input_parallel_dictionary: input dictionary for the parallel function.
-    :type input_parallel_dictionary: dict
-
-    :return: DataFrame with statistical information and a list with ID and problem of the patient
-    :rtype: tuple[pd.DataFrame, list]
-    
-    """
-    #Extract information from dictionary
-    
-    dir_histo_fin=Path(reference_dict_resampling["directory_histo_fin"])
-    dir_files_fin=Path(reference_dict_resampling["directory_files_fin"])
-    df_py=pd.DataFrame(reference_dict_resampling["dataset"])
-    ID_problems=list(reference_dict_resampling["ID_problems"])
-    new_sp=np.array(reference_dict_resampling["new_sp"])
-    rt_kind=str(reference_dict_resampling["rt_kind"])
-    list_roi=list(reference_dict_resampling["list_roi"])
-    directory_out=Path(reference_dict_resampling["directory_out"])
-    show_info_all=bool(reference_dict_resampling["show_info_all"])
-    save_info_all=bool(reference_dict_resampling["save_info_all"])
-    resampler=reference_dict_resampling["resampler"]
-    
-    
-    #Check if pz is acceptable
-    if not pz<len(df_py):
-        raise ValueError(f"{pz} index not valid")
-  
-    #ID patient
-    ID = df_py.loc[pz,"PatientID"]
-    
-    if str(ID) not in ID_problems:
-
-        try:
-            ct_path = df_py.loc[pz, "Path"]
-            ROI_founded, ROI_path = test_find_rt_st(ct_path, rt_kind, ID, list_roi)
-            
-            #Old spacing
-            old_sp = np.array([df_py.loc[pz,"VoxelSpacingX"], df_py.loc[pz,"VoxelSpacingY"], df_py.loc[pz,"VoxelSpacingZ"]])
-
-
-            if np.all(old_sp == new_sp):
-                
-                print("")    
-                print("PZ", ID , " ok")
-                
-                HU_ROI, counts_ROI = info.ROI_ok(ct_path, ROI_path, ROI_founded, show_info_all, 
-                                                    save_info_all, directory_out, ID, slice=40)
-                #Extract information
-                stats_df = histo.features_ROI(ID, HU_ROI, counts_ROI, new_sp, ROI_founded, dir_histo_fin, dir_files_fin, save_info_all)
-                         
-                return stats_df,None
-
-            else:
-                
-                print("")    
-                print("PZ", ID , " has to be resampled")
-
-                #Store information
-                dir_histo_res = Path(directory_out) / "Total_ROI" / "To_be_resampled" / "Histograms"
-                Path(dir_histo_res).mkdir(parents=True, exist_ok=True)
-            
-                dir_files_res = Path(directory_out) / "Total_ROI" / "To_be_resampled" / "Files"
-                Path(dir_files_res).mkdir(parents=True, exist_ok=True)
-            
-                dir_compare_ct_res = Path(directory_out) / "Total_ROI" / "To_be_resampled" / "Compare_histo"
-                Path(dir_compare_ct_res).mkdir(parents=True, exist_ok=True)
-        
-                HU_ROI, counts_ROI = info.ROI_ok(ct_path, ROI_path, ROI_founded, show_info_all, 
-                                                    save_info_all, directory_out, ID, slice=40)
-                histo.features_ROI(ID, HU_ROI, counts_ROI, old_sp, ROI_founded, dir_histo_res, dir_files_res, save_info_all)
-                            
-        
-                print("")    
-                print("ANALYZING THE RESAMPLED IMAGE!")
-                print("")
-        
-                HU_ROI_res, counts_ROI_res = info.ROI_res(ct_path, ROI_path, new_sp, ROI_founded, 
-                                                            show_info_all, save_info_all, directory_out, ID, resampler,slice=100)
-                #Extract information
-                stats_df = histo.features_ROI(ID, HU_ROI_res, counts_ROI_res, new_sp, ROI_founded, dir_histo_fin, dir_files_fin, save_info_all)
-                                
-                compare = histo.compare_histo_res(HU_ROI_res, counts_ROI_res, HU_ROI, counts_ROI, 
-                                                    dir_compare_ct_res, ID, save_info_all)
-
-                return stats_df,None
-
-        except Exception as e:
-            
-            #If Patient has problems with ROI
-            print(f"Patient {ID} has problems with ROI.")
-            print(f"{e}")
-            
-
-            return None, (ID, str(e))
-            
+    if result is not None:
+        ROI_name, path_rt_st = result
     else:
-        print("You caught a patient within the problem's ones.")
-        print("")
+        ROI_name = None
+        path_rt_st = None
         
-        return None,[ID, "You knew there was an error"]
+    assert isinstance(ROI_name,str) or ROI_name is None
+    assert isinstance(path_rt_st,Path) or path_rt_st is None
+    
+    if path_rt_st is not None:
+        assert path_rt_st.exists()
+        
+
+
+@pytest.mark.parametrize("pz",[0])
+def test_parallel_fun(pz:int, reference_dict_resampling:dict):
+    
+    """ Test if parallel_fun works correctly. """
+    
+    
+    df,ID_list=parallel_fun(pz,reference_dict_resampling)
+    
+    assert isinstance(df,pd.DataFrame) or df is None
+    assert isinstance(ID_list,list) or ID_list is None
+    
+    
+
+def test_parallel_fun_not_valid_pz(reference_dict_resampling:dict):
+    
+    """ Test if parallel_fun works raises Error if pz is not valid. """
+    
+    pz=1
+    
+    with pytest.raises(ValueError):
+        df,ID_list=parallel_fun(pz,reference_dict_resampling)
+        
+@pytest.mark.parametrize("pz",[0])    
+def test_parallel_fun_old_sp(pz:int,reference_dict_resampling:dict,reference_py_patient_file_dataset:pd.DataFrame):
+    
+    """ Test if parallel_fun works using old_sp. """
+    
+    x=reference_py_patient_file_dataset.loc[pz,"VoxelSpacingX"]
+    y=reference_py_patient_file_dataset.loc[pz,"VoxelSpacingY"]
+    z=reference_py_patient_file_dataset.loc[pz,"VoxelSpacingZ"]
+    
+    sp=np.array([x,y,z])
+    reference_dict_resampling["new_sp"]=sp
+
+
+    df,ID_list=parallel_fun(pz,reference_dict_resampling)
+    assert isinstance(df,pd.DataFrame) or df is None
+    assert isinstance(ID_list,list) or ID_list is None
+    
+    
+@pytest.mark.parametrize("pz",[0])    
+def test_parallel_fun_mising_roi(pz:int,reference_dict_resampling:dict):
+    
+    """ Test if parallel_fun raises Exception when missing ROI is considered. """
+
+
+    reference_dict_resampling["list_roi"]=["Heart"]
+
+
+    df,ID_list=parallel_fun(pz,reference_dict_resampling)
+    assert df is None
+    assert isinstance(ID_list,list)
+    
+
+@pytest.mark.parametrize("pz",[0])    
+def test_parallel_fun_ID_problem(pz:int,reference_dict_resampling:dict):
+    
+    """ Test if parallel_fun detects correctly ID_problems. """
+
+
+    reference_dict_resampling["ID_problems"]=["1"]
+
+
+    df,ID_list=parallel_fun(pz,reference_dict_resampling)
+    assert df is None
+    assert isinstance(ID_list,list)
    
 
 
-@pytest.mark.parametrize("ID_problems,new_sp,rt_kind,list_roi,show_info_all,save_info_all,N_jobs,resampler",[([],[1,1,3],"DCM_RS",["GTV-1"],True,True,2,sitk.sitkBSpline)],)
+@pytest.mark.parametrize("ID_problems,new_sp,rt_kind,list_roi,show_info_all,save_info_all,N_jobs,resampler",[([],[1,1,3],"DCM_RS",["GTV-1"],True,True,2,sitk.sitkBSpline),
+                                                                                                             ([],[1,1,3],"DCM_RS",["GTV-1"],True,False,2,sitk.sitkBSpline),
+                                                                                                             ([],[1,1,3],"DCM_RS",["GTV-1"],False,True,2,sitk.sitkBSpline),
+                                                                                                             ([],[1,1,3],"DCM_RS",["GTV-1"],False,False,2,sitk.sitkBSpline),(["1"],[1,1,3],"DCM_RS",["GTV-1"],False,False,2,sitk.sitkBSpline)])
 def test_res_and_create_histo(reference_py_patient_file_dataset:pd.DataFrame, ID_problems:list, new_sp:np.array, rt_kind:str, list_roi:list, 
-                         reference_dir_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int,resampler)->Path:
-    """
-    Here almost functions are called for all patients. Especially:
-    - CT and RTst are possibly showed; 
-    - specific ROI is found;
-    - if original CT voxel spacing is equal to the most common spacing,
-      this function creates the histogram and relative dataframe of the ROI;
-    - if not, histogram and df are created of the original image are obtained,
-      CT and RTst are resampled and histogram and df are created;
-    - comparison between original and resampled histo is obtained;
-    - a database with all patients features is created too.
-
-    :param df_py: database of headers information.
-    :type df_py: pd.DataFrame
-    :param ID_problems: input list of patient's ID with problems.
-    :type ID_problems: list
-    :param new_sp: new voxel spacing for resampling.
-    :type new_sp: np.array
-    :param directory_out: the directory of analyses.
-    :type directory_out: Path
-    :param show_info_all: if true show CT and ROI info.
-    :type show_info_all: bool
-    :param save_info_all: if true save all histograms and relatives 
-                    excel file with HU and counts;
-                    if false, histograms are plotted.
-    :type save_info_all: bool
-    :param n_jobs: number of jobs for parallelization.
-    :type n_jobs: int
-
-    :return: directory of all patients df with HU and counts.
-    :rtype: Path
-    """
-
-    print("The showing variable is set on: ", show_info_all)
-    print("The saving variable is set on: ", save_info_all)  
+                         reference_dir_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int,resampler):
     
-    dir_histo_fin = Path(reference_dir_out) / "Total_ROI" / "Histograms_ok"
-    Path(dir_histo_fin).mkdir(parents=True, exist_ok=True)
+    """ Test if res_and_create_histo works correctly. """
 
-    dir_files_fin = Path(reference_dir_out) / "Total_ROI" / "Files_ok"
-    Path(dir_files_fin).mkdir(parents=True, exist_ok=True)
+    dir_files_fin=res_and_create_histo(reference_py_patient_file_dataset,ID_problems,new_sp,rt_kind,list_roi,reference_dir_out,show_info_all,save_info_all,N_jobs,resampler)
 
-    more_patient_stats_df_total = pd.DataFrame()
-    pz_problems = []
-
-    #Create the input dictionary for the parallel function
-    input_parallel_dictionary={
-        "directory_histo_fin": dir_histo_fin,
-        "directory_files_fin": dir_files_fin,
-        "dataset": reference_py_patient_file_dataset,
-        "ID_problems": ID_problems,
-        "new_sp": new_sp,
-        "rt_kind": rt_kind,
-        "list_roi": list_roi,
-        "directory_out": reference_dir_out,
-        "show_info_all": show_info_all,
-        "save_info_all": save_info_all,
-        "resampler": resampler
-        }
+    assert isinstance(dir_files_fin,Path)
+    assert dir_files_fin.exists()
     
-    #Parallel function
-    results = Parallel(n_jobs=N_jobs,timeout=None)(
-        delayed(test_parallel_fun)(
-            pz, input_parallel_dictionary
-        )
-        for pz in range(len(reference_py_patient_file_dataset))
-    )
     
-    #Store results
-    stats_list = [r[0] for r in results if r[0] is not None]
-    pz_problems = [r[1] for r in results if r[1] is not None]
 
-    more_patient_stats_df_total = pd.DataFrame()
-    for r in stats_list:
-        more_patient_stats_df_total = pd.concat([more_patient_stats_df_total, r])
+
+@pytest.mark.parametrize("pz",[0])
+def test_no_res_parallel_fun(pz:int, reference_dict_no_res:dict):
     
-    for _, err in results:
-        if err is not None:
-            ID_problems.append(err[0])
-            
-            
+    """ Test if no_res_parallel_fun works correctly. """
     
-    if len(more_patient_stats_df_total!=0):
-        
-        #Save information
-        excel_file_tot = Path(reference_dir_out) / "Total_ROI" / "Histo_total_stats.xlsx"
-        more_patient_stats_df_total.to_excel(excel_file_tot, index=False)
-        print(f"All ROI's densitometric features are in {excel_file_tot}")
+    df,ID_list=no_res_parallel_fun(pz,reference_dict_no_res)
     
-        # else:
-        #     print("")
-        #     print("Saving the database with the densitometric features of the histograms of the entire region.")
-        #     display(more_patient_stats_df_total)
-
-    #If you have problems with patients
-    if len(ID_problems)!=0:
-        excel_ID_problems = Path(reference_dir_out) / "ID_with_problems.xlsx"
-        print("I have problems with patients: ")
-        print(ID_problems)
-        df_problems = pd.DataFrame(pz_problems, columns=['ID', 'Errore'])
-        df_problems.to_excel(excel_ID_problems, index=False)
-    else:
-        print("\nThere are no problems")
-        
-    return dir_files_fin
-
-
-@pytest.mark.parametrize("pz",[0],)
-def test_no_res_parallel_fun(pz:int, reference_dict_no_res:dict)->tuple[pd.DataFrame,list]:
-    """
-    This function is used to obtain the statistical features extracted or append the ID in a list (if there is a problem). 
-    This function is implemented at patient-level and used for the parallelization.
+    assert isinstance(df,pd.DataFrame) or df is None
+    assert isinstance(ID_list,list) or ID_list is None
     
-    :param pz: patient number in list.
-    :type pz: int
-    :param input_dictionary_parallel: input dictionary for the parallel function.
-    :type input_dictionary_parallel: dict
+
+@pytest.mark.parametrize("pz",[0])    
+def test_no_res_parallel_fun_mising_roi(pz:int,reference_dict_no_res:dict):
     
-    :return: DataFrame with statistical information and ID and problem of the patient
-    :rtype: tuple[pd.DataFrame,list]
+    """ Test if no_res_parallel_fun raises Exception when missing ROI is considered. """
+
+
+    reference_dict_no_res["list_roi"]=["Heart"]
+
+
+    df,ID_list=no_res_parallel_fun(pz,reference_dict_no_res)
+    assert df is None
+    assert isinstance(ID_list,list)
+
     
-    """
-
-    #Extract information from the dictionary
-                      
-    dir_histo_fin=Path(reference_dict_no_res["directory_histo_fin"])
-    dir_files_fin=Path(reference_dict_no_res["directory_files_fin"])
-    df_py=pd.DataFrame(reference_dict_no_res["dataset"])
-    ID_problems=list(reference_dict_no_res["ID_problems"])
-    rt_kind=str(reference_dict_no_res["rt_kind"])
-    list_roi=list(reference_dict_no_res["list_roi"])
-    directory_out=Path(reference_dict_no_res["directory_out"])
-    show_info_all=bool(reference_dict_no_res["show_info_all"])
-    save_info_all=bool(reference_dict_no_res["save_info_all"])
+def test_no_res_parallel_fun_not_valid_pz(reference_dict_no_res:dict):
     
-        
-    #Check if pz is acceptable
-    if not pz<len(df_py):
-        raise ValueError(f"{pz} index not valid")
-                      
-    #ID patient
-    ID = df_py.loc[pz,"PatientID"]
+    """ Test if no_res_parallel_fun works raises Error if pz is not valid. """
     
-    if str(ID) not in ID_problems:
+    pz=1
+    
+    with pytest.raises(ValueError):
+        df,ID_list=no_res_parallel_fun(pz,reference_dict_no_res)
 
-        try:
-            ct_path = df_py.loc[pz, "Path"]
-            ROI_founded, ROI_path = test_find_rt_st(ct_path, rt_kind, ID, list_roi)
-            
-            #Old spacing
-            old_sp = np.array([df_py.loc[pz,"VoxelSpacingX"], df_py.loc[pz,"VoxelSpacingY"], df_py.loc[pz,"VoxelSpacingZ"]])
 
-            print("")    
-            print("PZ", ID , " ok")
-            
-            HU_ROI, counts_ROI = info.ROI_ok(ct_path, ROI_path, ROI_founded, show_info_all, 
-                                                save_info_all, directory_out, ID, slice=40)
-            #Extract information
-            stats_df = histo.features_ROI(ID, HU_ROI, counts_ROI, old_sp, ROI_founded, dir_histo_fin, dir_files_fin, save_info_all)
-            
-         
-            return stats_df,None
+@pytest.mark.parametrize("pz",[0])    
+def test_no_res_parallel_fun_ID_problem(pz:int,reference_dict_no_res:dict):
+    
+    """ Test if no_res_parallel_fun detects correctly ID_problems. """
 
-        except Exception as e:
-            
-            #If Patient has problems
-            print(f"Patient {ID} has problems with ROI.")
-            print(f"{e}")
-            
-  
-            return None, (ID, str(e))
-            
-    else:
 
-        print("You caught a patient within the problem's ones.")
-        print("")
-        
+    reference_dict_no_res["ID_problems"]=["1"]
 
-        return None,[ID, "You knew there was an error"]
+
+    df,ID_list=no_res_parallel_fun(pz,reference_dict_no_res)
+    assert df is None
+    assert isinstance(ID_list,list)
+    
 
    
-@pytest.mark.parametrize("ID_problems,rt_kind,list_roi,show_info_all,save_info_all,N_jobs",[([],"DCM_RS",["GTV-1"],True,False,2)],)
+@pytest.mark.parametrize("ID_problems,rt_kind,list_roi,show_info_all,save_info_all,N_jobs",[([],"DCM_RS",["GTV-1"],True,True,2),([],"DCM_RS",["GTV-1"],True,False,2),
+                                                                                            ([],"DCM_RS",["GTV-1"],False,True,2),([],"DCM_RS",["GTV-1"],False,False,2),
+                                                                                            (["1"],"DCM_RS",["GTV-1"],True,True,2)])
 def test_no_res_and_create_histo(reference_py_patient_file_dataset:pd.DataFrame, ID_problems:list, rt_kind:str, list_roi:list, 
-                         reference_dir_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int)->Path:
-    """
-    Here almost functions are called for all patients. Especially:
-    - CT and RTst are possibly showed; 
-    - specific ROI is found;
-    - if original CT voxel spacing is equal to the most common spacing,
-      this function creates the histogram and relative dataframe of the ROI;
-    - if not, histogram and df are created of the original image are obtained,
-      CT and RTst are resampled and histogram and df are created;
-    - comparison between original and resampled histo is obtained;
-    - a database with all patients features is created too.
-
-    :param df_py: database of headers information.
-    :type df_py: pd.DataFrame
-    :param ID_problems: input list of patient's ID with problems.
-    :type ID_problems: list
-    :param new_sp: new voxel spacing for resampling.
-    :type new_sp: np.array
-    :param directory_out: the directory of analyses.
-    :type directory_out: Path
-    :param show_info_all: if true show CT and ROI info.
-    :type show_info_all: bool
-    :param save_info_all: if true save all histograms and relatives 
-                    excel file with HU and counts;
-                    if false, histograms are plotted.
-    :type save_info_all: bool
-
-    :return: directory of all patients df with HU and counts.
-    :rtype: Path
-    """
-
-    print("The showing variable is set on: ", show_info_all)
-    print("The saving variable is set on: ", save_info_all)  
+                         reference_dir_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int):
     
-    dir_histo_fin = Path(reference_dir_out) / "Total_ROI" / "Histograms_ok"
-    Path(dir_histo_fin).mkdir(parents=True, exist_ok=True)
+    """ Test if no_res_and_create_histo works correctly. """
 
-    dir_files_fin = Path(reference_dir_out) / "Total_ROI" / "Files_ok"
-    Path(dir_files_fin).mkdir(parents=True, exist_ok=True)
-
-    more_patient_stats_df_total = pd.DataFrame()
-    pz_problems = []
-
-    #Create the input dictionary for the parallel function
-    input_parallel_dictionary={
-        "directory_histo_fin": dir_histo_fin,
-        "directory_files_fin": dir_files_fin,
-        "dataset": reference_py_patient_file_dataset,
-        "ID_problems": ID_problems,
-        "rt_kind": rt_kind,
-        "list_roi": list_roi,
-        "directory_out": reference_dir_out,
-        "show_info_all": show_info_all,
-        "save_info_all": save_info_all,
-    }
-
-    
-    #Parallel function
-    results = Parallel(n_jobs=N_jobs,timeout=None)(
-        delayed(test_no_res_parallel_fun)(
-            pz, input_parallel_dictionary
-        )
-        for pz in range(len(reference_py_patient_file_dataset))
-    )
-    
-    
-    #Store results
-    stats_list = [r[0] for r in results if r[0] is not None]
-    pz_problems = [r[1] for r in results if r[1] is not None]
-
-    more_patient_stats_df_total = pd.DataFrame()
-    for r in stats_list:
-        more_patient_stats_df_total = pd.concat([more_patient_stats_df_total, r])
-    
-    for _, err in results:
-        if err is not None:
-            ID_problems.append(err[0])
-            
-    
-    if len(more_patient_stats_df_total!=0):
-        # if save_all:
-        excel_file_tot = Path(reference_dir_out) / "Total_ROI" / "Histo_total_stats.xlsx"
-        more_patient_stats_df_total.to_excel(excel_file_tot, index=False)
-        print(f"All ROI's densitometric features are in {excel_file_tot}")
-    
-        # else:
-        #     print("")
-        #     print("Saving the database with the densitometric features of the histograms of the entire region.")
-            # display(more_patient_stats_df_total)
-
-    #If you have problems with Patients
-    if len(ID_problems)!=0:
-        excel_ID_problems = Path(reference_dir_out) / "ID_with_problems.xlsx"
-        print("I have problems with patients: ")
-        print(ID_problems)
-        df_problems = pd.DataFrame(pz_problems, columns=['ID', 'Errore'])
-        df_problems.to_excel(excel_ID_problems, index=False)
-    else:
-        print("\nThere are no problems")
         
-    return dir_files_fin
+    dir_files_fin=no_res_and_create_histo(reference_py_patient_file_dataset,ID_problems,rt_kind,list_roi,reference_dir_out,show_info_all,save_info_all,N_jobs)
+
+    assert isinstance(dir_files_fin,Path)
+    assert dir_files_fin.exists()

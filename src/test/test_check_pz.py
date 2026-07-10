@@ -1,74 +1,118 @@
+"""
+
+Testing check_pz module
+
+"""
+
+
 from pathlib import Path
-from test_other_functions import rtv_configuration_file
 import pytest
 import pandas as pd
 import os
 import glob
+from Densitometry.main_scripts.check_pz import find_id_dir, main
 
 
-def test_find_id_dir(patient_directory:Path)->list:
+def test_find_id_dir(patient_directory:Path):
     
-        """
-        Find all ID directories
+        """ Test if find_id_dir runs correctly. """
+
+        id_dirs=find_id_dir(patient_directory)
         
-        :param directory: input folder
-        :type directory: Path
+        assert  isinstance(id_dirs,list)
+        assert not len(id_dirs)==0
+
+
+
+def test_main(patient_directory:Path, reference_dir_out:Path, reference_py_patient_file:Path,reference_conf_total_ROI_analyses:dict):
+    
+    """ Test if the main function check_pz runs correctly. """
+
+    
+    reference_conf_total_ROI_analyses["directory_dcm_out"]=Path(patient_directory)
+    reference_conf_total_ROI_analyses["py_patient_path"]=Path(reference_py_patient_file) 
+    reference_conf_total_ROI_analyses["directory_out"]=Path(reference_dir_out)           
+
+    main(reference_conf_total_ROI_analyses)
+    
+
+
+def test_main_no_dcm_out(reference_dir_out:Path, reference_py_patient_file:Path,reference_conf_total_ROI_analyses:dict):
+    
+    """ Test if there is no directory_dcm_out in the configuration file for check_pz. """
+
+    
+    reference_conf_total_ROI_analyses["directory_dcm_out"]=None
+    reference_conf_total_ROI_analyses["py_patient_path"]=Path(reference_py_patient_file) 
+    reference_conf_total_ROI_analyses["directory_out"]=Path(reference_dir_out)           
+
+    
+    with pytest.raises(ValueError):
+        main(reference_conf_total_ROI_analyses)
+
+
+
+def test_main_no_py_file(patient_directory:Path,reference_dir_out:Path,reference_conf_total_ROI_analyses:dict):
+    
+    """ Test if there is no py_patient_path in the configuration file for check_pz. """
+
+    
+    reference_conf_total_ROI_analyses["directory_dcm_out"]=Path(patient_directory)
+    reference_conf_total_ROI_analyses["py_patient_path"]=None
+    reference_conf_total_ROI_analyses["directory_out"]=Path(reference_dir_out)           
+
+    
+    with pytest.raises(ValueError):
+        main(reference_conf_total_ROI_analyses)
         
-        :return: list of ID directories
-        :rtype: list
         
-        """
 
-        directory=str(patient_directory)
+def test_main_no_dir_out(patient_directory:Path, reference_py_patient_file:Path,reference_conf_total_ROI_analyses:dict):
+    
+    """ Test if there is no directory_out in the configuration file for check_pz. """
+
+    
+    reference_conf_total_ROI_analyses["directory_dcm_out"]=Path(patient_directory)
+    reference_conf_total_ROI_analyses["py_patient_path"]=Path(reference_py_patient_file)
+    reference_conf_total_ROI_analyses["directory_out"]=None       
+
+    
+    with pytest.raises(ValueError):
+        main(reference_conf_total_ROI_analyses)
         
-        # Use glob to find all items in the directory
-        folders = [f for f in glob.glob(directory + "/*") if os.path.isdir(f)]
-
-        #Print names of the folders
-        id_dirs = []
-        for folder in folders:
-            id_dirs.append(os.path.basename(folder))
-
-        return id_dirs
 
 
-
-def test_main(patient_directory, reference_dir_out, reference_py_patient_file):
-
-    config = rtv_configuration_file("test_conf_total_ROI", save=False)
+def test_main_not_valid_dcm_out(reference_dir_out:Path,reference_py_patient_file:Path,reference_conf_total_ROI_analyses:dict):
     
-    #Check if the a parameter in the configuration file is missing 
-    #if config["directory_dcm_out"]==None:
-    #    raise ValueError("Missing directory_dcm_out")
-    #elif config["py_patient_path"]==None:
-    #    raise ValueError("Missing py_patient_path")
+    """ Test if the Path to directory_dcm_out is not valid for check_pz. """
+
     
-    config["directory_dcm_out"]=Path(patient_directory)
-    config["py_patient_path"]=Path(reference_py_patient_file)
+    reference_conf_total_ROI_analyses["directory_dcm_out"]="C:\\User\\user\\not_valid_dcm"
+    reference_conf_total_ROI_analyses["py_patient_path"]=Path(reference_py_patient_file)
+    reference_conf_total_ROI_analyses["directory_out"]=Path(reference_dir_out)       
+
     
-    
-    #Check if the Paths exist
-    if not Path(config["directory_dcm_out"]).exists():
-        raise ValueError("directory_dcm_out does not exist")
-    elif not Path(config["py_patient_path"]).exists():
-        raise ValueError("py_patient_path does not exist")
+    with pytest.raises(ValueError):
+        main(reference_conf_total_ROI_analyses)
         
-    directory_dcm_out = config["directory_dcm_out"]
-    py_patient_file = config["py_patient_path"]
+
+
+def test_main_not_valid_py(patient_directory:Path,reference_dir_out:Path,reference_conf_total_ROI_analyses:dict):
     
-    df_py = pd.read_excel(py_patient_file)
+    """ Test if the Path to py_patient_path is not valid for check_pz. """
 
-    id_dirs = test_find_id_dir(directory_dcm_out)
     
+    reference_conf_total_ROI_analyses["directory_dcm_out"]=Path(patient_directory)
+    reference_conf_total_ROI_analyses["py_patient_path"]="C:\\User\\user\\not_valid_py_patient_path"
+    reference_conf_total_ROI_analyses["directory_out"]=Path(reference_dir_out)       
+
     
-    list_pz = []
-    for pz in df_py.loc[:, "PatientID"]:
-        list_pz.append(str(pz))
-            
-    difference = [nome for nome in id_dirs if nome not in list_pz]
-
-    print(difference)
+    with pytest.raises(ValueError):
+        main(reference_conf_total_ROI_analyses)
 
 
-#if __name__ == "__main__":
-#    test_main(patient_directory, reference_dir_out, reference_py_patient_file)
+
+
+
+
+

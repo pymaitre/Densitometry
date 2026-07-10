@@ -1,9 +1,11 @@
 """
+
 Module for: 
 reading database of headers DICOM; 
 comparing voxel spacing between patients;
 creating plot about the distribution of each coordinate; 
 establishing a new voxel spacing equal to the most common values.
+
 """
 
 import os

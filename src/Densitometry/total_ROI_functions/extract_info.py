@@ -1,10 +1,11 @@
 """
+
 Module for:
-- reading and showing CT images;
-- reading and showing the RTst;
-- finding the ROI needed;
-- recreating the ROI on the CT;
-- extracting HU and Counts.
+reading and showing CT images;
+reading and showing the RTst;
+finding the ROI needed;
+recreating the ROI on the CT;
+extracting HU and Counts.
 
 """
 
@@ -288,7 +289,7 @@ def resample(image: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) 
     orig_size=image.size
     for s in orig_size: 
         if s==0: 
-            print("The image has one dimension equal to zero")
+            raise ValueError("The image has one dimension equal to zero")
 
     new_image=rsm.Image.resample(image,new_spacing,resampler,0)
     

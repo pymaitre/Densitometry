@@ -32,11 +32,8 @@ def find_id_dir(directory:Path)->list:
 
 
 
-def main():
-
-    config = rtv_configuration_file("conf_total_ROI", save=False)
-    
-    
+def main(config):
+        
     #Check if Paths are missing
     if config["directory_dcm_out"]==None: 
         raise ValueError("Missing directory_dcm_out")
@@ -71,4 +68,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    
+    config = rtv_configuration_file("conf_total_ROI", save=False)
+    main(config)

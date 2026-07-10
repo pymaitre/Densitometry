@@ -13,7 +13,7 @@ Modules
 -------------
 
 The current folder has two subfolders: **src** and **tutorials**. 
-The folder **src** contains other a folder **Densitometry**, used for the extraction of densitometric data. On the other hand **tutorials** contains some additional Jupyter notebooks used for tutorials.
+The folder **src** contains two subfolders: **Densitometry**, used for the extraction of densitometric data, and **test**, where testing can be performed. On the other hand **tutorials** contains some additional Jupyter notebooks used for tutorials.
 
 Focusing on **Densitometry**, the following subfolders can be found: 
 

@@ -5,12 +5,12 @@ Fixtures for testing
 """
 
 import pytest
+import os
 import resmip as rsm
 import numpy as np
 import pandas as pd
 import SimpleITK as sitk
 from pathlib import Path
-import argparse
 import yaml
 
 
@@ -84,7 +84,7 @@ def reference_sp()->np.array:
     x=df_py["VoxelSpacingX"]
     y=df_py["VoxelSpacingY"]
     z=df_py["VoxelSpacingZ"]
-    return np.array([x,y,z])
+    return np.array([x, y, z], dtype=float)
 
 
 @pytest.fixture
@@ -197,7 +197,29 @@ def reference_conf_ROI_analyses():
 def reference_conf_total_ROI_analyses():
     """conf file used for test_ROI_analyses"""
     
-
     config_path= Path(__file__).parents[1]/"test"/ "test_conf" / "test_conf_total_ROI.yml"
        
     return yaml.safe_load(config_path.read_text())
+
+@pytest.fixture
+def reference_dir_out_empty():
+    """Path to an empty directory out used for tesing."""
+    path=Path(Path(__file__).parent/"output_empty")
+    
+    yield path
+    
+    for item in path.iterdir():
+        if item.is_file():
+            item.unlink()
+
+@pytest.fixture
+def reference_path_conf():
+    """ Path to a configuration file used for testing."""
+    return Path(Path(__file__).parent/"test_conf"/"test_conf_total_ROI.yml")
+
+
+@pytest.fixture
+def reference_pathout():
+    """ Path to a configuration file used for testing."""
+    return Path(Path(__file__).parent/"test_conf")
+

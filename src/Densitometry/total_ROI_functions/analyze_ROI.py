@@ -1,9 +1,11 @@
 """
+
 Module for: 
 reading and showing CT converting it into an array, 
 reading all the ROIs from the relative RTst,
 creating a database with all ROIs for patients,
 creating a database with counts of ROIs found.
+
 """
 
 import os

@@ -1,6 +1,10 @@
-"""Module for creating histograms plot and excel files referred to HU and counts in input. 
+"""
+
+Module for:
+creating histograms plot and excel files referred to HU and counts in input. 
 Statistical features are also estracted.
 In case of resampling, histograms about original and resampled ROIs are overlapped. 
+
 """
 
 import os
@@ -50,7 +54,7 @@ def features_ROI(ID:str, HU_ROI:pd.Series, counts_ROI:pd.Series, sp: np.array, R
     return stats_df
 
 
-def make_histo(HU_ROI_no_nan:pd.Series, counts_ROI_no_nan:pd.Series, n_size:int, sp:np.array, ROI_name:str, save_path:Path, name:str, save=False)->tuple[pd.Series,pd.Series,pd.DataFrame]:
+def make_histo(HU_ROI_no_nan:pd.Series, counts_ROI_no_nan:pd.Series, n_size:int, sp:np.array, ROI_name:str, save_path:Path, name:str, save=False)->tuple[np.ndarray,np.ndarray,pd.DataFrame]:
     """
     This function has as input HU and counts of the ROI and returns a plot of the histogram.
 
@@ -69,7 +73,7 @@ def make_histo(HU_ROI_no_nan:pd.Series, counts_ROI_no_nan:pd.Series, n_size:int,
     :type save: bool
 
     :return: HU values of the histogram for excel file, HU relative counts for excel file and statistical features extracted for each patient.   
-    :rtype: tuple[pd.Series,pd.Series,pd.DataFrame]
+    :rtype: tuple[np.ndarray,np.ndarray,pd.DataFrame]
     """
     
     #Create histogram plot

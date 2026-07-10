@@ -1,7 +1,10 @@
 """
-Module for: reading excel files referred to patients entire region histograms, looking for HU and relatives counts, 
+
+Module for: 
+reading excel files referred to patients entire region histograms, looking for HU and relatives counts, 
 evaluating statistic features referred to a specific region of the histogram below minimum and above maximum,
 HU thresholds and above rate threshold beetween counts of the part outside and inside this region of HU.
+
 """
 
 import os
@@ -46,8 +49,8 @@ def analyze_rate(HU: pd.Series, counts: pd.Series, HU_min: int, HU_max: int)->tu
     :rtype: tuple[float, pd.Series, pd.Series]
     """
     
-    coppie = {'HU': HU, 'Counts': counts}
-    df = pd.DataFrame(coppie)
+    pairs = {'HU': HU, 'Counts': counts}
+    df = pd.DataFrame(pairs)
 
     #Rates
     under_threshold = df[ (df["HU"] >= HU_min) & (df["HU"] <= HU_max)]

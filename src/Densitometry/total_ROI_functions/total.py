@@ -1,5 +1,8 @@
 """
-Module for reading dcm images and obtaining densitometry histograms.
+
+Module for:
+reading dcm images and obtaining densitometry histograms.
+
 """
 
 import os
@@ -50,13 +53,17 @@ def is_roi_empty(rtst_file:Path, roi_name:str)->bool:
     :rtype: bool
     
     """
+    
+    roi_number=None
 
     ds = pydicom.dcmread(rtst_file)
     for roi in ds.StructureSetROISequence:
         if roi_name == roi.ROIName:
             roi_number = roi.ROINumber
             break
-    
+    if roi_number is None:
+        raise ValueError(f"ROI '{roi_name}' not found in Structure Set")
+
     # Search for ROI Contour Sequence
     if 'ROIContourSequence' in ds:
         for roi_contour in ds.ROIContourSequence:
@@ -225,7 +232,7 @@ def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,lis
             print(f"{e}")
             
 
-            return None, (ID, str(e))
+            return None, [ID, str(e)]
             
     else:
         print("You caught a patient within the problem's ones.")
@@ -404,7 +411,7 @@ def no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.DataFr
             print(f"{e}")
             
   
-            return None, (ID, str(e))
+            return None, [ID, str(e)]
             
     else:
 
