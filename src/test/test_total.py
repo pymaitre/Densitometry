@@ -49,12 +49,12 @@ def test_is_roi_empty_not_valid_roi(reference_RT_path:Path):
 
 
     
-@pytest.mark.parametrize("rt_kind,ID,list_roi",[("DCM_RS","1",["GTV-1"]),("DCM_RS","1",["Heart"])])
-def test_find_rt_st(reference_CT:Path, rt_kind:str, ID:str, list_roi:list):
+@pytest.mark.parametrize("rt_kind,list_roi",[("DCM_RS",["GTV-1"]),("DCM_RS",["Heart"])])
+def test_find_rt_st(reference_CT:Path, rt_kind:str, list_roi:list):
     
     """ Test if find_rt_st works correctly. """
 
-    result =find_rt_st(reference_CT,rt_kind,ID,list_roi)
+    result =find_rt_st(reference_CT,rt_kind,list_roi)
     
     if result is not None:
         ROI_name, path_rt_st = result

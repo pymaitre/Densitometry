@@ -11,15 +11,13 @@ import pydicom
 from datetime import datetime
 
 
-def find_ct_info(directory:Path, directory_out:Path, imm_mod:str,py_patient_file:Path)->pd.DataFrame:
+def find_ct_info(directory:Path, imm_mod:str,py_patient_file:Path)->pd.DataFrame:
     """
     Create a dataframe reading a slice header of all CTs.
     It will contains ID, Name, Age, dimensions of Voxel_spacing and CT_path.
 
     :param directory: path to the directory of organized dcm.
     :type directory: Path
-    :param directory_out: path to the directory of analyses.
-    :type directory_out: Path
     :param imm_mod: modality of image.
     :type imm_mod: str
     :param py_patient_file: Path file with ID_patient and CT path.

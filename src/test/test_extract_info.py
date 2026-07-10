@@ -33,12 +33,12 @@ def test_save_info_nifti_no_CT(save_info_all:bool, reference_dir_out:Path,refere
     save_info_nifti(save_info_all,reference_dir_out,reference_RT,CT,ID)
             
             
-@pytest.mark.parametrize("ROI_founded,show_CT_ROI,save_info_all,ID,slice",[("GTV-1",True,True,"1",0),("GTV-1",True,False,"1",0),("GTV-1",False,True,"1",0),("GTV-1",False,False,"1",0)])
-def test_ROI_ok(reference_CT_path:Path, reference_RT_path:Path, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool, reference_dir_out:Path, ID:str, slice:int)->Tuple[np.array,np.array]:
+@pytest.mark.parametrize("ROI_founded,show_CT_ROI,slice",[("GTV-1",True,0),("GTV-1",False,0)])
+def test_ROI_ok(reference_CT_path:Path, reference_RT_path:Path, ROI_founded:str, show_CT_ROI:bool, slice:int)->Tuple[np.array,np.array]:
     
     """ Test if ROI_ok runs correctly. """
     
-    HU_ROI, counts_ROI = ROI_ok (reference_CT_path,reference_RT_path,ROI_founded,show_CT_ROI,save_info_all,reference_dir_out,ID,slice)
+    HU_ROI, counts_ROI = ROI_ok (reference_CT_path,reference_RT_path,ROI_founded,show_CT_ROI,slice)
     
     assert isinstance(HU_ROI,np.ndarray)
     assert isinstance(counts_ROI,np.ndarray)
@@ -46,13 +46,12 @@ def test_ROI_ok(reference_CT_path:Path, reference_RT_path:Path, ROI_founded:str,
     assert HU_ROI is not None
     assert counts_ROI is not None
 
-@pytest.mark.parametrize("new_sp,ROI_founded,show_CT_ROI,save_info_all,ID,resampler,slice",[([1,1,3],"GTV-1",True,True,"1",sitk.sitkBSpline,0),([1,1,3],"GTV-1",True,False,"1",sitk.sitkBSpline,0),([1,1,3],"GTV-1",False,True,"1",sitk.sitkBSpline,0),([1,1,3],"GTV-1",False,False,"1",sitk.sitkBSpline,0)])
-def test_ROI_res(reference_CT_path:Path, reference_RT_path:Path, new_sp:np.array, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool,
-            reference_dir_out:Path, ID:str, resampler,slice:int):
+@pytest.mark.parametrize("new_sp,ROI_founded,show_CT_ROI,resampler,slice",[([1,1,3],"GTV-1",True,sitk.sitkBSpline,0),([1,1,3],"GTV-1",False,sitk.sitkBSpline,0)])
+def test_ROI_res(reference_CT_path:Path, reference_RT_path:Path, new_sp:np.array, ROI_founded:str, show_CT_ROI:bool,resampler,slice:int):
     
     """ Test if ROI_res works correctly. """
     
-    HU_ROI_res, counts_ROI_res=ROI_res(reference_CT_path,reference_RT_path,new_sp,ROI_founded,show_CT_ROI,save_info_all,reference_dir_out,ID,resampler,slice)
+    HU_ROI_res, counts_ROI_res=ROI_res(reference_CT_path,reference_RT_path,new_sp,ROI_founded,show_CT_ROI,resampler,slice)
     
     assert isinstance(HU_ROI_res,np.ndarray)
     assert isinstance(counts_ROI_res,np.ndarray)

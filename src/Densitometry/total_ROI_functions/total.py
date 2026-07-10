@@ -84,7 +84,7 @@ def is_roi_empty(rtst_file:Path, roi_name:str)->bool:
     
     return True  # ROI is empty
     
-def find_rt_st(ct_path:Path, rt_kind:str, ID, list_roi:list)->tuple[str, Path] | None:
+def find_rt_st(ct_path:Path, rt_kind:str, list_roi:list)->tuple[str, Path] | None:
     """
     This function checks the correspondence in ROI names and returns a tuple with the name of the ROI and the path 
     to RTSTRUCT file.
@@ -173,7 +173,7 @@ def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,lis
 
         try:
             ct_path = df_py.loc[pz, "Path"]
-            ROI_founded, ROI_path = find_rt_st(ct_path, rt_kind, ID, list_roi)
+            ROI_founded, ROI_path = find_rt_st(ct_path, rt_kind, list_roi)
             
             #Old spacing
             old_sp = np.array([df_py.loc[pz,"VoxelSpacingX"], df_py.loc[pz,"VoxelSpacingY"], df_py.loc[pz,"VoxelSpacingZ"]])
@@ -184,8 +184,7 @@ def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,lis
                 print("")    
                 print("PZ", ID , " ok")
                 
-                HU_ROI, counts_ROI = info.ROI_ok(ct_path, ROI_path, ROI_founded, show_info_all, 
-                                                    save_info_all, directory_out, ID, slice=40)
+                HU_ROI, counts_ROI = info.ROI_ok(ct_path, ROI_path, ROI_founded, show_info_all,slice=40)
                 #Extract information
                 stats_df = histo.features_ROI(ID, HU_ROI, counts_ROI, new_sp, ROI_founded, dir_histo_fin, dir_files_fin, save_info_all)
                          
@@ -206,8 +205,8 @@ def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,lis
                 dir_compare_ct_res = Path(directory_out) / "Total_ROI" / "To_be_resampled" / "Compare_histo"
                 Path(dir_compare_ct_res).mkdir(parents=True, exist_ok=True)
         
-                HU_ROI, counts_ROI = info.ROI_ok(ct_path, ROI_path, ROI_founded, show_info_all, 
-                                                    save_info_all, directory_out, ID, slice=40)
+                HU_ROI, counts_ROI = info.ROI_ok(ct_path, ROI_path, ROI_founded, show_info_all,slice=40)
+                
                 histo.features_ROI(ID, HU_ROI, counts_ROI, old_sp, ROI_founded, dir_histo_res, dir_files_res, save_info_all)
                             
         
@@ -216,7 +215,7 @@ def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,lis
                 print("")
         
                 HU_ROI_res, counts_ROI_res = info.ROI_res(ct_path, ROI_path, new_sp, ROI_founded, 
-                                                            show_info_all, save_info_all, directory_out, ID, resampler,slice=100)
+                                                            show_info_all, resampler,slice=100)
                 #Extract information
                 stats_df = histo.features_ROI(ID, HU_ROI_res, counts_ROI_res, new_sp, ROI_founded, dir_histo_fin, dir_files_fin, save_info_all)
                                 
@@ -242,7 +241,7 @@ def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,lis
    
 
 def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, rt_kind:str, list_roi:list, 
-                         directory_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int,resampler)->Path:
+                         directory_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int,resampler:int)->Path:
     """
     Here almost functions are called for all patients. Especially:
     - CT and RTst are possibly showed; 
@@ -270,6 +269,8 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
     :type save_info_all: bool
     :param n_jobs: number of jobs for parallelization.
     :type n_jobs: int
+    :param resampler: resampler used for resampling
+    :type resampler: int
 
     :return: directory of all patients df with HU and counts.
     :rtype: Path
@@ -388,7 +389,7 @@ def no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.DataFr
 
         try:
             ct_path = df_py.loc[pz, "Path"]
-            ROI_founded, ROI_path = find_rt_st(ct_path, rt_kind, ID, list_roi)
+            ROI_founded, ROI_path = find_rt_st(ct_path, rt_kind, list_roi)
             
             #Old spacing
             old_sp = np.array([df_py.loc[pz,"VoxelSpacingX"], df_py.loc[pz,"VoxelSpacingY"], df_py.loc[pz,"VoxelSpacingZ"]])
@@ -396,8 +397,8 @@ def no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.DataFr
             print("")    
             print("PZ", ID , " ok")
             
-            HU_ROI, counts_ROI = info.ROI_ok(ct_path, ROI_path, ROI_founded, show_info_all, 
-                                                save_info_all, directory_out, ID, slice=40)
+            HU_ROI, counts_ROI = info.ROI_ok(ct_path, ROI_path, ROI_founded, show_info_all,slice=40)
+            
             #Extract information
             stats_df = histo.features_ROI(ID, HU_ROI, counts_ROI, old_sp, ROI_founded, dir_histo_fin, dir_files_fin, save_info_all)
             

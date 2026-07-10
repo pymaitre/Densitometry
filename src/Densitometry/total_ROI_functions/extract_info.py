@@ -60,7 +60,7 @@ def save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, rt:rsm
         except Exception as e:
             print("problem: ", e)
 
-def ROI_ok(ct_path:Path, rt_path:Path, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool, directory_out:Path, ID:str, slice:int)->Tuple[np.array,np.array]:
+def ROI_ok(ct_path:Path, rt_path:Path, ROI_founded:str, show_CT_ROI:bool, slice:int)->Tuple[np.array,np.array]:
     """
     Function for obtaining ROIs and its distribution of HU.
 
@@ -72,12 +72,6 @@ def ROI_ok(ct_path:Path, rt_path:Path, ROI_founded:str, show_CT_ROI:bool, save_i
     :type ROI_founded: str
     :param show_CT_ROI: selector for showing CT slice and ROI.
     :param show_CT_ROI: bool
-    :param save_info_all: save all the information.
-    :type save_info_all: bool
-    :param directory_out: output folder.
-    :type directory_out: Path
-    :param ID: patient ID.
-    :type ID: str
     :param slice: input number for slice view.
     :type slice: int
 
@@ -100,8 +94,7 @@ def ROI_ok(ct_path:Path, rt_path:Path, ROI_founded:str, show_CT_ROI:bool, save_i
     return HU_ROI, counts_ROI
 
 
-def ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, show_CT_ROI:bool, save_info_all:bool,
-            directory_out:Path, ID:str, resampler,slice:int)->Tuple[np.array,np.array]:
+def ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, show_CT_ROI:bool, resampler,slice:int)->Tuple[np.array,np.array]:
     """
     Function for obtaining ROIs and its distribution of HU
     in patients with different voxel spacing.
@@ -116,12 +109,6 @@ def ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, show_C
     :type ROI_founded: str
     :param show_CT_ROI: flag used to show the CT slice.
     :type show_CT_ROI: bool
-    :param save_info_all: save all the information.
-    :type save_info_all: bool
-    :param directory_out: path where to save output.
-    :type directory_out: Path
-    :param ID: patient's ID.
-    :type ID: str
     :param slice: desired slice.
     :type slice: int
     

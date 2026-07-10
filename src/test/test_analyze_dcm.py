@@ -18,11 +18,11 @@ from Densitometry.dcm_functions.analyze_dcm import find_ct_info
 
 
 @pytest.mark.parametrize("imm_mod",["CT"])
-def test_find_ct_info(patient_directory:Path, reference_dir_out:Path,imm_mod:str,reference_py_patient_file:Path):
+def test_find_ct_info(patient_directory:Path,imm_mod:str,reference_py_patient_file:Path):
     
     """ Test to verify if the py_patient file is created correctly. """
     
-    df_py=find_ct_info(patient_directory,reference_dir_out,imm_mod,reference_py_patient_file)
+    df_py=find_ct_info(patient_directory,imm_mod,reference_py_patient_file)
     
     assert isinstance(df_py, pd.DataFrame)
     assert not df_py.empty
@@ -37,13 +37,13 @@ def test_find_ct_info(patient_directory:Path, reference_dir_out:Path,imm_mod:str
     
 
         
-def test_find_ct_info_create_excel(patient_directory:Path,reference_dir_out:Path,tmp_path:Path):
+def test_find_ct_info_create_excel(patient_directory:Path,tmp_path:Path):
     
     """ Test to verify if the path of the patient_file is wrong or not valid for the function find_ct_info function. """
 
     fake_excel = Path(tmp_path) / "patient_file.xlsx"
 
-    df = find_ct_info(patient_directory,reference_dir_out,"CT",fake_excel)
+    df = find_ct_info(patient_directory,"CT",fake_excel)
 
     assert isinstance(df, pd.DataFrame)
     assert fake_excel.exists()
