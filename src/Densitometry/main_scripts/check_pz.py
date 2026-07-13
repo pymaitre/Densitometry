@@ -6,7 +6,6 @@ import glob
 
 
 def find_id_dir(directory:Path)->list:
-    
         """
         Find all ID directories
         
@@ -15,7 +14,6 @@ def find_id_dir(directory:Path)->list:
         
         :return: list of ID directories
         :rtype: list
-        
         """
 
         directory=str(directory)

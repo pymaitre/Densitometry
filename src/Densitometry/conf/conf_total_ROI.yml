@@ -32,5 +32,5 @@
 
     rt_kind : 'RT_type' #Type of RT 
 
-    roi_name : ['Heart'] #name of the ROI to be analyzed
+    list_roi : ['Heart'] #name of the ROI to be analyzed
    

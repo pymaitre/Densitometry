@@ -1,0 +1,36 @@
+  directory_dcm_out : "C:\\Users\\user\\Desktop\\input_folder" #input directory
+
+  directory_out : "C:\\Users\\user\\Desktop\\output_folder" #output directory
+
+  image_modality : "CT" 
+
+  save_spacing_histo :  True  #False #
+
+  save_ROI_info : True #False #
+  
+  total_ROI_analyses :  True #False  #
+
+  show_total_ROI_info : False  # True #
+
+  save_total_ROI_info :  True #False  #
+
+  py_patient_path: "C:\\User\\user\\Desktop\\output_folder\\py_patient.xlsx"
+
+  flag_resampling: True #Flag for the resampling (True: resample, False: dot not resample)
+
+  flag_new_spacing: "manual" #Flag to choose the spacing (min_global, mean_global, max_global,frequency, manual)
+
+  new_spacing: [1, 1, 3] #Insert the desired new spacing (during the resampling)
+
+  flag_parallel: True #Flag to manage parallelization (if True: insert manually N_jobs below, if False: N_jobs=1 automatically)
+
+  N_jobs: 2 #Number of jobs used during parallelization
+
+  resampler: sitkBSpline #choose the proper resampler (e.g. sitkBSpline, sitkNearestNeighbor, sitkLinear)
+
+  ID_problems : [] #List of IDs with known problems
+
+  rt_kind : 'DCM_RS' #Type of RT 
+
+  list_roi : ['GTV-1'] #Name of the ROI to be analysed
+  

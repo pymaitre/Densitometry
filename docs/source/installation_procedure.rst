@@ -76,4 +76,4 @@ To check whether the installation has been successful, run from the terminal:
     pip show densitometry
 
 
-After completing this flow, follow the `setting` guide, which explains how files should be organized and how to run the code.
+After completing this flow, follow the `setting_total_ROI_analyses` and `setting_ROI_analyses` guides, which explain how files should be organized and how to extract the densitometric features.

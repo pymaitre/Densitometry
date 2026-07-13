@@ -1,10 +1,9 @@
 """
-
 Module for: 
-reading excel files referred to patients entire region histograms, 
-looking for HU and relatives counts, evaluating statistic features referred à
-to a specific region of the histogram beetween minimum and maximum HU and above minimum counts thresholds.
-
+- reading Excel files referred to patients entire region histograms;
+- looking for HU and relative counts; 
+- evaluating statistic features referred to a specific region of the histogram 
+  beetween minimum and maximum HU and above minimum counts thresholds.
 """
 
 import os
@@ -21,7 +20,6 @@ def just_variable()->tuple[int,int,int]:
 
     :return: minimum HU threshold, maximum HU threshold and minimum counts threshold.
     :rtype: tuple[int,int,int]
-
     """
 
     
@@ -35,11 +33,11 @@ def just_variable()->tuple[int,int,int]:
 
 def justified(HU: pd.Series, counts: pd.Series, HU_min:int , HU_max: int, min_counts:int)->tuple[pd.Series, pd.Series]:
     """
-    Function for evalueting HU and counts above thresholds.
+    Function for evaluating HU and counts above thresholds.
 
-    :param HU: HU from excel file, referred to entire region histogram.
+    :param HU: HU from Excel file, referred to entire region histogram.
     :type HU: pd.Series
-    :param counts: counts from excel file, referred to entire region histogram.
+    :param counts: counts from Excel file, referred to entire region histogram.
     :type counts: pd.Series
     :param HU_min: minimum HU threshold.
     :type HU_min: int
@@ -67,9 +65,9 @@ def justified(HU: pd.Series, counts: pd.Series, HU_min:int , HU_max: int, min_co
 
 def histo_just(dir_files_fin: str, directory_out: str, delimiter: tuple[int,int,int])->None:
     """
-    Here almost functions are called for all patients. Especially:
+    Here almost functions are called for all patients. Especially for:
     - establishing thresholds;
-    - reading excel files referred to entire region histograms;
+    - reading Excel files referred to entire region histograms;
     - looking for HU and relatives counts;
     - evaluating statistic features referred to a specific region of the histogram beetween minimum and maximum HU and above minimum counts thresholds;
     - considering patients that do not have this significative region of the histogram.
@@ -84,7 +82,7 @@ def histo_just(dir_files_fin: str, directory_out: str, delimiter: tuple[int,int,
     :return: None
     """
 
-    #if True save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
+    #if True save all histograms and relatives Excel file with HU and counts; if false, histograms are plotted.
     save_just=True
     
     print("The saving variable is on: ", save_just)

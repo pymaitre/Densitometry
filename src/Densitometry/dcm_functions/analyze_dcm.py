@@ -1,6 +1,6 @@
 """
 Module for: 
-reading dcm header and creating a database with header's information;
+reading dcm header and creating a database with header's information.
 """
 
 import os
@@ -14,7 +14,7 @@ from datetime import datetime
 def find_ct_info(directory:Path, imm_mod:str,py_patient_file:Path)->pd.DataFrame:
     """
     Create a dataframe reading a slice header of all CTs.
-    It will contains ID, Name, Age, dimensions of Voxel_spacing and CT_path.
+    It will contain PatientID, PatientName, PatientAge, dimensions of VoxelSpacing and CT_path.
 
     :param directory: path to the directory of organized dcm.
     :type directory: Path
@@ -25,11 +25,8 @@ def find_ct_info(directory:Path, imm_mod:str,py_patient_file:Path)->pd.DataFrame
 
     :return: Database of headers information.
     :rtype: pd.DataFrame
-
     """
     
-
-
     try:
         
         #Check if patient file has been already created

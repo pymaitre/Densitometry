@@ -1,10 +1,9 @@
 """
-
 Module for: 
-reading excel files referred to patients entire region histograms, looking for HU and relatives counts, 
-evaluating statistic features referred to a specific region of the histogram below minimum and above maximum,
-HU thresholds and above rate threshold beetween counts of the part outside and inside this region of HU.
-
+- reading Excel files referred to patients entire region histograms;
+- looking for HU and relative counts;
+- evaluating statistic features referred to a specific region of the histogram below minimum and above maximum,
+  HU thresholds and above rate threshold beetween counts of the part outside and inside this region of HU.
 """
 
 import os
@@ -21,7 +20,6 @@ def rate_variable()->tuple[int,int,float]:
 
     :return: minimum HU threshold, maximum HU threshold and rate thresholds beetween counts outside and counts inside the region of (HU_min, HU_max).
     :rtype: tuple[int,int,float]
-
     """
 
     HU_min = int(input("Enter the minimum HU threshold above which to check: "))
@@ -34,11 +32,11 @@ def rate_variable()->tuple[int,int,float]:
 
 def analyze_rate(HU: pd.Series, counts: pd.Series, HU_min: int, HU_max: int)->tuple[float, pd.Series, pd.Series]:
     """
-    Function for evalueting HU and counts above thresholds.
+    Evaluate HU and counts considering the thresholds.
 
-    :param HU: HU from excel file, referred to entire region histogram.
+    :param HU: HU from Excel file, referred to entire region histogram.
     :type HU: pd.Series
-    :param counts: counts from excel file, referred to entire region histogram.
+    :param counts: counts from Excel file, referred to entire region histogram.
     :type counts: pd.Series
     :param HU_min: minimum HU threshold.
     :type HU_min: int
@@ -73,11 +71,11 @@ def analyze_rate(HU: pd.Series, counts: pd.Series, HU_min: int, HU_max: int)->tu
 
 def check_rate(dir_files_fin: str, directory_out: str, rate_over_ROI: tuple[int,int,float])->None:
     """
-    Here almost functions are called for all patients. Especially:
+    Here almost functions are called for all patients. Especially for:
     - establishing thresholds;
-    - reading excel files referred to entire region histograms;
+    - reading Excel files referred to entire region histograms;
     - looking for HU and relatives counts;
-    - evalueting statistic features referred to a specific 
+    - evaluating statistic features referred to a specific 
       region of the histogram above minimum and maximum 
       HU and minimum counts thresholds;
     - considering patients that do not have this significative
@@ -91,10 +89,9 @@ def check_rate(dir_files_fin: str, directory_out: str, rate_over_ROI: tuple[int,
     :type rate_over_ROI: tuple[int,int,float]
     
     :return: None
-    
     """
 
-    #if True save all histograms and relatives excel file with HU and counts; if false, histograms are plotted.
+    #if True save all histograms and relatives Excel file with HU and counts; if false, histograms are plotted.
     save_rate=True        
         
     print("The saving variable is set on: ", save_rate)

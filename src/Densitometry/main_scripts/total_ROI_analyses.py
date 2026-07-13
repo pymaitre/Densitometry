@@ -91,10 +91,10 @@ def main(conf):
         print("You chose to not extract all patients ROIs.") 
         print("")
         
-    list_roi = conf['roi_name']
+    list_roi = conf['list_roi']
     
     if len(list_roi)==0:
-        raise ValueError("Missing roi_name")
+        raise ValueError("Empty list_roi")
 
     all = conf['total_ROI_analyses']
     if type(all) is not bool:

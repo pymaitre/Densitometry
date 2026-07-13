@@ -3,11 +3,11 @@ Setting: Total ROI analyses
 
 After having followed the instructions described in `installation_procedure`, it comes a brief description of
 how files should be organized and how to run the code used to extract the densitometric information. 
-Differently from `setting_ROI_analyses`, it does not take into account specific ROI delimeters.
+For specific ROI delimeters, follow `setting_ROI_analyses` guide.
 
 File organization
 ---------------------
-In order to use the code, patient files should be organized in a proper way.
+In order to use both the codes, patient files should be organized in a proper way.
 Consider an institute folder (**input_folder**) which contains patient-associated folders, as described below:
 
 .. code-block:: text
@@ -29,13 +29,13 @@ each Patient (**Patient_i**) folder has to be organized as follows:
             |___CT_1
                 |___CT
                 |___RTDOSE
-                |___RTst
+                |___RTSTRUCT
 
 where:
 
 * **CT folder** (the one inside CT_1) stores the CT DICOM files;
 * **RTDOSE folder** contains the RTDOSE and RTPlan files;
-* **RTst folder** contains the RTStruct and MV files.
+* **RTSTRUCT folder** contains the RTSTRUCT files.
 
              
 Configuration file
@@ -150,12 +150,12 @@ More precisely, the results are organized as follows:
 **Total_ROI** is a folder which contains the densitometry extraction information 
 (before and after the resampling) and the relative plots (e.g. DVHs).
 
-**Voxel_Analyses** is generated only when flag_resampling==True and flag_new_spacing=="frequency. 
+**Voxel_Analyses** is generated only when flag_resampling==True and flag_new_spacing=="frequency". 
 It stores the distributions of the spacings of the given dataset.
 
 *counts_ROI.xlsx* reports the found ROIs and their presence. 
 
-*py_patient_file.xlsx* stores the patients' age (if present in CT files), the original voxel spacing 
+*py_patient_file.xlsx* stores the patients' age (if present in CT files), the original VoxelSpacing 
 and the path where the CT files are stored. 
 
 *ROI_tot_pz.xlsx* reports the ROIs of each patient.

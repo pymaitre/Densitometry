@@ -1,8 +1,6 @@
 """
-
 Module for:
 reading dcm images and obtaining densitometry histograms.
-
 """
 
 import os
@@ -20,12 +18,12 @@ matplotlib.use("Agg")
 
 def get_roi_names(rtstruct_path:Path)->list:
     """
-    Generate a list with names of the ROI
+    Generate a list with names of the ROIs.
     
     :param rtstruct_path: Path to RTSTRUCT file.
     :type rtstruct_path: Path
     
-    :return: list with names of the ROI.
+    :return: list with names of the ROIs.
     :rtype: list
     """
 
@@ -42,16 +40,15 @@ def get_roi_names(rtstruct_path:Path)->list:
 
 def is_roi_empty(rtst_file:Path, roi_name:str)->bool:
     """
-    Check whether the ROI is empty
+    Check whether the ROI is empty or not.
     
-    :param rtst_file: path to RTSTRUCT file
+    :param rtst_file: path to RTSTRUCT file.
     :type rtst_file: Path
-    :param roi_name: name of the ROI
+    :param roi_name: name of the ROI.
     :type roi_name: str
     
-    :return: True if empty, False otherwise
+    :return: True if empty, False otherwise.
     :rtype: bool
-    
     """
     
     roi_number=None
@@ -86,19 +83,18 @@ def is_roi_empty(rtst_file:Path, roi_name:str)->bool:
     
 def find_rt_st(ct_path:Path, rt_kind:str, list_roi:list)->tuple[str, Path] | None:
     """
-    This function checks the correspondence in ROI names and returns a tuple with the name of the ROI and the path 
-    to RTSTRUCT file.
+    Check the correspondence in ROI names.
+    Return a tuple with the name of the ROI and the Path to the RTSTRUCT file.
     
     :param ct_path: Path to CT.
     :type ct_path: Path
     :param rt_kind: type of RT.
     :type rt_kind: str
-    :param list_roi: list of ROIs.
+    :param list_roi: list of ROI.
     :type list_roi: list
     
-    :return: name of the ROI and path to RTSTRUCT (otherwise None)
+    :return: name of the ROI and path to RTSTRUCT (otherwise None).
     :rtype: tuple[str, Path]
-
     """
     
     try:
@@ -119,12 +115,12 @@ def find_rt_st(ct_path:Path, rt_kind:str, list_roi:list)->tuple[str, Path] | Non
             ROI_names = get_roi_names(path_rt_st)
             
             #Check the same name
-            for nome in names_with_importance:
+            for name in names_with_importance:
 
                 for ROI_name in ROI_names:
 
-                    if nome in ROI_name:
-                        print(f'ROI name {ROI_name} matched with name {nome}.')
+                    if name in ROI_name:
+                        print(f'ROI name {ROI_name} matched with name {name}.')
                         if is_roi_empty(path_rt_st, ROI_name):
                             continue
                         else:
@@ -136,15 +132,15 @@ def find_rt_st(ct_path:Path, rt_kind:str, list_roi:list)->tuple[str, Path] | Non
 
 def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,list]:
     """
-    This function is used to obtain the statistical features extracted or append the ID in a list (if there is a problem). 
-    This function is implemented at patient-level and used for the parallelization.
-    
+    This function is used to obtain the statistical features extracted or, if there are problems, append the IDs in a list. 
+    It is implemented at patient-level and used for the parallelization and it is used when resampling is performed.
+        
     :param pz: patient number in list.
     :type pz: int
     :param input_parallel_dictionary: input dictionary for the parallel function.
     :type input_parallel_dictionary: dict
 
-    :return: DataFrame with statistical information and a list with ID and problem of the patient
+    :return: dataframe with statistical information and list with ID and problem of the patient.
     :rtype: tuple[pd.DataFrame, list]
     
     """
@@ -246,30 +242,30 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
     Here almost functions are called for all patients. Especially:
     - CT and RTst are possibly showed; 
     - specific ROI is found;
-    - if original CT voxel spacing is equal to the most common spacing,
-      this function creates the histogram and relative dataframe of the ROI;
-    - if not, histogram and df are created of the original image are obtained,
-      CT and RTst are resampled and histogram and df are created;
+    - Resampling is perfomed and both df and histogram of both original and resampled image are obtained;
     - comparison between original and resampled histo is obtained;
-    - a database with all patients features is created too.
+    - a database with all patients features is created.
 
     :param df_py: database of headers information.
     :type df_py: pd.DataFrame
     :param ID_problems: input list of patient's ID with problems.
     :type ID_problems: list
-    :param new_sp: new voxel spacing for resampling.
+    :param new_sp: new VoxelSpacing for resampling.
     :type new_sp: np.array
+    :param rt_kind: type of RT.
+    :type rt_kind: str
+    :param list_roi: list of ROI.
+    :type list_roi: list
     :param directory_out: the directory of analyses.
     :type directory_out: Path
     :param show_info_all: if true show CT and ROI info.
     :type show_info_all: bool
-    :param save_info_all: if true save all histograms and relatives 
-                    excel file with HU and counts;
-                    if false, histograms are plotted.
+    :param save_info_all: if True save all histograms and relatives Excel file with HU and counts;
+                    if False, histograms are plotted.
     :type save_info_all: bool
-    :param n_jobs: number of jobs for parallelization.
-    :type n_jobs: int
-    :param resampler: resampler used for resampling
+    :param N_jobs: number of jobs for parallelization.
+    :type N_jobs: int
+    :param resampler: resampler used for resampling.
     :type resampler: int
 
     :return: directory of all patients df with HU and counts.
@@ -352,15 +348,15 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
 
 def no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.DataFrame,list]:
     """
-    This function is used to obtain the statistical features extracted or append the ID in a list (if there is a problem). 
-    This function is implemented at patient-level and used for the parallelization.
+    This function is used to obtain the statistical features extracted or, if there are problems, append the ID in a list. 
+    It is implemented at patient-level and used for the parallelization and it is used when no resampling is performed.
     
     :param pz: patient number in list.
     :type pz: int
     :param input_dictionary_parallel: input dictionary for the parallel function.
     :type input_dictionary_parallel: dict
     
-    :return: DataFrame with statistical information and ID and problem of the patient
+    :return: dataframe with statistical information and ID and problem of the patient.
     :rtype: tuple[pd.DataFrame,list]
     
     """
@@ -430,27 +426,26 @@ def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, l
     Here almost functions are called for all patients. Especially:
     - CT and RTst are possibly showed; 
     - specific ROI is found;
-    - if original CT voxel spacing is equal to the most common spacing,
-      this function creates the histogram and relative dataframe of the ROI;
-    - if not, histogram and df are created of the original image are obtained,
-      CT and RTst are resampled and histogram and df are created;
-    - comparison between original and resampled histo is obtained;
-    - a database with all patients features is created too.
+    - df and histogram of original image are obtained;
+    - a database with all patients features is created.
 
     :param df_py: database of headers information.
     :type df_py: pd.DataFrame
     :param ID_problems: input list of patient's ID with problems.
     :type ID_problems: list
-    :param new_sp: new voxel spacing for resampling.
-    :type new_sp: np.array
+    :param rt_kind: type of RT.
+    :type rt_kind: str
+    :param list_roi: list of the ROI.
+    :type list_roi: list
     :param directory_out: the directory of analyses.
     :type directory_out: Path
-    :param show_info_all: if true show CT and ROI info.
+    :param show_info_all: if True show CT and ROI info.
     :type show_info_all: bool
-    :param save_info_all: if true save all histograms and relatives 
-                    excel file with HU and counts;
-                    if false, histograms are plotted.
+    :param save_info_all: if True save all histograms and relatives Excel file with HU and counts;
+                          if False, histograms are plotted.
     :type save_info_all: bool
+    :param N_jobs: number of jobs for parallelization.
+    :type N_jobs: int
 
     :return: directory of all patients df with HU and counts.
     :rtype: Path

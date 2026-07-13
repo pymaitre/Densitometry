@@ -1,11 +1,9 @@
 """
-
 Module for: 
-reading and showing CT converting it into an array, 
-reading all the ROIs from the relative RTst,
-creating a database with all ROIs for patients,
-creating a database with counts of ROIs found.
-
+- reading and showing CT converting it into an array;
+- reading all the ROIs from the relative RTst;
+- creating a database with all ROIs for patients;
+- creating a database with counts of ROIs found.
 """
 
 import os
@@ -19,16 +17,15 @@ import pydicom
 def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:str)->tuple[pd.DataFrame,pd.DataFrame]:
     """
     Read all ROIs from RTst linked to CT (in directory named by ID).
-    This function create a dataframe where each row has PatientID
-    and all his ROIs.
-    A dataframe with all ROIs and their counts is also created.
+    This function creates a dataframe where each row has PatientID
+    and all the associated ROIs. A dataframe with all ROIs and their counts is also created.
 
     :param df_py: database of headers information.
     :type df_py: pd.DataFrame
-    :param directory_out: the directory of analyses.
-    :type directory_out: Path
     :param ID_problems: list of problems.
     :type ID_problems: list
+    :param directory_out: the directory of analyses.
+    :type directory_out: Path
     :param rt_kind: type of RT.
     :type rt_kind: str
 

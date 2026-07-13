@@ -1,12 +1,10 @@
 """
-
 Module for:
-reading and showing CT images;
-reading and showing the RTst;
-finding the ROI needed;
-recreating the ROI on the CT;
-extracting HU and Counts.
-
+- reading and showing CT images;
+- reading and showing the RTst;
+- finding the ROI needed;
+- recreating the ROI on the CT;
+- extracting HU and Counts.
 """
 
 import os
@@ -20,24 +18,31 @@ import matplotlib
 matplotlib.use("Agg")
 
 
-def save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, rt:rsm.RTStructureSet, ID:str)->None:
+def save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, rt:rsm.RTStructureSet, ROI_name: str, ID:str)->None:
     """
-    Save an image in NIFTI format
+    Save an image in NIFTI format.
     
     :param save_info_all: save all the information.
     :type save_info_all: bool
-    :param directory_out: where to save the desired information.
+    :param directory_out: Path where to save the desired information.
     :type directory_out: Path
     :param CT: CT image.
     :type CT: rsm.Image
     :param rt: RT Structure Set.
     :type rt: rsm.RTStructureSet
+    :param ROI_name: name of the ROI
+    :type ROI_name: str
     :param ID: patient ID.
     :type ID: str
     
     :return: None
-    
     """
+    
+    if ROI_name in rt.keys():
+        rt_save=rt[ROI_name]
+    else: 
+        raise ValueError("Not valid ROI name")
+    
     if save_info_all:
         dir_nifti = Path(directory_out) / "dataset" / "imagesTr"
         Path(dir_nifti).mkdir(parents=True, exist_ok=True)
@@ -52,7 +57,7 @@ def save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, rt:rsm
             sitk.WriteImage(CT, str(CT_nifti_path))
             print("CT_saved in:")
             print(CT_nifti_path)
-            sitk.WriteImage(rt, str(RTst_nifti_path))
+            sitk.WriteImage(rt_save, str(RTst_nifti_path))
 
             print("RTst_saved in: ")
             print(RTst_nifti_path)
@@ -62,11 +67,11 @@ def save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, rt:rsm
 
 def ROI_ok(ct_path:Path, rt_path:Path, ROI_founded:str, show_CT_ROI:bool, slice:int)->Tuple[np.array,np.array]:
     """
-    Function for obtaining ROIs and its distribution of HU.
+    Function for obtaining ROI and its distribution of HU.
 
-    :param ct_path: path to the CT.
+    :param ct_path: CT image Path.
     :type ct_path: Path
-    :param rt_path: path to the RT.
+    :param rt_path: RT Structure set Path.
     :type rt_path: Path
     :param ROI_founded: ROI you are looking for.
     :type ROI_founded: str
@@ -96,23 +101,22 @@ def ROI_ok(ct_path:Path, rt_path:Path, ROI_founded:str, show_CT_ROI:bool, slice:
 
 def ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, show_CT_ROI:bool, resampler,slice:int)->Tuple[np.array,np.array]:
     """
-    Function for obtaining ROIs and its distribution of HU
-    in patients with different voxel spacing.
+    Function for obtaining ROI and its distribution of HU after resampling.
 
-    :param ct_path: CT image path.
+    :param ct_path: CT image Path.
     :type ct_path: Path
-    :param rt_path: RT Structure set path.
+    :param rt_path: RT Structure set Path.
     :type rt_path: Path
-    :param new_sp: new spacing.
+    :param new_sp: new VoxelSpacing.
     :type new_sp: np.array
     :param ROI_founded: ROI you are looking for.
     :type ROI_founded: str
-    :param show_CT_ROI: flag used to show the CT slice.
+    :param show_CT_ROI: selector for showing CT slice and ROI.
     :type show_CT_ROI: bool
-    :param slice: desired slice.
+    :param slice: input number for slice view.
     :type slice: int
     
-    :return: array of HU in the resampled ROI and array of HU relative counts of resampled ROI.
+    :return: array of HU and array of HU relative counts of resampled image.
     :rtype: Tuple[np.array,np.array]
     """
     
@@ -137,7 +141,7 @@ def ROI_res(ct_path:Path, rt_path:Path, new_sp:np.array, ROI_founded:str, show_C
 
 def read_and_show_ct(ct_path:Path, show_CT_ROI:bool, slice:int)->Tuple[rsm.Image,np.array]:
     """
-    Take CT from ct_path and show the slice you want.
+    Extract CT from ct_path and show a desired slice.
 
     :param ct_path: path of CT directory.
     :type ct_path: Path
@@ -173,12 +177,12 @@ def read_and_show_RTst(rt_0:rsm.RTStructureSet, ROI_founded:str)->np.array:
     Because of significative value for 0 HU in CT, ROI of 0 and 1 is 
     converted in 1 and nan.
 
-    :param rt_0: RTst image.
+    :param rt_0: RT image.
     :type rt_0: rsm.RTStructureSet
     :param ROI_founded: ROI you are looking for.
     :type ROI_founded: str
 
-    :return: ROI's mask of 1 and nan instead of 1 and 0.
+    :return: mask of the ROI (1 and nan instead of 1 and 0).
     :rtype: np.array
     """
     #Check the different ROIs
@@ -214,14 +218,12 @@ def read_and_show_RTst(rt_0:rsm.RTStructureSet, ROI_founded:str)->np.array:
 
 def obtain_ROI(mask:np.array, ct_arr:np.array, show_CT_ROI:bool, slice:int)->Tuple[np.array,np.array]:
     """
-    Here the real visualization of the ROI is given thanks to
-    the product between the array of the CT and mask. 
-    Than nan values are deleted.
+    Visualization of the ROI is obtained as the product between the array of the CT and mask. 
+    Then nan values are deleted.
 
-    :param mask: ROI's mask of 1 and nan instead of 1 and 0.
+    :param mask: mask of the ROI (1 and nan instead of 1 and 0).
     :type mask: np.array
-    :param ct_arr: CT conversion in array for reading and showing
-                    in Python.
+    :param ct_arr: CT image converted in array.
     :type ct_arr: np.array
     :param show_CT_ROI: selector for showing CT slice and ROI.
     :type show_CT_ROI: bool
@@ -253,15 +255,15 @@ def obtain_ROI(mask:np.array, ct_arr:np.array, show_CT_ROI:bool, slice:int)->Tup
 
 def resample(image: rsm.Image, new_x:float, new_y:float, new_z:float,resampler) -> rsm.Image:
     """
-    Resample image (increase pixel density) in order to increase computation accuracy.
+    Resample the given image using the new VoxelSpacing and resampler.
 
     :param image: image to be resampled.
     :type image: rsm.Image
-    :param new_x: new_pixels for the x-axis.
+    :param new_x: new VoxelSpacing for the x-axis.
     :type new_x: float
-    :param new_y: new_pixels for the y-axis.
+    :param new_y: new VoxelSpacing for the y-axis.
     :type new_y: float
-    :param new_z: new_pixels for the z-axis.
+    :param new_z: new VoxelSpacing for the z-axis.
     :type new_z: float
 
 
