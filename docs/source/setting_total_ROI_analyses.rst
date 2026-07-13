@@ -107,7 +107,7 @@ An example of configuration file is below reported:
 Choice of flag_new_spacing
 --------------------
 
-This flag is used to manage the choice of the voxel spacing for the resampling. 
+This flag is used to manage the choice of the VoxelSpacing for the resampling. 
 It is taken into account only when ``flag_resampling == True``.
 The following values can be set: 
 
@@ -115,7 +115,7 @@ The following values can be set:
 * *"mean_global"*: the new spacing is set as (mean_x, mean_y, mean_z) of the given dataset
 * *"max_global"*: the new spacing is set as (max_x, max_y, max_z) of the given dataset
 * *"frequency"*: the new spacing is set as the most frequent (x, y, z) in the given dataset
-* *"manual"*: set manually (in *conf_total_ROI.yml*) the desired voxel spacing 
+* *"manual"*: set manually (in *conf_total_ROI.yml*) the desired VoxelSpacing 
 
 
 Run the code
