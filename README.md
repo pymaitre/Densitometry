@@ -59,8 +59,8 @@ Contributions
 Contributions are welcomed. 
 If interested in support the improvement of this library please follow these steps:
 1. Clone the repository;
-2. Create a branch from the  {code}`main` and add the modifications;
-3. Use {code}`pytest` to check if your modifications are well implemented;
+2. Create a branch from the `main` and add the modifications;
+3. Use `pytest` to check if your modifications are well implemented;
 4. Open a pull request, describing the added modifications.
 
 Please check also the issue tracker to see the open issues and future requests.
