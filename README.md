@@ -50,8 +50,8 @@ Main scripts
 
 The subfolder **main_scripts** contains three different codes.
 1. *check_pz.py*: used to print the list of patient IDs;
-2. *ROI_analyses.py*: used to extract densitometric features considering a specific delimiter (see [setting_ROI_analyses](docs/source/setting_ROI_analyses.rst) for further details);
-3. *total_ROI_analyses.py*: used to extract densitometric of the given ROI (see [setting_total_ROI_analyses](docs/source/setting_total_ROI_analyses.rst) for further details).
+2. *ROI_analyses.py*: used to extract densitometric features considering a specific delimiter (see [setting ROI analyses](docs/source/setting_ROI_analyses.rst) for further details);
+3. *total_ROI_analyses.py*: used to extract densitometric of the given ROI (see [setting total ROI analyses](docs/source/setting_total_ROI_analyses.rst) for further details).
 
 
 Contributions
