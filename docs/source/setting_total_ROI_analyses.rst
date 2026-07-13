@@ -108,7 +108,7 @@ Choice of flag_new_spacing
 --------------------
 
 This flag is used to manage the choice of the voxel spacing for the resampling. 
-It is taken into account only when flag_resampling==True. 
+It is taken into account only when ``flag_resampling == True``.
 The following values can be set: 
 
 * *"min_global"*: the new spacing is set as (min_x, min_y, min_z) of the given dataset
@@ -150,8 +150,8 @@ More precisely, the results are organized as follows:
 **Total_ROI** is a folder which contains the densitometry extraction information 
 (before and after the resampling) and the relative plots (e.g. DVHs).
 
-**Voxel_Analyses** is generated only when flag_resampling==True and flag_new_spacing=="frequency". 
-It stores the distributions of the spacings of the given dataset.
+**Voxel_Analyses** is generated only when ``flag_resampling == True`` and ``flag_new_spacing == "frequency"``. 
+It stores the distributions of the VoxelSpacings of the given dataset.
 
 *counts_ROI.xlsx* reports the found ROIs and their presence. 
 

@@ -42,7 +42,7 @@ pip install poetry
 poetry install
 ```
 
-For further details regarding both the installation procedure, see [Installation procedure](*docs\source\installation_procedure.rst*) in [**source**](docs\source). 
+For further details regarding both the installation procedure, see [Installation procedure](*docs/source/installation_procedure.rst*) in [**source**](docs/source). 
 
 
 Main scripts
@@ -50,8 +50,8 @@ Main scripts
 
 The subfolder **main_scripts** contains three different codes.
 1. *check_pz.py*: used to print the list of patient IDs;
-2. *ROI_analyses.py*: used to extract densitometric features considering a specific delimiter (see [setting_ROI_analyses](docs\source\setting_ROI_analyses.rst) for further details);
-3. *total_ROI_analyses.py*: used to extract densitometric of the given ROI (see [setting_total_ROI_analyses](docs\source\setting_total_ROI_analyses.rst) for further details).
+2. *ROI_analyses.py*: used to extract densitometric features considering a specific delimiter (see [setting_ROI_analyses](docs/source/setting_ROI_analyses.rst) for further details);
+3. *total_ROI_analyses.py*: used to extract densitometric of the given ROI (see [setting_total_ROI_analyses](docs/source/setting_total_ROI_analyses.rst) for further details).
 
 
 Contributions
@@ -59,8 +59,8 @@ Contributions
 Contributions are welcomed. 
 If interested in support the improvement of this library please follow these steps:
 1. Clone the repository;
-2. Create a branch from the code[main] and add the modifications;
-3. Use code[pytest] to check if your modifications are well implemented;
+2. Create a branch from the  {code}`main` and add the modifications;
+3. Use {code}`pytest` to check if your modifications are well implemented;
 4. Open a pull request, describing the added modifications.
 
 Please check also the issue tracker to see the open issues and future requests.
@@ -68,6 +68,6 @@ Please check also the issue tracker to see the open issues and future requests.
 
 Acknowledgements
 ------------------
-This repository has been implemented by: Tommaso Giovanni Volonteri, Alfonso Belardo and Gabriele Palazzo.
+This repository has been implemented by: **Tommaso Giovanni Volonteri**, **Alfonso Belardo** and **Gabriele Palazzo**.
 
 

@@ -88,6 +88,7 @@ When the code stops running, all the computed densitometric data are stored in t
 Output
 ---------------------
 Three different analyses can be performed:
+
 * **specific ROI analysis**: extraction of infomation, considering the range [HU_min, HU_max] with counts greater than min_counts.
 * **over ROI analysis**: extraction of infomation, considering HU greater than HU_min with at least min_counts.
 * **rate ROI analysis**: extraction of information, considering the range [HU_min, HU_max] and rate_counts beetween inside and outside for this region.
