@@ -1,9 +1,9 @@
 Setting: Total ROI analyses
 ============================
 
-After having followed the instructions described in :doc:`installation_procedure`, it comes a brief description of
+After having followed the instructions described in :doc:`installation_procedure <source/installation_procedure>`, it comes a brief description of
 how files should be organized and how to run the code used to extract the densitometric information. 
-For specific ROI delimeters, follow :doc:`setting_ROI_analyses` guide.
+For specific ROI delimeters, follow :doc:`setting_ROI_analyses <source/setting_ROI_analyses>` guide.
 
 File organization
 ---------------------
