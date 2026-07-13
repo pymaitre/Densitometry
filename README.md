@@ -42,7 +42,7 @@ pip install poetry
 poetry install
 ```
 
-For further details regarding both the installation procedure, see [Installation procedure](*docs/source/installation_procedure.rst*) in [**source**](docs/source). 
+For further details regarding both the installation procedure, see [installation procedure](docs/source/installation_procedure.rst) in [**source**](docs/source). 
 
 
 Main scripts
