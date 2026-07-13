@@ -1,9 +1,9 @@
 Setting: Total ROI analyses
 ============================
 
-After having followed the instructions described in `installation_procedure`, it comes a brief description of
+After having followed the instructions described in :doc:`installation_procedure <installation_procedure>`, it comes a brief description of
 how files should be organized and how to run the code used to extract the densitometric information. 
-For specific ROI delimeters, follow `setting_ROI_analyses` guide.
+For specific ROI delimeters, follow :doc:`setting_ROI_analyses <setting_ROI_analyses>` guide.
 
 File organization
 ---------------------
@@ -46,7 +46,7 @@ It contains the following parameters to be manually set:
 
 * **directory_dcm_out**: input folder
 * **directory_out**: output folder where information are stored
-* **image_modality**: modality of the image (e.g. "CT")
+* **image_modality**: modality of the image (e.g. ``"CT"``)
 * **save_spacing_histo**: save spacing histogram  
 * **save_ROI_info**: save ROI information
 * **total_ROI_analyses**: perform total ROI analyses
@@ -54,11 +54,11 @@ It contains the following parameters to be manually set:
 * **save_total_ROI_info**: save information from total ROI analyses
 * **py_patient_file_path**: Path to the file with ID_patient and CT path
 * **flag_resampling**: True for resampling, False otherwise
-* **flag_new_spacing**: Flag that can take values: min_global, mean_global, max_global, frequency or manual (see below)
-* **new_spacing**: 3D array with the desired new spacing (considered when flag_new_spacing=="manual")
+* **flag_new_spacing**: Flag that can take values: ``min_global``, ``mean_global``, ``max_global``, ``frequency`` or ``manual`` (see below)
+* **new_spacing**: 3D array with the desired new spacing (considered when ``flag_new_spacing=="manual"``)
 * **flag_parallel**: True for parallel processing, False for sequential processing
-* **N_jobs**: number of jobs for parallel execution (considered only when flag_parallel==True, if flag_parallel==False N_jobs is set equal to 1 automatically)
-* **resampler**: resampler used during CT resampling (e.g. sitkBSpline, sitkLinear)
+* **N_jobs**: number of jobs for parallel execution (considered only when ``flag_parallel==True``, if ``flag_parallel==False`` N_jobs is set equal to 1 automatically)
+* **resampler**: resampler used during CT resampling (e.g. ``sitkBSpline``, ``sitkLinear``)
 * **ID_problems**: list of patient IDs with known problems
 * **rt_kind**: type of RTSTRUCT file (e.g. name of the file)
 * **roi_name**: name of the ROI to be analyzed 

@@ -1,10 +1,10 @@
 Setting: ROI analyses
 ============================
 
-After having followed the instructions described in `installation_procedure`, 
+After having followed the instructions described in :doc:`installation_procedure <installation_procedure>`, 
 it comes a brief description of how files should be organized and how to run the code used to extract the densitometric information, 
 considering ROI delimiters. To perform the different analyses below reported, it is necessary to have previously extracted 
-the features using Total ROI analyses.
+the features using total ROI analyses (see :doc:`setting_total_ROI_analyses <setting_total_ROI_analyses>` for further details).
 
 File organization
 ---------------------
@@ -45,11 +45,11 @@ After having organized the files as described above, it is necessary to describe
 It contains the following parameters to be manually set:
 
 * **directory_out**: output directory 
-* **specific_ROI_analyses**: flag to perform specific ROI analysis (True or False)
+* **specific_ROI_analyses**: flag to perform specific ROI analysis (``True`` or ``False``)
 * **specific_ROI_delimiter**: HU_min, HU_max, min_counts for specific ROI delimiter analysis
-* **over_ROI_analyses**: flag to perform over ROI analysis (True or False) 
+* **over_ROI_analyses**: flag to perform over ROI analysis (``True`` or ``False``) 
 * **over_ROI_delimiter**: HU_min over whose analyse and min_counts for this region for the over ROI delimiter analysis
-* **rate_ROI_analyses**: flag to perform rate ROI analysis (True or False) 
+* **rate_ROI_analyses**: flag to perform rate ROI analysis (``True`` or ``False``) 
 * **rate_ROI_delimiter**: HU_min and HU_max and rate_counts beetween inside and outside for this region for the rate ROI delimiter analysis.
 
 An example of configuration file is below reported:
