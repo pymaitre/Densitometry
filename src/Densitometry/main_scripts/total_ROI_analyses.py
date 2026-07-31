@@ -73,7 +73,7 @@ def main(conf):
     
     save_ROI = conf['save_ROI_info']
     
-    if type(save_ROI) is not bool: 
+    if not isinstance(save_ROI,bool): 
         raise ValueError("Not valid save_ROI")
     
     rt_kind = conf['rt_kind']
