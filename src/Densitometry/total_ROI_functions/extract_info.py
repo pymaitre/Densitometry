@@ -57,7 +57,7 @@ def save_info_nifti(save_info_all:bool, directory_out:Path, CT:rsm.Image, rt:rsm
             sitk.WriteImage(CT, str(CT_nifti_path))
             print("CT_saved in:")
             print(CT_nifti_path)
-            sitk.WriteImage(rt_save, str(RTst_nifti_path))
+            rt_save.write(RTst_nifti_path, write_metadata=False)
 
             print("RTst_saved in: ")
             print(RTst_nifti_path)
