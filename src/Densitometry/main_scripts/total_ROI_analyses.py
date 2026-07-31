@@ -22,14 +22,11 @@ def main(conf):
     
     #Read the configuration file
     
-    # conf = rtv_configuration_file("conf_total_ROI", save=False)
-    
-    #Check missing Paths
-    if conf['directory_dcm_out']==None:
+    if conf['directory_dcm_out'] is None:
         raise ValueError("Missing directory_dcm_out")
-    elif conf['directory_out']==None:
+    if conf['directory_out'] is None:
         raise ValueError("Missing directory_out")
-    elif conf['py_patient_path']==None:
+    if conf['py_patient_path'] is None:
         raise ValueError("Missing py_patient_path")
 
     directory_dcm_out = Path(conf['directory_dcm_out'])
