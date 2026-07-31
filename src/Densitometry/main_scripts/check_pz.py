@@ -34,8 +34,6 @@ def main(config):
         
     if config["directory_dcm_out"] is None: 
         raise ValueError("Missing directory_dcm_out")
-    if config["directory_out"] is None: 
-        raise ValueError("Missing directory_out")
     if config["py_patient_path"] is None:
         raise ValueError("Missing py_patient_path")
         
