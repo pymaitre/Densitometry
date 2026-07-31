@@ -66,7 +66,7 @@ def main(conf):
     
     flag_resampling=conf["flag_resampling"]
     
-    if type(flag_resampling) is not bool:
+    if isinstance(flag_resampling, bool):
         raise ValueError("Not valid flag_resampling")
     
     #save_sp = conf['save_spacing_histo'] 
