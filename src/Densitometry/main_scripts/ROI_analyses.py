@@ -61,7 +61,6 @@ def main(conf):
 
             rate_over_ROI = conf['rate_ROI_delimiter']  
              
-            #Check if MaxHU>=MinHU
             if rate_over_ROI[1]<rate_over_ROI[0]:
                 raise ValueError("MaxHU is lower than MinHU")  
             
