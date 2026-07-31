@@ -28,7 +28,6 @@ def rtv_configuration_file(name_conf:str, path_conf:Path=None, save:bool=True, p
         
         config_path = Path(__file__).parent / "conf" / f"{name_conf}.yml"
     
-    # Reading the configuration file
     with open(config_path) as file:
         config_parameters = yaml.load(file, Loader=yaml.FullLoader)
         
