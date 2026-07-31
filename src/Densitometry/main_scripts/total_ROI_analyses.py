@@ -53,7 +53,7 @@ def main(conf):
         
         N_jobs=conf["N_jobs"]
         
-        if N_jobs<1 or (type(N_jobs) is not int):
+        if N_jobs<1 or not isinstance(N_jobs, int):
             raise ValueError("Not valid N_jobs")
         
         print(f"Parallelization with N_jobs equal to: {N_jobs}")
