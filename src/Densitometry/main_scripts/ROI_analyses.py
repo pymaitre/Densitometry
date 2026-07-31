@@ -10,9 +10,7 @@ from Densitometry.specific_ROI_functions import check_rate as rate
 
 
 def main(conf):
-    
-    #Check missing Path
-    if conf['directory_out']==None:
+    if conf['directory_out'] is None:
         raise ValueError("Missing directory_out")
     
     #Check if at least one analysis has been selected
