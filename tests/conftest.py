@@ -17,7 +17,7 @@ import yaml
 @pytest.fixture
 def patient_directory()->Path:
     """Path of the patient folder used for testing."""
-    return Path(Path(__file__).parent.parent.parent / "tutorials" / "tutorial_patient")
+    return Path(Path(__file__).parent.parent / "tutorials" / "tutorial_patient")
 
 
 @pytest.fixture
@@ -117,41 +117,41 @@ def reference_compare_dir()->Path:
 @pytest.fixture
 def reference_CT_path()->Path:
     """Path to the patient CT folder."""
-    return Path(__file__).parent.parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT"
+    return Path(__file__).parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT"
 
 
 @pytest.fixture
 def reference_CT()->rsm.Image:
     """rsm.Image of the patient's CT used for testing."""
-    return rsm.Image.read(Path(__file__).parent.parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT")
+    return rsm.Image.read(Path(__file__).parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT")
 
 
 @pytest.fixture
 def reference_CT_arr()->rsm.Image:
     """arry of the patient's CT used for testing."""
-    ct=rsm.Image.read(Path(__file__).parent.parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT")
+    ct=rsm.Image.read(Path(__file__).parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT")
     return ct.numpy()
 
 
 @pytest.fixture
 def reference_RT_path()->Path:
     """Path to the patient's RTSTRUCT file."""
-    return Path(__file__).parent.parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"Rtst"/"DCM_RS_00060.dcm"
+    return Path(__file__).parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"Rtst"/"DCM_RS_00060.dcm"
 
 
 @pytest.fixture
 def reference_RT()->rsm.RTStructureSet:
     """rsm.RTStructureSet of the patient's RTSTRUCT used for testing."""
-    reference_path_rt=Path(__file__).parent.parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"Rtst"/"DCM_RS_00060.dcm"
-    reference_CT=rsm.Image.read(Path(__file__).parent.parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT")
+    reference_path_rt=Path(__file__).parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"Rtst"/"DCM_RS_00060.dcm"
+    reference_CT=rsm.Image.read(Path(__file__).parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT")
     return rsm.RTStructureSet.read(filename=reference_path_rt,structure_names="GTV-1",reference_image=reference_CT)
 
 
 @pytest.fixture
 def reference_mask()->np.array:
     """Mask of the ROI used for testing."""
-    reference_path_rt=Path(__file__).parent.parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"Rtst"/"DCM_RS_00060.dcm"
-    reference_CT=rsm.Image.read(Path(__file__).parent.parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT")
+    reference_path_rt=Path(__file__).parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"Rtst"/"DCM_RS_00060.dcm"
+    reference_CT=rsm.Image.read(Path(__file__).parent.parent/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT")
     reference_RT=rsm.RTStructureSet.read(filename=reference_path_rt,structure_names="GTV-1",reference_image=reference_CT)
     RT_sub=reference_RT["GTV-1"]
     RT_sub_numpy=RT_sub.numpy()
@@ -203,7 +203,7 @@ def reference_dict_no_res()->dict:
 @pytest.fixture
 def reference_conf_ROI_analyses():
     """conf file used in test_ROI_analyses"""
-    config_path= Path(__file__).parents[1]/"tests"/ "test_conf" / "test_conf_ROI_analyses.yml"
+    config_path= Path(__file__).parent/ "test_conf" / "test_conf_ROI_analyses.yml"
        
     return yaml.safe_load(config_path.read_text())
 
@@ -212,7 +212,7 @@ def reference_conf_ROI_analyses():
 def reference_conf_total_ROI_analyses():
     """conf file used for test_total_ROI_analyses"""
     
-    config_path= Path(__file__).parents[1]/"tests"/ "test_conf" / "test_conf_total_ROI.yml"
+    config_path= Path(__file__).parent/ "test_conf" / "test_conf_total_ROI.yml"
        
     return yaml.safe_load(config_path.read_text())
 
