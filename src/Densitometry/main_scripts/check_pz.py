@@ -32,12 +32,11 @@ def find_id_dir(directory:Path)->list:
 
 def main(config):
         
-    #Check if Paths are missing
-    if config["directory_dcm_out"]==None: 
+    if config["directory_dcm_out"] is None: 
         raise ValueError("Missing directory_dcm_out")
-    elif config["directory_out"]==None: 
+    if config["directory_out"] is None: 
         raise ValueError("Missing directory_out")
-    elif config["py_patient_path"]==None:
+    if config["py_patient_path"] is None:
         raise ValueError("Missing py_patient_path")
         
 
