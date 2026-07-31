@@ -41,10 +41,9 @@ def main(config):
     directory_dcm_out = Path(config["directory_dcm_out"])
     py_patient_file = Path(config["py_patient_path"])
     
-    #Check if the Paths are valid
     if not directory_dcm_out.exists():
         raise ValueError("Not valid directory_dcm_out")
-    elif not py_patient_file.exists():
+    if not py_patient_file.exists():
         raise ValueError("Not valid py_patient_file")
     
     
