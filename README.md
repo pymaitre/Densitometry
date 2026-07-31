@@ -5,7 +5,7 @@ Overview
 ------------
 
 **Densitometry** is used for DICOM analysis, extraction of densitometry histograms of ROIs and the associated features.
-The code relies on [resmip](https://github.com/pymaitre/resmip.git) for the reading the DICOM images and for the resampling procedure, determinant when CT scans show large difference in terms of VoxelSpacing. 
+The code relies on [resmip](https://github.com/pymaitre/resmip.git) for the reading the DICOM images and for the resampling procedure, determinant when CT scans show large difference in terms of voxel spacing. 
 Moreover, the code is implemented to run using a sequential or parallel approach.
 
 
