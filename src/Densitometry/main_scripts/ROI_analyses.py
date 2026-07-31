@@ -31,7 +31,6 @@ def main(conf):
     
             delimiter_specific_ROI = conf['specific_ROI_delimiter']
             
-            #Check if MaxHU>=MinHU
             if delimiter_specific_ROI[1]<delimiter_specific_ROI[0]:
                 raise ValueError("MaxHU is smaller than MinHU")
 
