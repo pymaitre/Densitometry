@@ -45,7 +45,7 @@ def main(conf):
     #Parallelization
     flag_parallel=conf["flag_parallel"]
     
-    if type(flag_parallel) is not bool:
+    if not isinstance(flag_parallel, bool):
         raise ValueError("Not valid flag parallel")
     
     
