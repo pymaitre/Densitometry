@@ -12,6 +12,17 @@ import pandas as pd
 import pydicom
 
 
+def assert_all_ROI_dataframes_is_valid(df_ROI:pd.DataFrame,df_counts:pd.DataFrame):
+    
+    """ Check if df_ROI and df_counts are valid. """
+    
+    assert isinstance(df_ROI,pd.DataFrame)
+    assert isinstance(df_counts,pd.DataFrame)
+    assert not len(df_ROI)==0
+    assert not len(df_counts)==0
+    assert "Counts" in df_counts.columns
+    assert "count" in df_counts.columns
+
 
 @pytest.mark.parametrize("ID_problems, rt_kind",[([],"DCM_RS")])
 def test_all_ROI(reference_py_patient_file_dataset:pd.DataFrame, ID_problems:list, reference_dir_out:Path, rt_kind:str):
@@ -20,12 +31,8 @@ def test_all_ROI(reference_py_patient_file_dataset:pd.DataFrame, ID_problems:lis
     
     df_ROI, df_counts=all_ROI(reference_py_patient_file_dataset,ID_problems,reference_dir_out,rt_kind)
     
-    assert isinstance(df_ROI,pd.DataFrame)
-    assert isinstance(df_counts,pd.DataFrame)
-    assert not len(df_ROI)==0
-    assert not len(df_counts)==0
-    assert "Counts" in df_counts.columns
-    assert "count" in df_counts.columns
+    assert_all_ROI_dataframes_is_valid(df_ROI,df_counts)
+
     
 
 
@@ -38,9 +45,4 @@ def test_all_ROI_exception(reference_py_patient_file_dataset:pd.DataFrame,refere
     
     df_ROI, df_counts=all_ROI(reference_py_patient_file_dataset,ID_problems,reference_dir_out_empty,rt_kind)
     
-    assert isinstance(df_ROI,pd.DataFrame)
-    assert isinstance(df_counts,pd.DataFrame)
-    assert not len(df_ROI)==0
-    assert not len(df_counts)==0
-    assert "Counts" in df_counts.columns
-    assert "count" in df_counts.columns
+    assert_all_ROI_dataframes_is_valid(df_ROI,df_counts)

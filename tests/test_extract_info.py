@@ -14,6 +14,17 @@ import matplotlib
 import pytest
 matplotlib.use("Agg")
 
+def assert_valid_HU_and_counts(HU: np.array,counts:np.array):
+    
+    """ Check if HU and counts are valid. """
+    
+    assert isinstance(HU,np.ndarray)
+    assert isinstance(counts,np.ndarray)
+    assert len(HU)==len(counts)
+    assert HU is not None
+    assert counts is not None
+
+
 
 @pytest.mark.parametrize("save_info_all,ID,ROI_name",[(True,"1","GTV-1"),(False,"1","GTV-1")])
 def test_save_info_nifti(save_info_all:bool, reference_dir_out:Path, reference_CT:rsm.Image, reference_RT:rsm.RTStructureSet,ROI_name:str,ID:str):
@@ -42,11 +53,7 @@ def test_ROI_ok(reference_CT_path:Path, reference_RT_path:Path, ROI_founded:str,
     
     HU_ROI, counts_ROI = ROI_ok(reference_CT_path,reference_RT_path,ROI_founded,show_CT_ROI,slice)
     
-    assert isinstance(HU_ROI,np.ndarray)
-    assert isinstance(counts_ROI,np.ndarray)
-    assert len(HU_ROI)==len(counts_ROI)
-    assert HU_ROI is not None
-    assert counts_ROI is not None
+    assert_valid_HU_and_counts(HU_ROI,counts_ROI)
 
 
 
@@ -57,11 +64,7 @@ def test_ROI_res(reference_CT_path:Path, reference_RT_path:Path, new_sp:np.array
     
     HU_ROI_res, counts_ROI_res=ROI_res(reference_CT_path,reference_RT_path,new_sp,ROI_founded,show_CT_ROI,resampler,slice)
     
-    assert isinstance(HU_ROI_res,np.ndarray)
-    assert isinstance(counts_ROI_res,np.ndarray)
-    assert len(HU_ROI_res)==len(counts_ROI_res)
-    assert HU_ROI_res is not None
-    assert counts_ROI_res is not None
+    assert_valid_HU_and_counts(HU_ROI_res,counts_ROI_res)
  
  
  
@@ -96,11 +99,8 @@ def test_obtain_ROI(reference_mask:np.array, reference_CT_arr:np.array, show_CT_
     """ Test if obtain_ROI behaves correctly. """
     
     HU_ROI_no_nan, counts_ROI_no_nan=obtain_ROI(reference_mask,reference_CT_arr,show_CT_ROI,slice)
-    assert isinstance(HU_ROI_no_nan,np.ndarray)
-    assert isinstance(counts_ROI_no_nan,np.ndarray)
-    assert HU_ROI_no_nan is not None
-    assert counts_ROI_no_nan is not None
-    assert len(HU_ROI_no_nan)==len(counts_ROI_no_nan)
+
+    assert_valid_HU_and_counts(HU_ROI_no_nan,counts_ROI_no_nan)
 
 
 
