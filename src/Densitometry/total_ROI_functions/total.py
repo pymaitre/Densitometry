@@ -18,12 +18,12 @@ matplotlib.use("Agg")
 
 def get_roi_names(rtstruct_path:Path)->list:
     """
-    Generate a list with names of the ROIs.
+    Generate a list with the names of the ROIs.
     
-    :param rtstruct_path: Path to RTSTRUCT file.
+    :param rtstruct_path: path to RTSTRUCT file.
     :type rtstruct_path: Path
     
-    :return: list with names of the ROIs.
+    :return: list with the names of the ROIs.
     :rtype: list
     """
 
@@ -86,14 +86,14 @@ def find_rt_st(ct_path:Path, rt_kind:str, list_roi:list)->tuple[str, Path] | Non
     Check the correspondence in ROI names.
     Return a tuple with the name of the ROI and the Path to the RTSTRUCT file.
     
-    :param ct_path: Path to CT.
+    :param ct_path: path to CT.
     :type ct_path: Path
     :param rt_kind: type of RT.
     :type rt_kind: str
     :param list_roi: list of ROI.
     :type list_roi: list
     
-    :return: name of the ROI and path to RTSTRUCT (otherwise None).
+    :return: name of the ROI and path to RTSTRUCT file.
     :rtype: tuple[str, Path]
     """
     
@@ -132,15 +132,16 @@ def find_rt_st(ct_path:Path, rt_kind:str, list_roi:list)->tuple[str, Path] | Non
 
 def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,list]:
     """
-    This function is used to obtain the statistical features extracted or, if there are problems, append the IDs in a list. 
-    It is implemented at patient-level and used for the parallelization and it is used when resampling is performed.
+    Obtain the statistical features from the HU distributions of the ROI. If there are problems, the ID is appended to a list. 
+    This function is implemented at patient-level and can be used for a parallelization approach. 
+    It is applied when image resampling is performed.
         
-    :param pz: patient number in list.
+    :param pz: input row index of the dataset.
     :type pz: int
     :param input_parallel_dictionary: input dictionary for the parallel function.
     :type input_parallel_dictionary: dict
 
-    :return: dataframe with statistical information and list with ID and problem of the patient.
+    :return: dataframe with statistical information and ID list with the relative problems.
     :rtype: tuple[pd.DataFrame, list]
     
     """
@@ -239,14 +240,15 @@ def parallel_fun(pz:int, input_parallel_dictionary:dict)->tuple[pd.DataFrame,lis
 def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, rt_kind:str, list_roi:list, 
                          directory_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int,resampler:int)->Path:
     """
-    Here almost functions are called for all patients. Especially:
-    - CT and RTst are possibly showed; 
+    Statistical features of the HU distribution of the selected ROI are extracted. 
+    The following workflow is performed:
+    - CT and RTst are possibly displayed; 
     - specific ROI is found;
-    - Resampling is perfomed and both df and histogram of both original and resampled image are obtained;
-    - comparison between original and resampled histo is obtained;
-    - a database with all patients features is created.
+    - image resampling is performed and the datasets and histograms of both original and resampled image are obtained;
+    - original and resampled histograms are compared;
+    - a dataframe with all patients' features is created.
 
-    :param df_py: database of headers information.
+    :param df_py: dataset of headers information.
     :type df_py: pd.DataFrame
     :param ID_problems: input list of patient's ID with problems.
     :type ID_problems: list
@@ -256,19 +258,19 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
     :type rt_kind: str
     :param list_roi: list of ROI.
     :type list_roi: list
-    :param directory_out: the directory of analyses.
+    :param directory_out: output directory of the analyses.
     :type directory_out: Path
-    :param show_info_all: if true show CT and ROI info.
+    :param show_info_all: if True, CT and ROI information are showed.
     :type show_info_all: bool
-    :param save_info_all: if True save all histograms and relatives Excel file with HU and counts;
-                    if False, histograms are plotted.
+    :param save_info_all: if True, all histograms and relative Excel files with HU and counts are saved;
+                          if False, histograms are plotted.
     :type save_info_all: bool
-    :param N_jobs: number of jobs for parallelization.
+    :param N_jobs: number of jobs used for parallelization.
     :type N_jobs: int
     :param resampler: resampler used for resampling.
     :type resampler: int
 
-    :return: directory of all patients df with HU and counts.
+    :return: output directory with all patients' dataset with HU values and their counts.
     :rtype: Path
     """
 
@@ -321,7 +323,7 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
             
             
     
-    if len(more_patient_stats_df_total!=0):
+    if len(more_patient_stats_df_total)!=0:
         
         #Save information
         excel_file_tot = Path(directory_out) / "Total_ROI" / "Histo_total_stats.xlsx"
@@ -348,15 +350,17 @@ def res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, new_sp:np.array, 
 
 def no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.DataFrame,list]:
     """
-    This function is used to obtain the statistical features extracted or, if there are problems, append the ID in a list. 
-    It is implemented at patient-level and used for the parallelization and it is used when no resampling is performed.
+    Obtain the statistical features from the HU distributions of the ROI. 
+    If there are problems, the patient ID is appended to a list. 
+    It is implemented at patient-level and used for the parallelization. 
+    It is applied when resampling is not performed.
     
-    :param pz: patient number in list.
+    :param pz:  input row index of the dataset.
     :type pz: int
     :param input_dictionary_parallel: input dictionary for the parallel function.
     :type input_dictionary_parallel: dict
     
-    :return: dataframe with statistical information and ID and problem of the patient.
+    :return: dataframe with statistical information and and ID list with the relative problems.
     :rtype: tuple[pd.DataFrame,list]
     
     """
@@ -423,13 +427,14 @@ def no_res_parallel_fun(pz:int, input_dictionary_parallel:dict)->tuple[pd.DataFr
 def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, list_roi:list, 
                          directory_out:Path, show_info_all:bool, save_info_all:bool,N_jobs:int)->Path:
     """
-    Here almost functions are called for all patients. Especially:
-    - CT and RTst are possibly showed; 
+    Statistical features of the HU distribution of the selected ROI are extracted. 
+    The following workflow is performed:
+    - CT and RTst are possibly displayed; 
     - specific ROI is found;
-    - df and histogram of original image are obtained;
-    - a database with all patients features is created.
+    - datasets and histograms of original image are obtained;
+    - a dataset with all patients' features is generated.
 
-    :param df_py: database of headers information.
+    :param df_py: dataframe of headers information.
     :type df_py: pd.DataFrame
     :param ID_problems: input list of patient's ID with problems.
     :type ID_problems: list
@@ -437,7 +442,7 @@ def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, l
     :type rt_kind: str
     :param list_roi: list of the ROI.
     :type list_roi: list
-    :param directory_out: the directory of analyses.
+    :param directory_out: output directory of the analyses.
     :type directory_out: Path
     :param show_info_all: if True show CT and ROI info.
     :type show_info_all: bool
@@ -447,7 +452,7 @@ def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, l
     :param N_jobs: number of jobs for parallelization.
     :type N_jobs: int
 
-    :return: directory of all patients df with HU and counts.
+    :return: output directory with all patients' dataset with HU values and their counts.
     :rtype: Path
     """
 
@@ -499,7 +504,7 @@ def no_res_and_create_histo(df_py:pd.DataFrame, ID_problems:list, rt_kind:str, l
             ID_problems.append(err[0])
             
     
-    if len(more_patient_stats_df_total!=0):
+    if len(more_patient_stats_df_total)!=0:
         # if save_all:
         excel_file_tot = Path(directory_out) / "Total_ROI" / "Histo_total_stats.xlsx"
         more_patient_stats_df_total.to_excel(excel_file_tot, index=False)

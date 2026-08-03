@@ -15,9 +15,9 @@ import pandas as pd
 
 def over_variable()->tuple[int, int]:
     """
-    Function for inserting input HU and counts thresholds.
+    Ask the user to insert input HU and count thresholds.
 
-    :return: minimum HU threshold and minimum counts threshold.
+    :return: minimum HU and minimum count thresholds.
     :rtype: tuple[int,int]
     """
 
@@ -30,7 +30,7 @@ def over_variable()->tuple[int, int]:
 
 def over_HU_counts(HU:pd.Series, counts:pd.Series, HU_min:int, min_counts:int)->tuple[pd.Series,pd.Series]:
     """
-    Evaluate HU and counts above thresholds.
+    Evaluate HU and counts above the over ROI analysis thresholds.
 
     :param HU: HU from Excel file, referred to entire region histogram.
     :type HU: pd.Series
@@ -38,10 +38,10 @@ def over_HU_counts(HU:pd.Series, counts:pd.Series, HU_min:int, min_counts:int)->
     :type counts: pd.Series
     :param HU_min: minimum HU threshold.
     :type HU_min: int
-    :param min_counts: minimum counts threshold.
+    :param min_counts: minimum count threshold.
     :type min_counts: int
 
-    :return: HU beetween thresholds and the counts above threshold. 
+    :return: HU values over the HU threshold and the corresponding counts above the count threshold. 
     :rtype: tuple[pd.Series,pd.Series]
     """
     
@@ -61,21 +61,19 @@ def over_HU_counts(HU:pd.Series, counts:pd.Series, HU_min:int, min_counts:int)->
 
 def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple[int,int])->None:
     """
-    Here almost functions are called for all patients. Especially for:
-    - establishing thresholds;
+    Perform over ROI analysis. This function is used for:
+    - defining analysis thresholds;
     - reading Excel files referred to entire region histograms;
-    - looking for HU and relatives counts;
-    - evaluating statistic features referred to a specific 
-      region of the histogram above minimum HU and minimum
-      counts thresholds;
-    - considering patients that do not have this significative
-      region of the histogram.
+    - extracting HU values and their corresponding counts;
+    - obtaining statistical features referred to a specific 
+      region of the histogram (HU greater than HU_min and their counts greater than min_counts);
+    - handling patients without the significative region of the histogram.
 
     :param dir_files_fin: directory of all patients df with HU and counts.
     :type dir_files_fin: str
     :param directory_out: the directory of analyses.
     :type directory_out: str
-    :param delimiter_over_ROI: tuple with min HU and min counts of threshold for the ROI.
+    :param delimiter_over_ROI: tuple with minimum HU and minimum count thresholds for the ROI.
     :type delimiter_over_ROI: tuple[int,int]
 
     :return: None

@@ -14,20 +14,19 @@ import matplotlib.pyplot as plt
 
 def read_spacing(df_py: pd.DataFrame, directory_out:Path, save_sp:bool)->tuple[float,float,float]:
     """
-    Function that calls the database of header DICOM where are stored
-    the VoxelSpacing values of each patient. It can be used to establish the
-    new VoxelSpacing for resampling.
+    Study the distribution of VoxelSpacing values of the given dataset. 
+    It returns the most occuring tuple, which can be used as the
+    new VoxelSpacing in case of image resampling.
 
-    :param df_py: database of headers information.
+    :param df_py: dataframe of headers information.
     :type df_py: pd.DataFrame
     :param directory_out: the directory of analyses.
     :type directory_out: Path
-    :param save_sp: if True, saves the histogram plots of each coordinate
-                of voxel spacing distribution;
-                if False, shows them.
+    :param save_sp: if True, the histogram plots of the voxel spacing distribution along each axes are saved;
+                    if False, they are displayed.
     :type save_sp: bool
 
-    :return: more present (x,y,z) voxel spacing.
+    :return: the most frequent voxel spacing values along the x, y and z axes.
     :rtype: tuple[float,float,float]
     """
     
@@ -45,22 +44,21 @@ def read_spacing(df_py: pd.DataFrame, directory_out:Path, save_sp:bool)->tuple[f
     
 def histo_spacing(coordinate: pd.Series, directory_out: Path, name: str, n_size: float, save_sp: bool)->float:
     """
-    Show or save the distributions of the VoxelSpacing for each coordinate.
+    Show or save the distributions of the VoxelSpacing along each coordinate.
 
-    :param coordinate: column of header's database with the list of coordinates.
+    :param coordinate: column of the dataset header with the list of coordinates.
     :type coordinate: pd.Series
-    :param directory_out: the directory of analyses.
+    :param directory_out: output directory.
     :type directory_out: Path
-    :param name: title of histogram and file.
+    :param name: title of histogram file.
     :type name: str
-    :param n_size: bin size of histogram.
+    :param n_size: bin size for the histogram.
     :type n_size: float
-    :param save_sp: if True, the function saves the histogram plots of each coordinate
-                of VoxelSpacing distribution;
-                if False, it shows them.
+    :param save_sp: if True, the histogram plots of the voxel spacing distributions along each axes are saved;
+                    if False, they are displayed.
     :type save_sp: bool
     
-    :return: the most present coordinate.
+    :return: the most frequent value of the voxel spacing along the given axis.
     :rtype: float
     """
   
@@ -99,15 +97,17 @@ def histo_spacing(coordinate: pd.Series, directory_out: Path, name: str, n_size:
 
 def find_global_scale(df_py: pd.DataFrame,new_spacing_approach:str)->np.array:
     """
-    Create the new VoxelSpacing using one of the following criteria: (min_x, min_y and min_z), 
-    (mean_x,mean_y,mean_z) or (max_x,max_y,max_z) of the given dataset.
+    Define the new VoxelSpacing for image resampling using one of the following criteria: 
+    - min_global ([min_x, min_y, min_z]);
+    - mean_global ([mean_x, mean_y, mean_z]);
+    - max_global ([max_x, max_y, max_z]).
     
     :param df_py: input dataframe.
     :type df_py: pd.DataFrame
-    :param new_spacing_approach: flag to choose the global spacing (min_global, mean_global or max_global).
+    :param new_spacing_approach: flag to choose the criterion (min_global, mean_global or max_global).
     :type new_spacing_approach: str
     
-    :return: new VoxelSpacing based on the desired criterion.
+    :return: new VoxelSpacing based on the chosen criterion.
     :rtype: np.array
     """
     

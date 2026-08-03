@@ -16,7 +16,7 @@ import numpy as np
 
 def just_variable()->tuple[int,int,int]:
     """
-    Function for inserting input HU and counts thresholds.
+    Ask the user to insert input HU and counts thresholds.
 
     :return: minimum HU threshold, maximum HU threshold and minimum counts threshold.
     :rtype: tuple[int,int,int]
@@ -33,7 +33,7 @@ def just_variable()->tuple[int,int,int]:
 
 def justified(HU: pd.Series, counts: pd.Series, HU_min:int , HU_max: int, min_counts:int)->tuple[pd.Series, pd.Series]:
     """
-    Function for evaluating HU and counts above thresholds.
+    Evaluate HU values in the HU range and their respective counts if greather than min_counts.
 
     :param HU: HU from Excel file, referred to entire region histogram.
     :type HU: pd.Series
@@ -46,7 +46,7 @@ def justified(HU: pd.Series, counts: pd.Series, HU_min:int , HU_max: int, min_co
     :param min_counts: minimum counts threshold.
     :type min_counts: int
 
-    :return: HU beetween thresholds and counts above threshold. 
+    :return: HU values in the HU range and their correspondingcounts above the count threshold. 
     :rtype: tuple[pd.Series, pd.Series]   
     """
     
@@ -65,12 +65,12 @@ def justified(HU: pd.Series, counts: pd.Series, HU_min:int , HU_max: int, min_co
 
 def histo_just(dir_files_fin: str, directory_out: str, delimiter: tuple[int,int,int])->None:
     """
-    Here almost functions are called for all patients. Especially for:
-    - establishing thresholds;
+    Perform the specific ROI analysis. This function is used for:
+    - defining the analysis thresholds;
     - reading Excel files referred to entire region histograms;
-    - looking for HU and relatives counts;
-    - evaluating statistic features referred to a specific region of the histogram beetween minimum and maximum HU and above minimum counts thresholds;
-    - considering patients that do not have this significative region of the histogram.
+    - extracting HU and their corresponding counts;
+    - evaluating statistical features referred to a specific region of the histogram (HU values beetween HU_min and HU_max and their counts above min_counts threshold);
+    - handling patients without the significative region of the histogram.
 
     :param dir_files_fin: directory of all patients df with HU and counts.
     :type dir_files_fin: str

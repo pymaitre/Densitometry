@@ -1,3 +1,8 @@
+"""
+Main module to check if the patient IDs in a folder are present in a given Excel file.
+"""
+
+
 from pathlib import Path
 from Densitometry.other_functions import rtv_configuration_file
 import pandas as pd
@@ -7,12 +12,12 @@ import glob
 
 def find_id_dir(directory:Path)->list:
         """
-        Find all ID directories
+        Find all patient ID directories.
         
-        :param directory: input folder
+        :param directory: input folder.
         :type directory: Path
         
-        :return: list of ID directories
+        :return: list of patient ID directories.
         :rtype: list
         """
 

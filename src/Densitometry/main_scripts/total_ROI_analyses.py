@@ -1,3 +1,7 @@
+"""
+Main module to perfom total ROI analyses.
+"""
+
 import matplotlib
 matplotlib.use("Agg")
 import time

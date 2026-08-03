@@ -1,3 +1,7 @@
+"""
+Main module to perform ROI analyses.
+"""
+
 from pathlib import Path
 import os
 import sys
@@ -12,8 +16,9 @@ from Densitometry.specific_ROI_functions import check_rate as rate
 def analysis_check(config:dict)->dict:
     
     """
-    Check if the configuration file has all the analyses flags inserted and returns a properly modified configuration file. 
-    If no analysis has been selected or wrong values are provided, it raises ValueError. 
+    Validate and modify the configuration file for ROI analyses. 
+    If missing or incorrect flags are inserted, it sets them to False.
+    If no analysis has been selected or invalid delimiters are provided, a ValueError is raised. 
     
     :param config: configuration file.
     :type config: dict

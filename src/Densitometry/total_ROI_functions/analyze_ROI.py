@@ -16,9 +16,9 @@ import pydicom
 
 def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:str)->tuple[pd.DataFrame,pd.DataFrame]:
     """
-    Read all ROIs from RTst linked to CT (in directory named by ID).
-    This function creates a dataframe where each row has PatientID
-    and all the associated ROIs. A dataframe with all ROIs and their counts is also created.
+    Read all ROIs from RTSTRUCT file linked to CT.
+    This function creates a dataframe where each row has PatientID and all the associated ROIs. 
+    A dataframe with all ROIs and their counts is also created.
 
     :param df_py: database of headers information.
     :type df_py: pd.DataFrame
@@ -29,7 +29,7 @@ def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:st
     :param rt_kind: type of RT.
     :type rt_kind: str
 
-    :return: database of ROI for each patient and database of ROI's counts.
+    :return: dataframe of ROI for each patient and a dataframe with the counts of each ROI.
     :rtype: tuple[pd.DataFrame, pd.DataFrame]
     """
     

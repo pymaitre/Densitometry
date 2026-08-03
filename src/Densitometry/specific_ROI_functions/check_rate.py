@@ -16,7 +16,7 @@ import pandas as pd
 
 def rate_variable()->tuple[int,int,float]:
     """
-    Function for inserting input HU and counts thresholds.
+    Ask the user to insert input HU and counts thresholds.
 
     :return: minimum HU threshold, maximum HU threshold and rate thresholds beetween counts outside and counts inside the region of (HU_min, HU_max).
     :rtype: tuple[int,int,float]
@@ -32,7 +32,7 @@ def rate_variable()->tuple[int,int,float]:
 
 def analyze_rate(HU: pd.Series, counts: pd.Series, HU_min: int, HU_max: int)->tuple[float, pd.Series, pd.Series]:
     """
-    Evaluate HU and counts considering the thresholds.
+    Evaluate HU and counts considering the rate ROI analysis thresholds.
 
     :param HU: HU from Excel file, referred to entire region histogram.
     :type HU: pd.Series
@@ -43,7 +43,7 @@ def analyze_rate(HU: pd.Series, counts: pd.Series, HU_min: int, HU_max: int)->tu
     :param HU_max: maximum HU threshold.
     :type HU_max: int
 
-    :return: rate beetween parts of the histograms insideand outside the HU thresholds, HU outside the region and counts outside the region.  
+    :return: rate beetween counts inside and outside the selected HU range, HU outside the region and their corresponding counts.  
     :rtype: tuple[float, pd.Series, pd.Series]
     """
     
@@ -71,14 +71,13 @@ def analyze_rate(HU: pd.Series, counts: pd.Series, HU_min: int, HU_max: int)->tu
 
 def check_rate(dir_files_fin: str, directory_out: str, rate_over_ROI: tuple[int,int,float])->None:
     """
-    Here almost functions are called for all patients. Especially for:
-    - establishing thresholds;
+    Perform rate ROI analysis. This function is used for:
+    - defining the analysis thresholds;
     - reading Excel files referred to entire region histograms;
-    - looking for HU and relatives counts;
-    - evaluating statistic features referred to a specific 
-      region of the histogram above minimum and maximum 
-      HU and minimum counts thresholds;
-    - considering patients that do not have this significative
+    - extracting HU values and their corresponding counts;
+    - obtaining statistical features referred to a specific 
+      region of the histogram (according to the rate analysis thresholds);
+    - considering patients without the significative
       region of the histogram.
 
     :param dir_files_fin: directory of all patients df with HU and counts.
