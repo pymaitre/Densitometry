@@ -9,14 +9,54 @@ from Densitometry.specific_ROI_functions import check_over as over
 from Densitometry.specific_ROI_functions import check_rate as rate
 
 
+def analysis_check(config:dict)->dict:
+    
+    """
+    Check if the configuration file has all the analyses flags inserted and returns a properly modified configuration file. 
+    If no analysis has been selected or wrong values are provided, it raises ValueError. 
+    
+    :param config: configuration file.
+    :type config: dict
+    
+    :return: modified configuration file.
+    :rtype: dict
+    """
+    
+    if (config["specific_ROI_analyses"] is None) or (not isinstance(config["specific_ROI_analyses"],bool)):
+        config["specific_ROI_analyses"]=False
+    if (config["over_ROI_analyses"] is None) or (not isinstance(config["over_ROI_analyses"],bool)):
+        config["over_ROI_analyses"]=False
+    if (config["rate_ROI_analyses"] is None) or (not isinstance(config["rate_ROI_analyses"],bool)):
+        config["rate_ROI_analyses"]=False
+        
+    
+    if (config["specific_ROI_analyses"]==False) and (config["over_ROI_analyses"]==False) and (config["rate_ROI_analyses"]==False):
+        raise ValueError("No analysis has been selected")
+    
+    #Check specific ROI delimiter
+    if config["specific_ROI_analyses"]==True:
+        delimiter_specific_ROI = config['specific_ROI_delimiter']
+                    
+        if delimiter_specific_ROI[1]<delimiter_specific_ROI[0]:
+            raise ValueError("MaxHU is smaller than MinHU")
+    
+    #Check rate ROI delimiter
+    if config["rate_ROI_analyses"]==True:
+        rate_over_ROI = config['rate_ROI_delimiter']  
+                     
+        if rate_over_ROI[1]<rate_over_ROI[0]:
+            raise ValueError("MaxHU is lower than MinHU")  
+    
+    return config
+    
+    
 def main(conf):
     if conf['directory_out'] is None:
         raise ValueError("Missing directory_out")
     
-    #Check if at least one analysis has been selected
-    if (conf["specific_ROI_analyses"] is None and conf["over_ROI_analyses"] is None and conf["rate_ROI_analyses"] is None):
-        raise ValueError("No analysis has been selected")
-    
+    #Correct the configuration file and check if the delimiters are valid
+    conf=analysis_check(conf)
+
     directory_out = Path(conf['directory_out'])
     Path(directory_out).mkdir(parents=True, exist_ok=True)  
 
@@ -31,9 +71,6 @@ def main(conf):
     
             delimiter_specific_ROI = conf['specific_ROI_delimiter']
             
-            if delimiter_specific_ROI[1]<delimiter_specific_ROI[0]:
-                raise ValueError("MaxHU is smaller than MinHU")
-
             just.histo_just(dir_files_fin, directory_out, delimiter_specific_ROI)
             print("") 
                 
@@ -60,9 +97,6 @@ def main(conf):
             print("")
 
             rate_over_ROI = conf['rate_ROI_delimiter']  
-             
-            if rate_over_ROI[1]<rate_over_ROI[0]:
-                raise ValueError("MaxHU is lower than MinHU")  
             
             rate.check_rate(dir_files_fin, directory_out, rate_over_ROI)
             print("")    

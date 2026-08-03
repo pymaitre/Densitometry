@@ -10,6 +10,7 @@ import pandas as pd
 import SimpleITK as sitk
 from pathlib import Path
 import yaml
+from typing import Any
 
 
 
@@ -205,7 +206,7 @@ def reference_conf_ROI_analyses():
     """conf file used in test_ROI_analyses"""
     config_path= Path(__file__).parent/ "test_conf" / "test_conf_ROI_analyses.yml"
        
-    return yaml.safe_load(config_path.read_text())
+    return config_path 
 
 
 @pytest.fixture
@@ -214,7 +215,7 @@ def reference_conf_total_ROI_analyses():
     
     config_path= Path(__file__).parent/ "test_conf" / "test_conf_total_ROI.yml"
        
-    return yaml.safe_load(config_path.read_text())
+    return config_path
 
 
 @pytest.fixture
@@ -240,4 +241,4 @@ def reference_path_conf():
 def reference_pathout():
     """ Path to the folder where the configuration files used for testing are stored."""
     return Path(__file__).parent/"test_conf"
-
+    
