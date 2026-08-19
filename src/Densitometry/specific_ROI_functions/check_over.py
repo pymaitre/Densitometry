@@ -1,8 +1,8 @@
 """
 Module for: 
-- reading Excel files referred to patients entire region histograms;
-- looking for HU and relative counts;
-- evaluating statistic features referred to a specific region of the histogram above minimum HU and counts thresholds.
+- reading Excel files associated with patients' entire region histograms;
+- extracting HU and relative counts;
+- evaluating statistical features referred to a specific region of the histogram above the minimum HU and count thresholds.
 """
 
 import os
@@ -15,13 +15,13 @@ import pandas as pd
 
 def over_variable()->tuple[int, int]:
     """
-    Ask the user to insert input HU and count thresholds.
+    Ask the user to enter the HU and count thresholds.
 
     :return: minimum HU and minimum count thresholds.
     :rtype: tuple[int,int]
     """
 
-    HU_min = int(input("Enter the minimum HU threshold above which to control: "))
+    HU_min = int(input("Enter the minimum HU threshold above which to perform the analysis: "))
     min_counts = int(input("Enter the count threshold for significance beyond the region of interest: "))    
     print("")
 
@@ -30,23 +30,23 @@ def over_variable()->tuple[int, int]:
 
 def over_HU_counts(HU:pd.Series, counts:pd.Series, HU_min:int, min_counts:int)->tuple[pd.Series,pd.Series]:
     """
-    Evaluate HU and counts above the over ROI analysis thresholds.
+    Evaluate HU and counts above the thresholds for over ROI analysis.
 
-    :param HU: HU from Excel file, referred to entire region histogram.
+    :param HU: HU from Excel file, corresponding to entire region histogram.
     :type HU: pd.Series
-    :param counts: counts from Excel file, referred to entire region histogram.
+    :param counts: counts from Excel file, corresponding to entire region histogram.
     :type counts: pd.Series
     :param HU_min: minimum HU threshold.
     :type HU_min: int
     :param min_counts: minimum count threshold.
     :type min_counts: int
 
-    :return: HU values over the HU threshold and the corresponding counts above the count threshold. 
+    :return: HU values above the HU threshold and the corresponding counts above the count threshold. 
     :rtype: tuple[pd.Series,pd.Series]
     """
     
-    coppie = {'HU': HU, 'Counts': counts}
-    df = pd.DataFrame(coppie)
+    pairs = {'HU': HU, 'Counts': counts}
+    df = pd.DataFrame(pairs)
 
     #Counts above the threshold
     above_threshold = df[ ( (df["HU"]> HU_min) & (df["Counts"] > min_counts) ) ]
@@ -59,34 +59,34 @@ def over_HU_counts(HU:pd.Series, counts:pd.Series, HU_min:int, min_counts:int)->
     return HU_over, counts_over
 
 
-def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple[int,int])->None:
+def check_over(dir_files_fin: str | Path, directory_out: str | Path, delimiter_over_ROI: tuple[int,int])->None:
     """
     Perform over ROI analysis. This function is used for:
-    - defining analysis thresholds;
-    - reading Excel files referred to entire region histograms;
+    - defining the analysis thresholds;
+    - reading Excel files containing the entire region histograms;
     - extracting HU values and their corresponding counts;
-    - obtaining statistical features referred to a specific 
-      region of the histogram (HU greater than HU_min and their counts greater than min_counts);
-    - handling patients without the significative region of the histogram.
+    - obtaining statistical features for a specific 
+      region of the histogram (HU greater than HU_min and the associated counts greater than min_counts);
+    - handling patients without a significant region of the histogram.
 
-    :param dir_files_fin: directory of all patients df with HU and counts.
-    :type dir_files_fin: str
-    :param directory_out: the directory of analyses.
-    :type directory_out: str
+    :param dir_files_fin: directory of all patients' datasets with HU and counts.
+    :type dir_files_fin: str | Path
+    :param directory_out: directory of the analyses.
+    :type directory_out: str | Path
     :param delimiter_over_ROI: tuple with minimum HU and minimum count thresholds for the ROI.
     :type delimiter_over_ROI: tuple[int,int]
 
     :return: None
     """
 
-    #save_over: if True save all histograms and relative Excel file with HU and counts; if false, histograms are plotted.
+    #save_over: if True save all histograms and the corresponding Excel file with HU and counts; if false, histograms are plotted.
     
     save_over=True       
         
     print("The saving variable is on: ", save_over)
     print("")
     
-    # Delimiter the ROI
+    # Delimiter of the ROI
     HU_min, min_counts = delimiter_over_ROI[0], delimiter_over_ROI[1]
     pz_over = []
     more_patient_stats_df_over = pd.DataFrame()
@@ -140,7 +140,7 @@ def check_over(dir_files_fin: str, directory_out: str, delimiter_over_ROI: tuple
             more_patient_stats_df_over = pd.concat([more_patient_stats_df_over, stats_df_over])
 
     if len(more_patient_stats_df_over)!=0:
-        print("Patients with significative counts over threshold are: ")
+        print("Patients with significant counts over threshold are: ")
         print(pz_over)
         
         if save_over:      

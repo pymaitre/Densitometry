@@ -1,5 +1,5 @@
 """
-Main module to perfom total ROI analyses.
+Main module used to perfom total ROI analyses.
 """
 
 import matplotlib

@@ -1,8 +1,8 @@
 """
 Module for:
-- creating histograms plot and Excel files referred to HU and counts in input. 
-- extracting statistical features.
-In case of resampling, histograms about original and resampled ROIs are overlapped. 
+- creating histogram plots and Excel files based on input HU values and counts. 
+- extracting statistical features from histograms.
+In case of resampling, plots with overlapping histograms associated with the original and resampled images are generated.
 """
 
 import os
@@ -14,20 +14,20 @@ from scipy import stats
 import pandas as pd
 
 
-def features_ROI(ID:str, HU_ROI:pd.Series, counts_ROI:pd.Series, sp: np.array, ROI_name:str,
+def features_ROI(ID:str, HU_ROI:pd.Series, counts_ROI:pd.Series, sp: np.ndarray, ROI_name:str,
                  dir_histo:Path, dir_files:Path, save=False)->pd.DataFrame:
     """
     
     Extract the statistical features from the histogram of a given ROI.
     
-    :param ID: patient's ID.
+    :param ID: patient ID.
     :type ID: str
     :param HU_ROI: HU values of the histogram.
     :type HU_ROI: pd.Series
     :param counts_ROI: counts associated with the HU values.
     :type counts_ROI: pd.Series
-    :param sp: VoxelSpacing.
-    :type sp: np.array
+    :param sp: voxel spacing.
+    :type sp: np.ndarray
     :param ROI_name: name of the ROI.
     :type ROI_name: str
     :param dir_histo: path to the directory for histogram plots.
@@ -35,10 +35,10 @@ def features_ROI(ID:str, HU_ROI:pd.Series, counts_ROI:pd.Series, sp: np.array, R
     :param dir_files: path to the directory for histogram values Excel files.
     :type dir_files: Path
     :param save: if True, histogram plots and the corresponding Excel files are saved in dir_histo and dir_files respectively;
-                 if False, some information are printed.
+                 if False, some information is printed.
     :type save: bool
 
-    :return: dataset with statistical features for each patient.
+    :return: dataset with statistical features extracted from the ROI histogram.
     :rtype: pd.DataFrame
     """
 
@@ -52,25 +52,29 @@ def features_ROI(ID:str, HU_ROI:pd.Series, counts_ROI:pd.Series, sp: np.array, R
     return stats_df
 
 
-def make_histo(HU_ROI_no_nan:pd.Series, counts_ROI_no_nan:pd.Series, n_size:int, sp:np.array, ROI_name:str, save_path:Path, name:str, save=False)->tuple[np.ndarray,np.ndarray,pd.DataFrame]:
+def make_histo(HU_ROI_no_nan:pd.Series, counts_ROI_no_nan:pd.Series, n_size:int, sp:np.ndarray, ROI_name:str, save_path:Path, name:str, save=False)->tuple[np.ndarray,np.ndarray,pd.DataFrame]:
     """
-    Generate the histogram plots, using HU values and the correspondingcounts of the given ROI.
+    Generate a histogram plot using HU values and their corresponding counts for the given ROI.
 
     :param HU_ROI_no_nan: HU values of the histogram.
     :type HU_ROI_no_nan: pd.Series
-    :param counts_ROI_no_nan: HU relative counts.
+    :param counts_ROI_no_nan: counts associated with the HU values.
     :type counts_ROI_no_nan: pd.Series
     :param n_size: bin size for plotting histograms.
     :type n_size: int
-    :param save_path: path to the directory where plots are saved.
+    :param sp: voxel spacing.
+    :type sp: np.ndarray
+    :param ROI_name: name of the ROI.
+    :type ROI_name: str
+    :param save_path: path to the directory where plot is saved.
     :type save_path: Path
     :param name: name of the plot.
     :type name: str
     :param save: if True, histogram is saved;
-                 if False, some information are printed.
+                 if False, some information is printed.
     :type save: bool
 
-    :return: HU values, their counts and a dataframe with statistical features of each patient.   
+    :return: HU values, their counts and a dataframe with statistical features of the ROI.   
     :rtype: tuple[np.ndarray,np.ndarray,pd.DataFrame]
     """
     
@@ -120,7 +124,7 @@ def make_histo(HU_ROI_no_nan:pd.Series, counts_ROI_no_nan:pd.Series, n_size:int,
 
 def make_file(HU:pd.Series, count:pd.Series, save_path:Path, name:str, save=False)->pd.DataFrame:
     """
-    Generate a dataframe with the histogram values and the correspondingcounts.
+    Generate a dataset with the histogram values and the corresponding counts.
 
     :param HU: HU values of the histogram.
     :type HU: pd.Series
@@ -152,7 +156,7 @@ def make_file(HU:pd.Series, count:pd.Series, save_path:Path, name:str, save=Fals
     return df
 
 
-def plot_stat(data:np.array)->None:
+def plot_stat(data:np.ndarray)->None:
     """
     Add statistical features to the current histogram plot.
 
@@ -180,7 +184,7 @@ def plot_stat(data:np.array)->None:
     plt.legend()
 
 
-def calculate_and_save_statistics(histo_name:str, region:str, data:np.array, sp: np.array, ROI_name:str)->pd.DataFrame:
+def calculate_and_save_statistics(histo_name:str, region:str, data:np.ndarray, sp: np.ndarray, ROI_name:str)->pd.DataFrame:
     """
     Extract statistical features from the histogram.
 
@@ -189,9 +193,9 @@ def calculate_and_save_statistics(histo_name:str, region:str, data:np.array, sp:
     :param region: name of the region.
     :type region: str
     :param data: array containing HU values repeated according to their frequency.
-    :type data: np.array
+    :type data: np.ndarray
     :param sp: image voxel spacing.
-    :type sp: np.array
+    :type sp: np.ndarray
     :param ROI_name: name of the ROI.
     :type ROI_name: str
 
@@ -202,10 +206,10 @@ def calculate_and_save_statistics(histo_name:str, region:str, data:np.array, sp:
 
     
     #Statistical features to be computed
-    mini = min(data)
-    massi = max(data)
+    minimum = min(data)
+    maximum = max(data)
     data_array = np.array(data)
-    count_massi = len(data_array[data_array==massi])              
+    count_massi = len(data_array[data_array==maximum])              
     mean = np.mean(data)
     median = np.median(data)
     unique_values, unique_counts = np.unique(data, return_counts=True)
@@ -234,8 +238,8 @@ def calculate_and_save_statistics(histo_name:str, region:str, data:np.array, sp:
         f"Tot_counts_{region}": [tot_counts],
         f"Volume_mm3_{region}": [volume],
         f"Volume_cc_{region}": [volume_cc],
-        f"Min_{region}": [mini],
-        f"Max_{region}": [massi],
+        f"Min_{region}": [minimum],
+        f"Max_{region}": [maximum],
         f"Mean_{region}": [mean],
         f"Mode_{region}": [mode],
         f"Count_Max_{region}": [max_count_value],        
@@ -262,19 +266,17 @@ def compare_histo_res(HU_ROI_res:pd.Series, counts_ROI_res:pd.Series, HU_ROI:pd.
     :param HU_ROI_res: HU values of the histogram referred to resampled ROI.
     :type HU_ROI_res: pd.Series
     :param counts_ROI_res: HU relative counts referred to resampled ROI.
-    :type counts_ROI:res: pd.Series
+    :type counts_ROI_res: pd.Series
     :param HU_ROI: HU values of the histogram referred to original ROI.
     :type HU_ROI: pd.Series
     :param counts_ROI: HU relative counts referred to original ROI.
     :type counts_ROI: pd.Series
-    :param n_size: bin size for plotting histograms.
-    :type n_size: int
     :param save_path: path to the directory where the plot will be saved.
     :type save_path: Path
     :param ID: patient ID.
     :type ID: str
     :param save: if True, histogram is saved;
-                 if False, histogram is showed.
+                 if False, no plot is saved.
     :type save: bool
     
     :return: None
@@ -318,10 +320,10 @@ def extract_hist(HU:pd.Series, counts:pd.Series, n_size:int, color:str, label:st
     """
     Establish the bin size and generate the histogram plot.
 
-    :param HU_ROI: HU values of the histogram.
-    :type HU_ROI: pd.Series
-    :param counts_ROI: HU relative counts.
-    :type counts_ROI: pd.Series
+    :param HU: HU values of the histogram.
+    :type HU: pd.Series
+    :param counts: HU relative counts.
+    :type counts: pd.Series
     :param n_size: bin size for plotting histograms.
     :type n_size: int
     :param color: color of the histogram.

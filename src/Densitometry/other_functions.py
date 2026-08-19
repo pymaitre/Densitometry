@@ -8,17 +8,17 @@ def rtv_configuration_file(name_conf:str, path_conf:Path=None, save:bool=True, p
     Read the configuration file from a .yml file and return it as a dictionary.
     
     
-    :param name_conf: name of configuration file.
+    :param name_conf: name of the configuration file.
     :type name_conf: str
-    :param path_conf: full path of the configuration file.
+    :param path_conf: full path to the configuration file.
     :type path_conf: Path
-    :param save: boolean value to save the configuration inside the results folder.
+    :param save: flag indicating whether to save the configuration inside the results folder.
     :type save: bool
-    :param pathout: where to save a copy of configuration file.
+    :param pathout: directory where a copy of the configuration file is saved.
     :type pathout: str
     
     
-    :return: dictionary with parameters of the configuration file.
+    :return: dictionary containing the configuration parameters.
     :rtype: dict
     """
     

@@ -1,6 +1,6 @@
 """
 Module for: 
-reading DICOM header and creating a database with header's information.
+reading DICOM header and creating a database containing header information.
 """
 
 import os
@@ -13,17 +13,17 @@ from datetime import datetime
 
 def find_ct_info(directory:Path, imm_mod:str,py_patient_file:Path)->pd.DataFrame:
     """
-    Create a dataframe reading a slice header of all CTs.
-    It will contain PatientID, PatientName, PatientAge, dimensions of voxel spacing and CT_path.
+    Create a DataFrame reading the header of a slice from each CT scan.
+    It will contain PatientID, PatientName, PatientAge,  voxel spacing dimensions and CT_path.
 
     :param directory: path to the directory of organized DICOM files.
     :type directory: Path
     :param imm_mod: modality of image.
     :type imm_mod: str
-    :param py_patient_file: Path file with ID_patient and CT path.
+    :param py_patient_file: Path to the file with patient IDs and CT paths.
     :type py_patient_file: Path
 
-    :return: dataframe of headers information.
+    :return: DataFrame of header information.
     :rtype: pd.DataFrame
     """
     
@@ -31,11 +31,11 @@ def find_ct_info(directory:Path, imm_mod:str,py_patient_file:Path)->pd.DataFrame
         
         #Check if patient file has been already created
         df = pd.read_excel(py_patient_file)
-        print("The dataframe with all headers information is in: ", py_patient_file)
+        print("The DataFrame with all header information is in: ", py_patient_file)
     
     except:
         
-        print("I am going to analyze the header's informations.")
+        print("I am going to analyze the header information.")
 
         data = []
          
@@ -66,7 +66,7 @@ def find_ct_info(directory:Path, imm_mod:str,py_patient_file:Path)->pd.DataFrame
                                 patient_age = (study_date - birth_date).days // 365
 
                             else:
-                                patient_age = 'Non_calcolato'
+                                patient_age = 'Not_computed'
                             
                             
                             voxel_spacing_x = dcm.PixelSpacing[0]
@@ -87,7 +87,7 @@ def find_ct_info(directory:Path, imm_mod:str,py_patient_file:Path)->pd.DataFrame
         with pd.ExcelWriter(py_patient_file) as writer:
             df.to_excel(writer, index=False)
         
-        print(f"Dataframe with Dicom header saved in {py_patient_file}")
+        print(f"DataFrame with DICOM header saved in {py_patient_file}")
         
     return df
 

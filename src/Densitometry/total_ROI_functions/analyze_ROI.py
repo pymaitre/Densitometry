@@ -1,9 +1,9 @@
 """
 Module for: 
-- reading and showing CT converting it into an array;
-- reading all the ROIs from the relative RTst;
-- creating a database with all ROIs for patients;
-- creating a database with counts of ROIs found.
+- reading information from CT scans (eventually show and convert it into an array);
+- extracting the ROI names from the RTSTRUCT files;
+- creating a dataset with all ROIs for all patients;
+- creating a dataset with the counts associated with the identified ROIs.
 """
 
 import os
@@ -16,20 +16,20 @@ import pydicom
 
 def all_ROI(df_py:pd.DataFrame, ID_problems:list, directory_out:Path, rt_kind:str)->tuple[pd.DataFrame,pd.DataFrame]:
     """
-    Read all ROIs from RTSTRUCT file linked to CT.
-    This function creates a dataframe where each row has PatientID and all the associated ROIs. 
-    A dataframe with all ROIs and their counts is also created.
+    Read all ROIs from RTSTRUCT file associated with CT scans.
+    This function creates a dataset in which each row stores the PatientID and all the associated ROIs. 
+    A dataset containing the frequency of each ROI is also created.
 
-    :param df_py: database of headers information.
+    :param df_py: DataFrame with header information.
     :type df_py: pd.DataFrame
-    :param ID_problems: list of problems.
+    :param ID_problems: list of PatientIDs with known problems.
     :type ID_problems: list
-    :param directory_out: the directory of analyses.
+    :param directory_out: directory of the analyses.
     :type directory_out: Path
     :param rt_kind: type of RT.
     :type rt_kind: str
 
-    :return: dataframe of ROI for each patient and a dataframe with the counts of each ROI.
+    :return: dataset containing the ROIs for each patient and a dataset with the frequency of each ROI.
     :rtype: tuple[pd.DataFrame, pd.DataFrame]
     """
     

@@ -1,5 +1,5 @@
 """
-Main module to perform ROI analyses.
+Main module used to perform ROI analyses.
 """
 
 from pathlib import Path
@@ -17,13 +17,13 @@ def analysis_check(config:dict)->dict:
     
     """
     Validate and modify the configuration file for ROI analyses. 
-    If missing or incorrect flags are inserted, it sets them to False.
+    If ROI analysis flags are missing or incorrect, they are set to False.
     If no analysis has been selected or invalid delimiters are provided, a ValueError is raised. 
     
-    :param config: configuration file.
+    :param config: configuration dictionary.
     :type config: dict
     
-    :return: modified configuration file.
+    :return: modified configuration dictionary.
     :rtype: dict
     """
     

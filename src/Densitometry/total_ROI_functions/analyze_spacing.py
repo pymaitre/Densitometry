@@ -1,9 +1,9 @@
 """
 Module for: 
-- reading database of headers DICOM; 
-- comparing voxel spacing between patients;
-- creating plot about the distribution of each coordinate; 
-- establishing a new voxel spacing equal to the most common values.
+- reading a dataset of DICOM header information; 
+- analyzing the voxel spacing distribution across patients;
+- creating plots of the voxel spacing distribution along each coordinate; 
+- defining a new voxel spacing, according to different criteria.
 """
 
 import os
@@ -14,15 +14,15 @@ import matplotlib.pyplot as plt
 
 def read_spacing(df_py: pd.DataFrame, directory_out:Path, save_sp:bool)->tuple[float,float,float]:
     """
-    Study the distribution of VoxelSpacing values of the given dataset. 
-    It returns the most occuring tuple, which can be used as the
-    new VoxelSpacing in case of image resampling.
+    Analyze the distribution of voxel spacing values in the given dataset. 
+    It returns the most frequent voxel spacing value along each axis, 
+    which can be used as the new voxel spacing in case of image resampling.
 
-    :param df_py: dataframe of headers information.
+    :param df_py: dataframe of header information.
     :type df_py: pd.DataFrame
-    :param directory_out: the directory of analyses.
+    :param directory_out: directory of the analyses.
     :type directory_out: Path
-    :param save_sp: if True, the histogram plots of the voxel spacing distribution along each axes are saved;
+    :param save_sp: if True, the histogram plots of the voxel spacing distribution along each axis are saved;
                     if False, they are displayed.
     :type save_sp: bool
 
@@ -44,18 +44,17 @@ def read_spacing(df_py: pd.DataFrame, directory_out:Path, save_sp:bool)->tuple[f
     
 def histo_spacing(coordinate: pd.Series, directory_out: Path, name: str, n_size: float, save_sp: bool)->float:
     """
-    Show or save the distributions of the VoxelSpacing along each coordinate.
+    Show or save the distribution of the voxel spacing along the given axis.
 
     :param coordinate: column of the dataset header with the list of coordinates.
     :type coordinate: pd.Series
     :param directory_out: output directory.
     :type directory_out: Path
-    :param name: title of histogram file.
+    :param name: name of the coordinate used for the histogram.
     :type name: str
     :param n_size: bin size for the histogram.
     :type n_size: float
-    :param save_sp: if True, the histogram plots of the voxel spacing distributions along each axes are saved;
-                    if False, they are displayed.
+    :param save_sp: if True, the histogram plot of the voxel spacing distribution along the given axis is saved.
     :type save_sp: bool
     
     :return: the most frequent value of the voxel spacing along the given axis.
@@ -95,20 +94,20 @@ def histo_spacing(coordinate: pd.Series, directory_out: Path, name: str, n_size:
     return co_mas_in
 
 
-def find_global_scale(df_py: pd.DataFrame,new_spacing_approach:str)->np.array:
+def find_global_scale(df_py: pd.DataFrame,new_spacing_approach:str)->np.ndarray:
     """
-    Define the new VoxelSpacing for image resampling using one of the following criteria: 
-    - min_global ([min_x, min_y, min_z]);
-    - mean_global ([mean_x, mean_y, mean_z]);
-    - max_global ([max_x, max_y, max_z]).
+    Define the new voxel spacing for image resampling using one of the following criteria: 
+    - min_global: minimum voxel spacing along each axis;
+    - mean_global: mean voxel spacing along each axis;
+    - max_global: maximum voxel spacing along each axis.
     
-    :param df_py: input dataframe.
+    :param df_py: input DataFrame.
     :type df_py: pd.DataFrame
-    :param new_spacing_approach: flag to choose the criterion (min_global, mean_global or max_global).
+    :param new_spacing_approach: parameter specifying the criterion (min_global, mean_global or max_global).
     :type new_spacing_approach: str
     
-    :return: new VoxelSpacing based on the chosen criterion.
-    :rtype: np.array
+    :return: new voxel spacing based on the chosen criterion.
+    :rtype: np.ndarray
     """
     
     #Find min global scaling

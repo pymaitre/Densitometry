@@ -1,6 +1,6 @@
-    directory_dcm_out : "C:\\Users\\user\\Desktop\\input_folder" #input directory
+    directory_dcm_out : "C:\\Users\\user\\Desktop\\input_folder" #Input directory
 
-    directory_out : "C:\\Users\\user\\Desktop\\output_folder" #output directory
+    directory_out : "C:\\Users\\user\\Desktop\\output_folder" #Output directory
 
     image_modality : "CT" 
 
@@ -18,19 +18,19 @@
 
     flag_resampling: True #Flag for the resampling (True: resample, False: dot not resample)
 
-    flag_new_spacing: "manual" #Flag to choose the spacing (min_global, mean_global, max_global,frequency, manual)
+    flag_new_spacing: "manual" #Flag to choose the spacing (min_global, mean_global, max_global, frequency, manual)
 
-    new_spacing: [1, 1, 3] #Insert the desired new spacing (during the resampling)
+    new_spacing: [1, 1, 3] #Insert the desired new voxel spacing (obtained through resampling)
 
     flag_parallel: False #Flag to manage parallelization (if True: insert manually N_jobs below, if False: N_jobs=1 automatically)
 
-    N_jobs: 3 #Number of jobs used during parallelization
+    N_jobs: 3 #Number of jobs used for parallelization
 
-    resampler: sitkBSpline #choose the proper resampler (e.g. sitkBSpline, sitkNearestNeighbor, sitkLinear)
+    resampler: sitkBSpline #Choose the proper resampler (e.g. sitkBSpline, sitkNearestNeighbor, sitkLinear)
 
     ID_problems : [] #List of IDs with known problems
 
     rt_kind : 'RT_type' #Type of RT 
 
-    list_roi : ['Heart'] #name of the ROI to be analyzed
+    list_roi : ['Heart'] #Name of the ROI to be analyzed
    

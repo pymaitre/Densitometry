@@ -1,9 +1,9 @@
 """
 Module for: 
-- reading Excel files referred to patients entire region histograms;
-- looking for HU and relative counts; 
-- evaluating statistic features referred to a specific region of the histogram 
-  beetween minimum and maximum HU and above minimum counts thresholds.
+- reading Excel files associated with patients' entire region histograms;
+- extracting HU and relative counts; 
+- evaluating statistical features for a specific region of the histogram 
+  between minimum and maximum HU thresholds and above minimum count thresholds.
 """
 
 import os
@@ -16,16 +16,16 @@ import numpy as np
 
 def just_variable()->tuple[int,int,int]:
     """
-    Ask the user to insert input HU and counts thresholds.
+    Ask the user to enter the HU range and minimum count threshold.
 
-    :return: minimum HU threshold, maximum HU threshold and minimum counts threshold.
+    :return: minimum HU threshold, maximum HU threshold and minimum count threshold.
     :rtype: tuple[int,int,int]
     """
 
     
     HU_min = int(input("Enter the minimum HU threshold for the region of interest: "))
     HU_max = int(input("Enter the maximum HU threshold for the region of interest: "))
-    min_counts = int(input("Enter the counts threshold for the region of interest: "))    
+    min_counts = int(input("Enter the count threshold for the region of interest: "))    
     print("")
 
     return HU_min, HU_max, min_counts
@@ -33,27 +33,27 @@ def just_variable()->tuple[int,int,int]:
 
 def justified(HU: pd.Series, counts: pd.Series, HU_min:int , HU_max: int, min_counts:int)->tuple[pd.Series, pd.Series]:
     """
-    Evaluate HU values in the HU range and their respective counts if greather than min_counts.
+    Evaluate HU values in the HU range and their relative counts if greater than min_counts.
 
-    :param HU: HU from Excel file, referred to entire region histogram.
+    :param HU: HU from Excel file, corresponding to the entire region histogram.
     :type HU: pd.Series
-    :param counts: counts from Excel file, referred to entire region histogram.
+    :param counts: counts from Excel file, corresponding to the entire region histogram.
     :type counts: pd.Series
     :param HU_min: minimum HU threshold.
     :type HU_min: int
     :param HU_max: maximum HU threshold.
     :type HU_max: int
-    :param min_counts: minimum counts threshold.
+    :param min_counts: minimum count threshold.
     :type min_counts: int
 
-    :return: HU values in the HU range and their correspondingcounts above the count threshold. 
+    :return: HU values in the HU range and their associated counts above the minimum count threshold. 
     :rtype: tuple[pd.Series, pd.Series]   
     """
     
-    coppie = {'HU': HU, 'Counts': counts}
-    df = pd.DataFrame(coppie)
+    pairs = {'HU': HU, 'Counts': counts}
+    df = pd.DataFrame(pairs)
     
-    #Above or under thresholds
+    #HU values within the range
     above_threshold = df[(df["Counts"] > min_counts) & (HU_min < df["HU"]) & \
                             (df["HU"]< HU_max)]
     
@@ -65,16 +65,16 @@ def justified(HU: pd.Series, counts: pd.Series, HU_min:int , HU_max: int, min_co
 
 def histo_just(dir_files_fin: str, directory_out: str, delimiter: tuple[int,int,int])->None:
     """
-    Perform the specific ROI analysis. This function is used for:
+    Perform specific ROI analysis. This function is used for:
     - defining the analysis thresholds;
-    - reading Excel files referred to entire region histograms;
+    - reading Excel files containing the entire region histograms;
     - extracting HU and their corresponding counts;
-    - evaluating statistical features referred to a specific region of the histogram (HU values beetween HU_min and HU_max and their counts above min_counts threshold);
-    - handling patients without the significative region of the histogram.
+    - evaluating statistical features for a specific region of the histogram (HU values between HU_min and HU_max and their counts above minimum count threshold);
+    - handling patients without a significant region of the histogram.
 
-    :param dir_files_fin: directory of all patients df with HU and counts.
+    :param dir_files_fin: directory of all patients' datasets with HU and counts.
     :type dir_files_fin: str
-    :param directory_out: the directory of analyses.
+    :param directory_out: directory of the analyses.
     :type directory_out: str
     :param delimiter: tuple with min_HU, max_HU and min_counts.
     :type delimiter: tuple[int,int,int]
@@ -82,7 +82,7 @@ def histo_just(dir_files_fin: str, directory_out: str, delimiter: tuple[int,int,
     :return: None
     """
 
-    #if True save all histograms and relatives Excel file with HU and counts; if false, histograms are plotted.
+    #if True save all histograms and corresponding Excel file with HU and counts; if false, histograms are plotted.
     save_just=True
     
     print("The saving variable is on: ", save_just)

@@ -27,7 +27,7 @@ def assert_all_ROI_dataframes_is_valid(df_ROI:pd.DataFrame,df_counts:pd.DataFram
 @pytest.mark.parametrize("ID_problems, rt_kind",[([],"DCM_RS")])
 def test_all_ROI(reference_py_patient_file_dataset:pd.DataFrame, ID_problems:list, reference_dir_out:Path, rt_kind:str):
     
-    """ Check if the dataframe with all the patient's ROIs is created. """
+    """ Check if the dataset with all the patient's ROIs is created. """
     
     df_ROI, df_counts=all_ROI(reference_py_patient_file_dataset,ID_problems,reference_dir_out,rt_kind)
     

@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 @pytest.mark.parametrize("save_sp",[True])
 def test_read_spacing(reference_py_patient_file_dataset:pd.DataFrame, reference_dir_out:Path,save_sp: bool):
     
-    """ Verify that the read VoxelSpacing is valid. """
+    """ Verify that the identified voxel spacing is valid. """
     
     
     new_x,new_y,new_z=read_spacing(reference_py_patient_file_dataset,reference_dir_out,save_sp)
@@ -27,7 +27,7 @@ def test_read_spacing(reference_py_patient_file_dataset:pd.DataFrame, reference_
 @pytest.mark.parametrize("name, n_size, save_sp",[("X", 0.01, True)])
 def test_histo_spacing(reference_voxelspacingx: pd.Series, reference_dir_out: Path, name: str, n_size: float, save_sp: bool):
     
-    """ Check if the VoxelSpacing analysis is performed correctly. """
+    """ Check if the voxel spacing analysis is performed correctly. """
   
     co_mas_in=histo_spacing(reference_voxelspacingx,reference_dir_out,name,n_size,save_sp)
     

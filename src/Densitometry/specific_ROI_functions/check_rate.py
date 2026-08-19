@@ -1,9 +1,9 @@
 """
 Module for: 
-- reading Excel files referred to patients entire region histograms;
-- looking for HU and relative counts;
-- evaluating statistic features referred to a specific region of the histogram below minimum and above maximum,
-  HU thresholds and above rate threshold beetween counts of the part outside and inside this region of HU.
+- reading Excel files associated with patients' entire region histograms;
+- extracting HU and relative counts;
+- evaluating statistical features for a specific region of the histogram outside the specified HU range and for which 
+  the rate between the counts outside and inside this HU region is greater than the specified rate threshold.
 """
 
 import os
@@ -16,14 +16,14 @@ import pandas as pd
 
 def rate_variable()->tuple[int,int,float]:
     """
-    Ask the user to insert input HU and counts thresholds.
+    Ask the user to enter the HU and count thresholds.
 
-    :return: minimum HU threshold, maximum HU threshold and rate thresholds beetween counts outside and counts inside the region of (HU_min, HU_max).
+    :return: minimum HU threshold, maximum HU threshold and rate threshold between counts outside and inside the (HU_min, HU_max) region.
     :rtype: tuple[int,int,float]
     """
 
     HU_min = int(input("Enter the minimum HU threshold above which to check: "))
-    HU_max = int(input("Enter the maximum HU threshold beyond which to control: "))
+    HU_max = int(input("Enter the maximum HU threshold beyond which to check: "))
     rate = float(input(f"Enter the threshold as a percentage of the count rate between inside and outside ({HU_min},{HU_max}): "))    
     print("")
 
@@ -32,18 +32,18 @@ def rate_variable()->tuple[int,int,float]:
 
 def analyze_rate(HU: pd.Series, counts: pd.Series, HU_min: int, HU_max: int)->tuple[float, pd.Series, pd.Series]:
     """
-    Evaluate HU and counts considering the rate ROI analysis thresholds.
+    Evaluate HU and counts considering the thresholds for rate ROI analysis.
 
-    :param HU: HU from Excel file, referred to entire region histogram.
+    :param HU: HU from Excel file, corresponding to entire region histogram.
     :type HU: pd.Series
-    :param counts: counts from Excel file, referred to entire region histogram.
+    :param counts: counts from Excel file, corresponding to entire region histogram.
     :type counts: pd.Series
     :param HU_min: minimum HU threshold.
     :type HU_min: int
     :param HU_max: maximum HU threshold.
     :type HU_max: int
 
-    :return: rate beetween counts inside and outside the selected HU range, HU outside the region and their corresponding counts.  
+    :return: rate between the counts inside and outside the selected HU range, HU values outside the selected range and their associated counts.  
     :rtype: tuple[float, pd.Series, pd.Series]
     """
     
@@ -69,28 +69,27 @@ def analyze_rate(HU: pd.Series, counts: pd.Series, HU_min: int, HU_max: int)->tu
     return diff, HU_rate, counts_rate
     
 
-def check_rate(dir_files_fin: str, directory_out: str, rate_over_ROI: tuple[int,int,float])->None:
+def check_rate(dir_files_fin: str | Path, directory_out: str | Path, rate_over_ROI: tuple[int,int,float])->None:
     """
     Perform rate ROI analysis. This function is used for:
     - defining the analysis thresholds;
-    - reading Excel files referred to entire region histograms;
+    - reading Excel files containing the entire region histograms;
     - extracting HU values and their corresponding counts;
-    - obtaining statistical features referred to a specific 
+    - obtaining statistical features for a specific 
       region of the histogram (according to the rate analysis thresholds);
-    - considering patients without the significative
-      region of the histogram.
+    - handling patients without a significant region of the histogram.
 
-    :param dir_files_fin: directory of all patients df with HU and counts.
-    :type dire_files_fin: str
-    :param directory_out: the directory of analyses.
-    :type directory_out: str
+    :param dir_files_fin: directory of all patients' datasets with HU and counts.
+    :type dir_files_fin: str | Path
+    :param directory_out: directory of the analyses.
+    :type directory_out: str | Path
     :param rate_over_ROI: tuple containing min_HU, max_HU and rate threshold for the ROI considered.
     :type rate_over_ROI: tuple[int,int,float]
     
     :return: None
     """
 
-    #if True save all histograms and relatives Excel file with HU and counts; if false, histograms are plotted.
+    #if True save all histograms and corresponding Excel file with HU and counts; if False, histograms are plotted.
     save_rate=True        
         
     print("The saving variable is set on: ", save_rate)
@@ -144,9 +143,9 @@ def check_rate(dir_files_fin: str, directory_out: str, rate_over_ROI: tuple[int,
             stats_df_rate = histo.features_ROI(ID, HU_rate, counts_rate,sp,ROI_name,dir_histo_rate, dir_files_rate, save_rate)
             more_patient_stats_df_rate = pd.concat([more_patient_stats_df_rate, stats_df_rate])
 
-    if len(more_patient_stats_df_rate!=0):
+    if len(more_patient_stats_df_rate)!=0:
         print("")
-        print("Patients with significative rate beetween inside and outside the region are: ")
+        print("Patients with significant rate between inside and outside the region are: ")
         print(pz_rate)
         
         

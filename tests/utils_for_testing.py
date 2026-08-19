@@ -1,5 +1,5 @@
 """
-Module for auxiliary functions used in testing
+Module for auxiliary functions used in testing.
 """
 
 from pathlib import Path
@@ -8,17 +8,18 @@ import yaml
 
 def modify_configuration_file(config_path:Path,key_list:list|str=None,value_list:Any=None)->dict:
     
-    """ Modify the input configuration file. 
+    """ 
+    Modify the input configuration file. 
     
-    :param config_path: input configuration file path
+    :param config_path: input configuration file path.
     :type config_path: Path
-    :param key_list: list of keys
+    :param key_list: key or list of keys to be modified.
     :type key_list: list|str
-    :param value_list: list of values to be modified
+    :param value_list: value or list of values to be modified.
     :type value_list: Any
 
     
-    :return: modified configuration file
+    :return: dictionary containing the modified configuration parameters.
     :rtype: dict
     """
     

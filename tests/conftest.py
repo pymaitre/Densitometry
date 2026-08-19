@@ -41,7 +41,7 @@ def reference_py_patient_file_dataset()->Path:
 
 @pytest.fixture
 def reference_folder_files_ok()->Path:
-    """Path to the folder with the DataFrames that stores HU and counts of the patient (if resampling has been performed, it stores information after resampling)."""
+    """Path to the folder with the dataset that store HU values and counts of the patient (if resampling has been performed, it stores information after resampling)."""
     return Path(__file__).parent/"output_test"/"Total_ROI"/"Files_ok"
 
 
@@ -53,14 +53,14 @@ def reference_file_ok()->pd.DataFrame:
 
 @pytest.fixture
 def reference_HU_ok()->pd.Series:
-    """HU of reference_file_ok DataFrame."""
+    """HU values from reference_file_ok DataFrame."""
     file_ok=pd.read_excel(Path(__file__).parent/"output_test"/"Total_ROI"/"Files_ok"/"1.xlsx")
     return file_ok["HU"]
 
 
 @pytest.fixture
 def reference_counts_ok()->pd.Series:
-    """Counts of reference_file_ok DataFrame."""
+    """Counts from reference_file_ok DataFrame."""
     file_ok=pd.read_excel(Path(__file__).parent/"output_test"/"Total_ROI"/"Files_ok"/"1.xlsx")
     return file_ok["Counts"]
 
@@ -80,14 +80,14 @@ def reference_dir_histo_ok()->Path:
 
 @pytest.fixture
 def reference_data()->np.array:
-    """array used as data for testing."""
+    """Array used as data for testing."""
     file_ok=pd.read_excel(Path(__file__).parent/"output_test"/"Total_ROI"/"Files_ok"/"1.xlsx")
     return np.repeat(file_ok["HU"],file_ok["Counts"])
 
 
 @pytest.fixture
 def reference_sp()->np.array:
-    """array containing the original VoxelSpacing."""
+    """Array containing the original voxel spacing."""
     df_py=pd.read_excel(Path(__file__).parent/"output_test"/"py_patient.xlsx")
     x=df_py["VoxelSpacingX"]
     y=df_py["VoxelSpacingY"]
@@ -97,21 +97,21 @@ def reference_sp()->np.array:
 
 @pytest.fixture
 def reference_HU_no_res()->pd.Series:
-    """HU of the patient before resampling."""
+    """HU values of the patient before resampling."""
     file_no_res=pd.read_excel(Path(__file__).parent/"output_test"/"Total_ROI"/"To_be_resampled"/"Files"/"1.xlsx")
     return file_no_res["HU"]
 
 
 @pytest.fixture
 def reference_counts_no_res()->pd.Series:
-    """Counts of the HU before resampling."""
+    """Counts of the HU values before resampling."""
     file_no_res=pd.read_excel(Path(__file__).parent/"output_test"/"Total_ROI"/"To_be_resampled"/"Files"/"1.xlsx")
     return file_no_res["Counts"]
 
 
 @pytest.fixture
 def reference_compare_dir()->Path:
-    """Path where compare histogram plots are stored."""
+    """Path where comparison histogram plots are stored."""
     return Path(__file__).parent/"output_test"/"Total_ROI"/"To_be_resampled"/"Compare_histo"
 
 
@@ -123,13 +123,13 @@ def reference_CT_path()->Path:
 
 @pytest.fixture
 def reference_CT()->rsm.Image:
-    """rsm.Image of the patient's CT used for testing."""
+    """rsm.Image of the patient's CT scans used for testing."""
     return rsm.Image.read(Path(__file__).parents[1]/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT")
 
 
 @pytest.fixture
 def reference_CT_arr()->rsm.Image:
-    """arry of the patient's CT used for testing."""
+    """Arry of the patient's CT scans used for testing."""
     ct=rsm.Image.read(Path(__file__).parents[1]/"tutorials"/"tutorial_patient"/"IBSI1_CT_phantom"/"CT"/"CT_1"/"CT")
     return ct.numpy()
 
@@ -203,7 +203,7 @@ def reference_dict_no_res()->dict:
 
 @pytest.fixture
 def reference_conf_ROI_analyses():
-    """conf file used in test_ROI_analyses"""
+    """Configuration file used in test_ROI_analyses"""
     config_path= Path(__file__).parent/ "test_conf" / "test_conf_ROI_analyses.yml"
        
     return config_path 
@@ -211,7 +211,7 @@ def reference_conf_ROI_analyses():
 
 @pytest.fixture
 def reference_conf_total_ROI_analyses():
-    """conf file used for test_total_ROI_analyses"""
+    """Configuration file used for test_total_ROI_analyses"""
     
     config_path= Path(__file__).parent/ "test_conf" / "test_conf_total_ROI.yml"
        

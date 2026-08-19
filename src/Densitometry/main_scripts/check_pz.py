@@ -1,5 +1,5 @@
 """
-Main module to check if the patient IDs in a folder are present in a given Excel file.
+Main module for checking if the patient IDs in a folder are present in a given Excel file.
 """
 
 
@@ -26,7 +26,7 @@ def find_id_dir(directory:Path)->list:
         # Use glob to find all items in the directory
         folders = [f for f in glob.glob(directory + "/*") if os.path.isdir(f)]
 
-        #Print names of the folders
+        #Print the names of the folders
         id_dirs = []
         for folder in folders:
             id_dirs.append(os.path.basename(folder))
