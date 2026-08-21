@@ -146,3 +146,7 @@ src/autospaarc/tests/Test_Destination_Files/New_Scan.mat
 # Generated Excel test files
 src/autospaarc/tests/ICC/ICC_Results.xlsx
 src/autospaarc/tests/Test_Result_Files/New_RF.xlsx
+
+#Excel files
+*.xls
+*.xlsx

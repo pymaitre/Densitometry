@@ -43,12 +43,12 @@ Next, you have to run from the terminal:
 
 .. code-block:: bash
 
-    python -m venv resmip_env
+    python -m venv .venv
 
-where resmip_env will be the virtual environment used during all the workflow.
+where .venv will be the virtual environment used during all the workflow.
 
 
-Be sure that after having created the environment, resmip_env is active (if not, activate it)
+Be sure that after having created the environment, .venv is active (if not, activate it)
 
 
 .. _Installation of Poetry:
@@ -76,4 +76,4 @@ To check whether the installation has been successful, run from the terminal:
     pip show densitometry
 
 
-After completing this flow, follow the `setting` guide, which explains how files should be organized and how to run the code.
+After completing this flow, follow the `setting total ROI analysess <setting_total_ROI_analyses.rst>`_ and `setting ROI analyses <setting_ROI_analyses.rst>`_ guides, which explain how files should be organized and how to extract the densitometric features.

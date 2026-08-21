@@ -1,18 +1,18 @@
 Setting: Total ROI analyses
 ============================
 
-After having followed the instructions described in `installation_procedure`, it comes a brief description of
+After having followed the instructions described in `installation procedure <installation_procedure.rst>`_, it comes a brief description of
 how files should be organized and how to run the code used to extract the densitometric information. 
-Differently from `setting_ROI_analyses`, it does not take into account specific ROI delimeters.
+For specific ROI delimeters, follow `setting ROI analyses <setting_ROI_analyses.rst>`_ guide.
 
 File organization
 ---------------------
-In order to use the code, patient files should be organized in a proper way.
-Consider an institute folder (**Institute**) which contains patient-associated folders, as described below:
+In order to use both the codes, patient files should be organized in a proper way.
+Consider an institute folder (**input_folder**) which contains patient-associated folders, as described below:
 
 .. code-block:: text
 
-    Institute
+    input_folder
        |___Patient_1
        |___Patient_2
        .
@@ -29,13 +29,13 @@ each Patient (**Patient_i**) folder has to be organized as follows:
             |___CT_1
                 |___CT
                 |___RTDOSE
-                |___RTst
+                |___RTSTRUCT
 
 where:
 
-* **CT folder** (the one inside CT_1) stores the CT DICOM files;
+* **CT folder** (the one inside **CT_1**) stores the CT DICOM files;
 * **RTDOSE folder** contains the RTDOSE and RTPlan files;
-* **RTst folder** contains the RTStruct and MV files.
+* **RTSTRUCT folder** contains the RTSTRUCT files.
 
              
 Configuration file
@@ -44,9 +44,9 @@ Configuration file
 After having organized the files as described above, it is necessary to describe the YAML configuration file *conf_total_ROI.yml* (in **conf** subfolder).
 It contains the following parameters to be manually set:
 
-* **directory_dcm_out**: input institute folder
+* **directory_dcm_out**: input folder
 * **directory_out**: output folder where information are stored
-* **image_modality**: modality of the image (e.g. "CT")
+* **image_modality**: modality of the image (e.g. ``"CT"``)
 * **save_spacing_histo**: save spacing histogram  
 * **save_ROI_info**: save ROI information
 * **total_ROI_analyses**: perform total ROI analyses
@@ -54,22 +54,22 @@ It contains the following parameters to be manually set:
 * **save_total_ROI_info**: save information from total ROI analyses
 * **py_patient_file_path**: Path to the file with ID_patient and CT path
 * **flag_resampling**: True for resampling, False otherwise
-* **flag_new_spacing**: Flag that can take values: min_global, mean_global, max_global, frequency or manual (see below)
-* **new_spacing**: 3D array with the desired new spacing (considered when flag_new_spacing=="manual")
+* **flag_new_spacing**: Flag that can take values: ``min_global``, ``mean_global``, ``max_global``, ``frequency`` or ``manual`` (see below)
+* **new_spacing**: 3D array with the desired new spacing (considered when ``flag_new_spacing=="manual"``)
 * **flag_parallel**: True for parallel processing, False for sequential processing
-* **N_jobs**: number of jobs for parallel execution (considered only when flag_parallel==True, if flag_parallel==False N_jobs is set equal to 1 automatically)
-* **resampler**: resampler used during CT resampling (e.g. sitkBSpline, sitkLinear)
+* **N_jobs**: number of jobs for parallel execution (considered only when ``flag_parallel==True``, if ``flag_parallel==False`` N_jobs is set equal to 1 automatically)
+* **resampler**: resampler used during CT resampling (e.g. ``sitkBSpline``, ``sitkLinear``)
 * **ID_problems**: list of patient IDs with known problems
-* **rt_kind**: type of RT file (e.g. "MV-RQ")
-* **list_roi**: list of ROIs 
+* **rt_kind**: type of RTSTRUCT file (e.g. name of the file)
+* **roi_name**: name of the ROI to be analyzed 
 
 An example of configuration file is below reported:
 
 .. code-block:: text
 
-    directory_dcm_out : "C:\\Users\\user_1\\Desktop\\Institute"
+    directory_dcm_out : "C:\\Users\\user\\Desktop\\input_folder"
 
-    directory_out : "C:\\Users\\user_1\\Desktop\\output_folder"
+    directory_out : "C:\\Users\\user\\Desktop\\output_folder"
 
     image_modality : "CT"
 
@@ -79,11 +79,11 @@ An example of configuration file is below reported:
     
     total_ROI_analyses :  True 
 
-    show_total_ROI_info : False  
+    show_total_ROI_info : True  
 
     save_total_ROI_info :  True 
 
-    py_patient_file_path: "C:\\User\\user\\folder\\py_patient.xlsx"
+    py_patient_file_path: "C:\\User\\user\\output_folder\\py_patient.xlsx"
 
     flag_resampling: True 
 
@@ -97,30 +97,30 @@ An example of configuration file is below reported:
 
     resampler: sitkBSpline
 
-    ID_problems : [ID_1,ID_2]
+    ID_problems : []
 
-    rt_kind : 'MV_RQ'
+    rt_kind : 'RT_type'
 
-    list_roi : ['Heart']   
+    roi_name : ['Heart']   
 
 
 Choice of flag_new_spacing
 --------------------
 
-This flag is used to manage the choice of the voxel spacing for the resampling. 
-It is taken into account only when flag_resampling==True. 
+This flag is used to manage the choice of the VoxelSpacing for the resampling. 
+It is taken into account only when ``flag_resampling == True``.
 The following values can be set: 
 
 * *"min_global"*: the new spacing is set as (min_x, min_y, min_z) of the given dataset
 * *"mean_global"*: the new spacing is set as (mean_x, mean_y, mean_z) of the given dataset
 * *"max_global"*: the new spacing is set as (max_x, max_y, max_z) of the given dataset
 * *"frequency"*: the new spacing is set as the most frequent (x, y, z) in the given dataset
-* *"manual"*: set manually (in *conf_total_ROI.yml*) the desired voxel spacing 
+* *"manual"*: set manually (in *conf_total_ROI.yml*) the desired VoxelSpacing 
 
 
 Run the code
 ---------------------
-At last, you can run the code. Be sure resmip_env is active (if not, activate it), move to the folder 
+At last, you can run the code. Be sure .venv is active (if not, activate it), move to the folder 
 **src** and then run from the terminal: 
 
 .. code-block:: bash
@@ -150,12 +150,12 @@ More precisely, the results are organized as follows:
 **Total_ROI** is a folder which contains the densitometry extraction information 
 (before and after the resampling) and the relative plots (e.g. DVHs).
 
-**Voxel_Analyses** is generated only when flag_resampling==True and flag_new_spacing=="frequency. 
-It stores the distributions of the spacings of the given dataset.
+**Voxel_Analyses** is generated only when ``flag_resampling == True`` and ``flag_new_spacing == "frequency"``. 
+It stores the distributions of the VoxelSpacings of the given dataset.
 
 *counts_ROI.xlsx* reports the found ROIs and their presence. 
 
-*py_patient_file.xlsx* stores the patients' age (if present in CT files), the original voxel spacing 
+*py_patient_file.xlsx* stores the patients' age (if present in CT files), the original VoxelSpacing 
 and the path where the CT files are stored. 
 
 *ROI_tot_pz.xlsx* reports the ROIs of each patient.

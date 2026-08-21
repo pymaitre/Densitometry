@@ -15,10 +15,18 @@ dependencies = [
     "matplotlib (>=3.10.8,<4.0.0)",
     "scipy (>=1.11.4,<2.0.0)",
     "joblib (>=1.5.3,<2.0.0)",
-    "pandas[excel] (>=2.2,<3.0)",
+    "pandas[excel] (>=2.2,<3.0)"
 ]
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.1.1,<10.0.0)",
+    "pytest-cov (>=7.1.0,<8.0.0)",
+    "jupyter (>=1.1.1,<2.0.0)",
+    "ipykernel (>=7.3.0,<8.0.0)"
+]
