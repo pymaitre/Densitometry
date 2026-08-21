@@ -150,8 +150,3 @@ src/autospaarc/tests/Test_Result_Files/New_RF.xlsx
 #Excel files
 *.xls
 *.xlsx
-
-# Ignore everything in this directory
-*
-# Except this .gitignore file
-!.gitignore
